@@ -1,11 +1,11 @@
+// internal/storage/fs.go
 package storage
 
 import (
-	"errors"
 	"io"
-	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type FSStore struct{ base string }
@@ -14,17 +14,20 @@ func NewFSStore(base string) (*FSStore, error) {
 	if base == "" {
 		base = "./data"
 	}
-	if err := os.MkdirAll(base, 0o755); err != nil {
+	abs, err := filepath.Abs(base)
+	if err != nil {
 		return nil, err
 	}
-	return &FSStore{base: base}, nil
+	if err := os.MkdirAll(abs, 0o755); err != nil {
+		return nil, err
+	}
+	return &FSStore{base: abs}, nil
 }
 
 func (s *FSStore) Put(key string, r io.Reader) (string, error) {
-	if key == "" {
-		return "", errors.New("empty key")
-	}
-	dst := filepath.Join(s.base, filepath.Clean(key))
+	key = strings.TrimPrefix(key, "/")
+	clean := filepath.Clean(key)
+	dst := filepath.Join(s.base, clean)
 	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
 		return "", err
 	}
@@ -36,14 +39,16 @@ func (s *FSStore) Put(key string, r io.Reader) (string, error) {
 	if _, err := io.Copy(f, r); err != nil {
 		return "", err
 	}
-	return key, nil
+	return clean, nil
 }
 
 func (s *FSStore) Get(key string) (io.ReadCloser, error) {
-	return os.Open(filepath.Join(s.base, filepath.Clean(key)))
+	key = strings.TrimPrefix(key, "/")
+	clean := filepath.Clean(key)
+	return os.Open(filepath.Join(s.base, clean))
 }
 
 func (s *FSStore) SignedURL(key string) (string, error) {
-	u := url.URL{Scheme: "file", Path: filepath.Join(s.base, key)}
-	return u.String(), nil
+	key = strings.TrimPrefix(key, "/")
+	return "file://" + filepath.Join(s.base, filepath.Clean(key)), nil
 }

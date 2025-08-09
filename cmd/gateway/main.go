@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	api "github.com/mind-engage/mindengage-lms/internal/api/http"
@@ -14,9 +15,11 @@ import (
 	"github.com/mind-engage/mindengage-lms/internal/exam"
 	"github.com/mind-engage/mindengage-lms/internal/lti"
 	rbac "github.com/mind-engage/mindengage-lms/internal/rbac"
+	storage "github.com/mind-engage/mindengage-lms/internal/storage"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 func main() {
@@ -41,10 +44,33 @@ func main() {
 	r.Use(middleware.RequestID, middleware.RealIP, middleware.Logger, middleware.Recoverer)
 	r.Use(middleware.Timeout(30 * time.Second))
 
+	if cfg.Mode == config.ModeOnline {
+		r.Use(cors.Handler(cors.Options{
+			AllowedOrigins:   []string{"https://your-frontend.example.com"},
+			AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowedHeaders:   []string{"Authorization", "Content-Type"},
+			ExposedHeaders:   []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           300,
+		}))
+	}
+
 	// Local login (enabled in offline mode by default; can be enabled online via env)
 	if cfg.EnableLocalAuth {
 		r.Post("/auth/login", auth.LoginHandler(authSvc))
 	}
+
+	bs, err := storage.NewFSStore(cfg.BlobBasePath)
+	if err != nil {
+		log.Fatalf("blob store: %v", err)
+	}
+	// assets routes (protected)
+	r.Group(func(pr chi.Router) {
+		pr.Use(auth.JWTMiddleware(authSvc))
+		pr.Route("/assets", func(ar chi.Router) {
+			api.MountAssets(ar, bs)
+		})
+	})
 
 	// Protected API (JWT → role in context → RBAC)
 	r.Group(func(pr chi.Router) {
@@ -92,10 +118,8 @@ func main() {
 }
 
 func getenvOr(k, def string) string {
-	if v := getenv(k); v != "" {
+	if v := os.Getenv(k); v != "" {
 		return v
 	}
 	return def
 }
-
-func getenv(k string) string { return map[string]string{}[k] }

@@ -89,6 +89,7 @@ func JWTMiddleware(a *AuthService) func(http.Handler) http.Handler {
 			}
 			// Stash role into context so RBAC middlewares/handlers can read it
 			ctx := rbac.WithRole(r.Context(), claims.Role)
+			ctx = rbac.WithSubject(ctx, claims.Sub)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

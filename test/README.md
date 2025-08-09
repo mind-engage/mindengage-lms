@@ -1,3 +1,4 @@
+```
 # login as teacher
 TOK=$(curl -s -X POST localhost:8080/auth/login \
   -H 'Content-Type: application/json' \
@@ -41,3 +42,12 @@ curl -s -H "Authorization: Bearer $TOK" \
 
 If your API is role-aware, the teacher might see answer keys and more grading info.
 
+# upload a scan
+curl -s -X POST "localhost:8080/assets/$ATTEMPT" \
+  -H "Authorization: Bearer $STOK" \
+  -F "file=@math-scan.png" | jq .
+
+# fetch it back
+curl -s -H "Authorization: Bearer $STOK" \
+  "localhost:8080/assets/attempts/$ATTEMPT/upload.bin" --output out.bin
+```

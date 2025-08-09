@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/mind-engage/mindengage-lms/internal/grading"
+	syncx "github.com/mind-engage/mindengage-lms/internal/sync"
 )
 
 type SQLStore struct {
@@ -141,6 +142,14 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 	if err != nil {
 		return Attempt{}, err
 	}
+
+	_ = syncx.NewEventRepo(s.db).Append(context.Background(), syncx.Event{
+		SiteID:   "local", // later: cfg.SiteID
+		Type:     "AttemptSubmitted",
+		Key:      attemptID,
+		DataJSON: string(buf), // responses; you can include score/examID too
+	})
+
 	return s.GetAttempt(attemptID)
 }
 

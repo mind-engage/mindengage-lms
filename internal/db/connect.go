@@ -81,6 +81,16 @@ CREATE TABLE IF NOT EXISTS attempts (
   started_at INTEGER NOT NULL,
   submitted_at INTEGER
 );
+
+CREATE TABLE IF NOT EXISTS event_log (
+  offset INTEGER PRIMARY KEY AUTOINCREMENT, -- BIGSERIAL in Postgres
+  site_id TEXT NOT NULL DEFAULT 'local',     -- or cfg.SiteID later
+  typ TEXT NOT NULL,                         -- e.g., AttemptSubmitted
+  key TEXT NOT NULL,                         -- natural key: attemptID
+  data TEXT NOT NULL,                        -- JSON payload
+  created_at INTEGER NOT NULL
+);
+
 `
 
 const schemaPostgres = `
@@ -102,4 +112,14 @@ CREATE TABLE IF NOT EXISTS attempts (
   started_at BIGINT NOT NULL,
   submitted_at BIGINT
 );
+
+CREATE TABLE IF NOT EXISTS event_log (
+  offset BIGSERIAL PRIMARY KEY,
+  site_id TEXT NOT NULL DEFAULT 'local',
+  typ TEXT NOT NULL,
+  key TEXT NOT NULL,
+  data TEXT NOT NULL,
+  created_at BIGINT NOT NULL
+);
+
 `
