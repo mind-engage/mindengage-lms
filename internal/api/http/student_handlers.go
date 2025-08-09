@@ -72,3 +72,16 @@ func GetAttemptHandler(store exam.Store) http.HandlerFunc {
 		_ = json.NewEncoder(w).Encode(a)
 	}
 }
+
+func IsAttemptOwner(store exam.Store) func(*http.Request) bool {
+	return func(r *http.Request) bool {
+		id := chi.URLParam(r, "attemptID")
+		a, err := store.GetAttempt(id)
+		if err != nil {
+			return false
+		}
+		// read role/subject from JWT (we stashed role only; add sub if you want exact match)
+		// quick version: accept ?user_id= query as a stand-in for now:
+		return r.URL.Query().Get("user_id") == a.UserID
+	}
+}

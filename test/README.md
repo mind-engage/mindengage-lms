@@ -6,7 +6,7 @@ TOK=$(curl -s -X POST localhost:8080/auth/login \
 # upload exam
 curl -s -X POST localhost:8080/exams \
   -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
-  --data @exam-1.json
+  --data @exam-101.json
 
 # login as student
 STOK=$(curl -s -X POST localhost:8080/auth/login \
@@ -29,3 +29,15 @@ curl -s -X POST localhost:8080/attempts/$ATTEMPT/responses \
 # submit
 curl -s -X POST localhost:8080/attempts/$ATTEMPT/submit \
   -H "Authorization: Bearer $STOK" | jq .
+
+# fetch the graded attempt as student
+curl -s -H "Authorization: Bearer $STOK" \
+  localhost:8080/attempts/$ATTEMPT | jq .
+
+This should now include "score" and "status": "submitted".
+
+curl -s -H "Authorization: Bearer $TOK" \
+  localhost:8080/attempts/$ATTEMPT | jq .
+
+If your API is role-aware, the teacher might see answer keys and more grading info.
+

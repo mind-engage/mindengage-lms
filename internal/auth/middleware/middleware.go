@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/mind-engage/mindengage-lms/internal/rbac"
 )
 
 type AuthService struct{ hmac []byte }
@@ -72,6 +73,7 @@ func LoginHandler(a *AuthService) http.HandlerFunc {
 	}
 }
 
+// JWTMiddleware validates the bearer token and injects the user's role into context for RBAC.
 func JWTMiddleware(a *AuthService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -80,12 +82,14 @@ func JWTMiddleware(a *AuthService) func(http.Handler) http.Handler {
 				http.Error(w, "missing bearer", http.StatusUnauthorized)
 				return
 			}
-			_, err := a.Parse(strings.TrimPrefix(h, "Bearer "))
+			claims, err := a.Parse(strings.TrimPrefix(h, "Bearer "))
 			if err != nil {
 				http.Error(w, "bad token", http.StatusUnauthorized)
 				return
 			}
-			next.ServeHTTP(w, r)
+			// Stash role into context so RBAC middlewares/handlers can read it
+			ctx := rbac.WithRole(r.Context(), claims.Role)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }

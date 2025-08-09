@@ -1,0 +1,66 @@
+openapi: 3.0.3
+info:
+  title: mindengage-lms
+  version: 0.1.0
+paths:
+  /auth/login:
+    post:
+      summary: Issue local JWT (offline/dev)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: { type: string }
+                password: { type: string }
+                role: { type: string, enum: [student, teacher, admin] }
+              required: [username, password, role]
+      responses:
+        '200':
+          description: token
+          content:
+            application/json:
+              schema: { type: object, properties: { access_token: { type: string } } }
+  /exams:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Upload exam (teacher)
+      responses: { '200': { description: ok } }
+  /exams/{id}:
+    get:
+      security: [{ bearerAuth: [] }]
+      summary: Get exam by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses: { '200': { description: exam } }
+  /attempts:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Create attempt
+      responses: { '200': { description: attempt } }
+  /attempts/{id}/responses:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Save responses
+      responses: { '200': { description: attempt } }
+  /attempts/{id}/submit:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Submit attempt (auto-grade)
+      responses: { '200': { description: attempt } }
+  /attempts/{id}:
+    get:
+      security: [{ bearerAuth: [] }]
+      summary: Get attempt
+      responses: { '200': { description: attempt } }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
