@@ -53,6 +53,15 @@ func main() {
 			AllowCredentials: true,
 			MaxAge:           300,
 		}))
+	} else {
+		r.Use(cors.Handler(cors.Options{
+			AllowedOrigins:   []string{"http://localhost:3000"},
+			AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowedHeaders:   []string{"Authorization", "Content-Type"},
+			ExposedHeaders:   []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           300,
+		}))
 	}
 
 	// Local login (enabled in offline mode by default; can be enabled online via env)
