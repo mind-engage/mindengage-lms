@@ -94,7 +94,25 @@ func main() {
 		// Basic guard: own-or-all can be tightened later with an owner check helper
 		pr.With(rbac.RequireAny("attempt:view-own", "attempt:view-all")).
 			Get("/attempts/{attemptID}", api.GetAttemptHandler(store))
+
+			// Users (teacher/admin)
+		pr.With(rbac.Require("users:bulk_upsert")).
+			Post("/users/bulk", api.BulkUpsertUsersHandler(dbh)) // pass *sql.DB
+
+		pr.With(rbac.Require("users:list")).
+			Get("/users", api.ListUsersHandler(dbh))
+
+		pr.With(rbac.Require("user:change_password")).
+			Post("/users/change-password", api.ChangePasswordHandler(dbh))
+
+		pr.With(rbac.Require("exam:create")).
+			Post("/qti/import", api.ImportQTIHandler(store, bs))
+		pr.With(rbac.Require("exam:export")).
+			Get("/exams/{id}/export", api.ExportQTIHandler(store))
 	})
+
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
+	r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 
 	// --- Online-only surfaces (feature-flagged) ---
 

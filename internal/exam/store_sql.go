@@ -168,3 +168,16 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 	}
 	return a, nil
 }
+
+func (s *SQLStore) GetExamAdmin(ctx context.Context, id string) (Exam, error) {
+	row := s.db.QueryRowContext(ctx, `SELECT id, title, time_limit_sec, questions_json, created_at FROM exams WHERE id=$1`, id)
+	var e Exam
+	var qjson string
+	if err := row.Scan(&e.ID, &e.Title, &e.TimeLimitSec, &qjson, &e.CreatedAt); err != nil {
+		return Exam{}, err
+	}
+	if err := json.Unmarshal([]byte(qjson), &e.Questions); err != nil {
+		return Exam{}, err
+	}
+	return e, nil
+}

@@ -1,136 +1,117 @@
 # MindEngage LMS
 
-An AI-first Learning Management System by MindEngage with Canvas-like UX, native Generative-AI content pipelines, and full LTI/QTI/xAPI support.
+An AI-first Learning Management System by **MindEngage**, designed for both **local LAN-only** deployments and **internet-connected** environments.  
+Supports AI-driven content generation, offline-first sync, and industry standards like LTI, QTI, and xAPI.
 
 ---
 
 ## Table of Contents
-
-- [Overview](#overview)  
-- [Features](#features)  
-- [Architecture](#architecture)  
-- [Course Generation Flow](#course-generation-flow)  
-- [Exam & Grading Flow](#exam--grading-flow)  
-- [Standards & Integrations](#standards--integrations)  
-- [Deployment & Extensibility](#deployment--extensibility)  
-- [Contributing](#contributing)  
+- [Overview](#overview)
+- [Features](#features)
+- [Dual-Mode Operation](#dual-mode-operation)
+- [Architecture](#architecture)
+- [Development Status](#development-status)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
 ## Overview
 
-MindEngage LMS lets your Generative-AI Course‐Factory publish real courses, modules, and quizzes directly into the system. Teachers can review and publish AI‐generated content; students take quizzes and exams with full proctoring hooks; and certification bodies integrate via LTI.
+MindEngage LMS enables:
+- AI-generated courses, quizzes, and exams.
+- Seamless **offline-first** operation for LAN deployments.
+- Secure **online** integration with external platforms via LTI 1.3 and OIDC.
+- Flexible grading with OCR, numeric, and text-matching engines.
 
 ---
 
 ## Features
 
-- **AI-Driven Content**: Automated import of courses, lessons, quizzes via REST/GraphQL.  
-- **Rich Authoring**: Markdown/HTML editor with IMS Common Cartridge export.  
-- **Assessments & Exams**: QTI 3.0 engine, randomized pools, proctoring.  
-- **LTI 1.3 Advantage**: Deep-Linking, NRPS, AGS for certification & tool interoperability.  
-- **Analytics**: xAPI statements to a Learning Record Store (LRS).  
-- **User Management**: OneRoster import, role-based enrollments.  
-- **Accessibility**: WCAG 2.2 AA, WAI-ARIA.  
-- **Notifications & Calendar**: In-app + email + iCal feeds.  
-- **Extensible Plugin SDK**: Webhooks & serverless functions (WASM/Node).
+- **Dual-Mode Deployment**  
+  - **Offline**: Operates entirely in LAN mode with local authentication and storage.  
+  - **Online**: Adds OIDC, LTI, and sync to cloud services.
+  
+- **Assessment & Grading**  
+  - QTI-compatible engine.
+  - Auto-grading with OCR and rubric-based evaluation.
+  
+- **User Management**  
+  - Teacher/admin can bulk-import students.
+  - Role-based access control (RBAC).
+  - Optional password reset flows.
+
+- **Content Management**  
+  - Markdown/HTML lesson editing.
+  - File uploads (local FS, MinIO, S3, GCS).
+
+- **Standards Support**  
+  - QTI 3.0, LTI 1.3 Advantage, xAPI, OneRoster.
+
+---
+
+## Dual-Mode Operation
+
+| Mode    | Description | Authentication | Storage | Sync |
+|---------|-------------|----------------|---------|------|
+| Offline | Runs entirely in a LAN; no internet required. | Local JWT (teacher/student) | Local FS + SQLite/Postgres | Disabled |
+| Online  | Full internet-enabled deployment. | OIDC / LTI / JWT | Cloud Storage + Postgres | Enabled |
+
+Switching mode is **runtime configurable** via environment variables (`MODE=offline` or `MODE=online`).
 
 ---
 
 ## Architecture
 
-```mermaid
-graph TD
-  A[Web/Mobile Client] -->|REST & GraphQL| B(API Gateway)
-  B --> C1[Auth & Identity Service<br/>OIDC, LTI Login]
-  B --> C2[Course Service<br/>Content Repo & Versioning]
-  B --> C3[Assessment Service<br/>QTI Engine]
-  B --> C4[AI Course-Factory Adapter<br/>Webhooks & Event Bus]
-  B --> C5[Analytics Service<br/>xAPI LRS]
-  B --> C6[Notification Service]
-  B --> C7[Certification Adapter<br/>LTI Tool Outbound]
+A full architecture diagram and sequence flows are documented in:  
+📄 [`docs/architecture.md`](docs/architecture.md)
 
-  subgraph Data Stores
-    D1[(User DB)]
-    D2[(Content Storage<br/>S3/GCS)]
-    D3[(Assessment DB)]
-    D4[(LRS)]
-  end
+---
 
-  C1 --> D1
-  C2 --> D2
-  C3 --> D3
-  C5 --> D4
-  C4 -->|events| C2
-  C3 -->|grades| C5
-  C7 -->|AGS| C3
+## Development Status
+
+Current implemented modules:
+- **API Gateway**: Chi-based HTTP router with JWT middleware.
+- **RBAC**: Role-based route protection.
+- **Exam Service**: Create, view, and submit attempts.
+- **Grading Engine**: OCR + numeric + text match.
+- **Storage Service**: Local FS uploads.
+- **Offline Auth**: Local JWT-based login.
+- **Online Hooks**: Stubs for LTI 1.3 and JWKS.
+
+Planned:
+- Sync service for online mode.
+- OIDC-based authentication.
+- Fully integrated LTI AGS/NRPS.
+
+---
+
+## Deployment
+
+### Prerequisites
+- Go 1.21+
+- SQLite or PostgreSQL
+- (Online mode) Access to OIDC/LTI platforms.
+
+### Run (Offline Mode)
+```bash
+MODE=offline DB_DRIVER=sqlite DB_DSN=./mindengage.db \
+AUTH_HMAC_SECRET=changeme \
+BLOB_BASE_PATH=./data \
+go run ./cmd/gateway
 ```
-
-## Course Generation Flow
-
-```mermaid
-sequenceDiagram
-  participant AI as Generative-AI Engine
-  participant CF as Course-Factory Adapter
-  participant CS as Course Service
-  participant T as Teacher
-
-  AI->>CF: POST /courses (metadata + QTI items)
-  CF->>CS: create course, modules, quizzes
-  CS-->>CF: 201 Created (courseId)
-  CF-->>AI: ACK
-  T->>CS: Review & publish course
-  CS-->>T: Course live to students
-```
-
-## Exam & Grading Flow
-
-```mermaid
-sequenceDiagram
-  autonumber
-  participant Stu as Student Browser
-  participant LMS as MindEngage LMS Host
-  participant AS as Assessment Service (LTI Tool)
-  participant Cert as Certification Platform
-
-  Stu->>LMS: Launch Quiz (LTI)
-  LMS->>AS: LTI Launch (id_token + AGS claims)
-  AS-->>Stu: Render QTI Player
-  Stu->>AS: Submit responses
-  AS->>AS: Auto-grade & proctor checks
-  AS->>LMS: send scores via LTI AGS
-  LMS->>Cert: Deep-Link with score
-  Cert-->>Stu: Issue verifiable certificate
-```
-
-## Standards & Integrations
-
-| Area                 | Standard / Spec             |
-| -------------------- | --------------------------- |
-| Course Packaging     | IMS Common Cartridge v1.3   |
-| Assessments          | QTI 3.0                     |
-| Analytics            | xAPI (Experience API)       |
-| Rosters & SIS        | OneRoster v1.2              |
-| Tool Launch & Grades | LTI 1.3 Advantage           |
-| Authentication       | OAuth 2.1 / OIDC / SAML 2.0 |
-| Accessibility        | WCAG 2.2 AA, WAI-ARIA       |
-
-## Deployment & Extensibility
-
-* Infrastructure: Kubernetes + PostgreSQL + Redis + Kafka/NATS + S3/GCS
-
-* CI/CD: GitHub Actions → Helm charts → Canary rollouts
-
-* Plugin SDK: Serverless webhooks (WASM/Node) on content events
-
-* Theming: React + Tailwind UI, CSS variables for branding
 
 ## Contributing
 
-1. Fork the repo & create a feature branch.
+    Fork the repo.
 
-2. Write Tests for any new behavior.
+    Create a feature branch.
 
-3. Submit a Pull Request with a clear description.
+    Write tests for your changes.
 
-4. Ensure all CI checks pass (lint, build, tests).
+    Submit a PR.
+
+License
+
+This project is licensed under the MIT License. See LICENSE for details.

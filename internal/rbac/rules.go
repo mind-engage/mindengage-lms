@@ -8,12 +8,16 @@ var RolePermissions = map[string][]string{
 		"attempt:save",
 		"attempt:submit",
 		"attempt:view-own",
+		"user:change_password",
 	},
 	"teacher": {
 		"exam:create",
 		"exam:view",
+		"exam:export",
 		"attempt:view-all",
 		"attempt:grade",
+		"users:bulk_upsert",
+		"users:list",
 	},
 	"admin": {
 		"*", // everything

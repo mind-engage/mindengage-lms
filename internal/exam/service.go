@@ -10,15 +10,6 @@ import (
 	"github.com/mind-engage/mindengage-lms/internal/grading"
 )
 
-type Store interface {
-	PutExam(e Exam) error
-	GetExam(id string) (Exam, error)
-	NewAttempt(examID, userID string) (Attempt, error)
-	SaveResponses(attemptID string, resp map[string]interface{}) (Attempt, error)
-	Submit(attemptID string) (Attempt, error)
-	GetAttempt(id string) (Attempt, error)
-}
-
 type memoryStore struct {
 	mu       sync.RWMutex
 	exams    map[string]Exam
@@ -136,6 +127,16 @@ func (m *memoryStore) GetAttempt(id string) (Attempt, error) {
 		return Attempt{}, errors.New("attempt not found")
 	}
 	return a, nil
+}
+
+func (m *memoryStore) GetExamAdmin(ctx context.Context, id string) (Exam, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	e, ok := m.exams[id]
+	if !ok {
+		return Exam{}, errors.New("exam not found")
+	}
+	return e, nil
 }
 
 func randID() string { return time.Now().Format("20060102150405") }

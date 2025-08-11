@@ -50,4 +50,60 @@ curl -s -X POST "localhost:8080/assets/$ATTEMPT" \
 # fetch it back
 curl -s -H "Authorization: Bearer $STOK" \
   "localhost:8080/assets/attempts/$ATTEMPT/upload.bin" --output out.bin
+
+# health check
+curl -s -H "Authorization: Bearer $STOK" \
+  localhost:8080/healthz | jq .
+
 ```
+
+
+Upload formats (front-end friendly)
+CSV (recommended for teachers)
+
+Header row required:
+
+id,username,role,password
+s-001,alice,student,alicepass
+s-002,bob,student,bobpass
+
+JSON
+
+[
+  {"id":"s-001","username":"alice","role":"student","password":"alicepass"},
+  {"id":"s-002","username":"bob","role":"student","password":"bobpass"}
+]
+
+cURL examples
+
+# Bulk upload CSV
+curl -s -X POST http://localhost:8080/users/bulk \
+  -H "Authorization: Bearer $TOK" \
+  -F "file=@students.csv" | jq .
+
+# Bulk upload JSON (raw body)
+curl -s -X POST http://localhost:8080/users/bulk \
+  -H "Authorization: Bearer $TOK" \
+  -H "Content-Type: application/json" \
+  --data-binary @students.json | jq .
+
+# List students
+curl -s -H "Authorization: Bearer $TOK" \
+  'http://localhost:8080/users?role=student' | jq .
+
+
+# Change password as a student
+curl -X POST http://localhost:8080/users/change-password \
+  -H "Authorization: Bearer $STOK" \
+  -H "Content-Type: application/json" \
+  -d '{"old_password":"oldpass123","new_password":"newpass456"}'
+
+# import qti zip
+curl -s -X POST "http://localhost:8080/qti/import" \
+  -H "Authorization: Bearer $TOK" \
+  -F "file=@test/sample-qti.zip" | jq .
+
+# export qti zip
+curl -s -H "Authorization: Bearer $TOK" \
+  "http://localhost:8080/exams/exam-101/export?format=qti" \
+  --output exported.zip  
