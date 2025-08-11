@@ -17,8 +17,8 @@ type SQLStore struct {
 	grader grading.Grader
 }
 
-func NewSQLStore(db *sql.DB, driver string) *SQLStore {
-	return &SQLStore{db: db, driver: driver}
+func NewSQLStore(db *sql.DB, driver string, grader grading.Grader) *SQLStore {
+	return &SQLStore{db: db, driver: driver, grader: grader}
 }
 
 func (s *SQLStore) PutExam(e Exam) error {

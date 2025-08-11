@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-// REMOVED: No more Grid import is necessary.
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -16,7 +15,6 @@ import {
   Stack,
   LinearProgress,
   Chip,
-  Divider,
   IconButton,
   Snackbar,
   Alert,
@@ -25,8 +23,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  ToggleButtonGroup,
-  ToggleButton,
   FormGroup,
   FormControlLabel,
   Checkbox,
@@ -36,10 +32,9 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-
 const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8080";
 
-// -------------------- Types --------------------
+/* -------------------- Types -------------------- */
 export type Exam = {
   id: string;
   title: string;
@@ -51,7 +46,7 @@ export type Question = {
   id: string;
   type: "mcq_single" | "mcq_multi" | "true_false" | "short_word" | "numeric" | "essay";
   prompt_html?: string;
-  prompt?: string; // legacy
+  prompt?: string;
   choices?: { id: string; label_html?: string }[];
   points?: number;
 };
@@ -64,7 +59,7 @@ export type Attempt = {
   score?: number;
 };
 
-// -------------------- Helpers --------------------
+/* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
   if (!res.ok) {
@@ -85,7 +80,120 @@ function formatTime(s?: number | null) {
   return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
 }
 
-// -------------------- Shared Shell --------------------
+function normType(t?: string): Question["type"] {
+  return (t || "").replace(/-/g, "_") as Question["type"];
+}
+
+/* -------------------- Memo bits -------------------- */
+const TimerChip = React.memo(function TimerChip({ label }: { label?: string | null }) {
+  return label ? <Chip label={`⏱ ${label}`} variant="outlined" sx={{ mr: 2 }} /> : null;
+});
+
+type QuestionCardProps = {
+  q: Question;
+  idx: number;
+  value: any;
+  onChange: (qid: string, val: any) => void;
+};
+
+const QuestionCard = React.memo(function QuestionCard({ q, idx, value, onChange }: QuestionCardProps) {
+  const qtype = normType(q.type);
+
+  return (
+    <Paper variant="outlined" sx={{ p: 2.5 }}>
+      <Stack spacing={2}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography variant="caption" color="text.secondary">
+            Q{idx + 1} • {qtype.replace(/_/g, "-")}{q.points ? `  ( ${q.points} pt )` : ""}
+          </Typography>
+        </Stack>
+
+        <Box sx={{ "& p": { my: 0.5 } }} dangerouslySetInnerHTML={htmlify(q.prompt_html || q.prompt)} />
+
+        {qtype === "mcq_single" && (
+          <RadioGroup value={value ?? ""} onChange={(e) => onChange(q.id, e.target.value)}>
+            {q.choices?.map((c) => (
+              <FormControlLabel
+                key={c.id}
+                value={c.id}
+                control={<Radio />}
+                label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />}
+              />
+            ))}
+          </RadioGroup>
+        )}
+
+        {qtype === "true_false" && (
+          <RadioGroup value={value ?? ""} onChange={(e) => onChange(q.id, e.target.value)}>
+            {(["true", "false"] as const).map((v) => (
+              <FormControlLabel key={v} value={v} control={<Radio />} label={<span style={{ textTransform: "capitalize" }}>{v}</span>} />
+            ))}
+          </RadioGroup>
+        )}
+
+        {qtype === "mcq_multi" && (
+          <FormGroup>
+            {q.choices?.map((c) => {
+              const arr: string[] = Array.isArray(value) ? value : [];
+              const checked = arr.includes(c.id);
+              return (
+                <FormControlLabel
+                  key={c.id}
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={(e) => {
+                        const next = new Set(arr);
+                        if (e.target.checked) next.add(c.id);
+                        else next.delete(c.id);
+                        onChange(q.id, Array.from(next));
+                      }}
+                    />
+                  }
+                  label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />}
+                />
+              );
+            })}
+          </FormGroup>
+        )}
+
+        {qtype === "short_word" && (
+          <TextField
+            fullWidth
+            autoFocus
+            placeholder="Your answer"
+            value={value ?? ""}
+            onChange={(e) => onChange(q.id, e.target.value)}
+          />
+        )}
+
+        {qtype === "numeric" && (
+          <TextField
+            type="number"
+            fullWidth
+            placeholder="0"
+            value={value ?? ""}
+            onChange={(e) => onChange(q.id, e.target.value)}
+          />
+        )}
+
+        {qtype === "essay" && (
+          <TextField
+            fullWidth
+            multiline
+            minRows={6}
+            placeholder="Write your answer..."
+            value={value ?? ""}
+            onChange={(e) => onChange(q.id, e.target.value)}
+          />
+        )}
+      </Stack>
+    </Paper>
+  );
+}, (prev, next) => prev.q === next.q && prev.idx === next.idx && prev.value === next.value);
+/* -------------------------------------------------- */
+
+/* -------------------- Shared Shell -------------------- */
 function Shell({
   children,
   authed,
@@ -122,9 +230,7 @@ function Shell({
               <Chip size="small" label={`${Math.round(progressPct)}%`} />
             </Stack>
           )}
-          {attempt && timer && (
-            <Chip label={`⏱ ${timer}`} variant="outlined" sx={{ mr: 2 }} />
-          )}
+          {attempt && <TimerChip label={timer} />}
           {authed && onSignOut && (
             <IconButton onClick={onSignOut} color="primary" aria-label="sign out">
               <LogoutIcon />
@@ -158,7 +264,7 @@ function useSnack() {
   } as const;
 }
 
-// -------------------- Screen 1: Login --------------------
+/* -------------------- Screen 1: Login -------------------- */
 function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string, r: "student" | "teacher" | "admin") => void; }) {
   const [username, setUsername] = useState("student");
   const [password, setPassword] = useState("student");
@@ -171,7 +277,6 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
 
   return (
     <Shell authed={false} title="Sign in">
-      {/* REPLACED: Grid with Stack and Box */}
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
         <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%`, lg: '50%' } }}>
           <Paper elevation={1} sx={{ p: 3 }}>
@@ -209,13 +314,12 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
   );
 }
 
-// -------------------- Screen 2: Select --------------------
+/* -------------------- Screen 2: Select -------------------- */
 function SelectScreen({ onBack, onLoadExam }: { onBack: () => void; onLoadExam: (id: string) => void; }) {
   const [examId, setExamId] = useState("exam-101");
 
   return (
     <Shell authed={true} title="Select exam or assignment" onSignOut={onBack}>
-      {/* REPLACED: Grid with Stack and Box */}
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
         <Box sx={{ width: { xs: '100%', md: `${(8 / 12) * 100}%` } }}>
           <Paper elevation={1} sx={{ p: 3 }}>
@@ -224,7 +328,9 @@ function SelectScreen({ onBack, onLoadExam }: { onBack: () => void; onLoadExam: 
               <TextField label="Exam ID" value={examId} onChange={(e) => setExamId(e.target.value)} fullWidth />
               <Button variant="contained" onClick={() => onLoadExam(examId)} disableElevation>Load</Button>
             </Stack>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>Example: <Box component="code" sx={{ px: 0.5, py: 0.25, bgcolor: "action.hover", borderRadius: 1 }}>exam-101</Box></Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
+              Example: <Box component="code" sx={{ px: 0.5, py: 0.25, bgcolor: "action.hover", borderRadius: 1 }}>exam-101</Box>
+            </Typography>
           </Paper>
         </Box>
         <Box sx={{ width: { xs: '100%', md: `${(4 / 12) * 100}%` } }}>
@@ -242,7 +348,7 @@ function SelectScreen({ onBack, onLoadExam }: { onBack: () => void; onLoadExam: 
   );
 }
 
-// -------------------- Screen 3: Exam --------------------
+/* -------------------- Screen 3: Exam -------------------- */
 function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: () => void; }) {
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [responses, setResponses] = useState<Record<string, any>>({});
@@ -252,15 +358,27 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const timerRef = useRef<number | null>(null);
+  const autosaveTRef = useRef<number | null>(null);
+  const snack = useSnack();
+
+  // Stable updater so memoized children don't re-render unnecessarily
+  const updateResponse = useCallback((qid: string, val: any) => {
+    setResponses((r) => {
+      if (r[qid] === val) return r;
+      return { ...r, [qid]: val };
+    });
+  }, []);
 
   const total = exam?.questions.length ?? 0;
   const answered = useMemo(() => {
     if (!exam) return 0;
-    return exam.questions.reduce((n, q) => (responses[q.id] == null || responses[q.id] === "" || (Array.isArray(responses[q.id]) && responses[q.id].length === 0) ? n : n + 1), 0);
+    return exam.questions.reduce((n, q) => {
+      const v = responses[q.id];
+      const has = !(v == null || v === "" || (Array.isArray(v) && v.length === 0));
+      return n + (has ? 1 : 0);
+    }, 0);
   }, [exam, responses]);
   const progressPct = total ? (answered / total) * 100 : 0;
-
-  const snack = useSnack();
 
   // actions
   async function startAttempt() {
@@ -327,16 +445,14 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
     } finally { setUploading(false); }
   }
 
-  // autosave
-  const respJsonRef = useRef("");
+  // autosave (debounced, no per-keystroke stringify)
   useEffect(() => {
     if (!attempt) return;
-    const s = JSON.stringify(responses);
-    if (s === respJsonRef.current) return;
-    respJsonRef.current = s;
-    const t = setTimeout(() => saveResponses(false), 1200);
-    return () => clearTimeout(t);
-  }, [responses, attempt]);
+    if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current);
+    autosaveTRef.current = window.setTimeout(() => { saveResponses(false); }, 1000) as unknown as number;
+    return () => { if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [responses, attempt?.id]);
 
   // timer
   useEffect(() => {
@@ -357,77 +473,8 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attempt?.id]);
 
-  function setResp(qid: string, val: any) {
-    setResponses((r) => ({ ...r, [qid]: val }));
-  }
-
-  function QuestionCard({ q, idx }: { q: Question; idx: number }) {
-    const current = responses[q.id];
-    return (
-      <Paper variant="outlined" sx={{ p: 2.5 }}>
-        <Stack spacing={2}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="caption" color="text.secondary">
-              Q{idx + 1} • {q.type.replace("_", "-")}{q.points ? `  ( ${q.points} pt )` : ""}
-            </Typography>
-          </Stack>
-          <Box sx={{ "& p": { my: 0.5 } }} dangerouslySetInnerHTML={htmlify(q.prompt_html || q.prompt)} />
-
-          {q.type === "mcq_single" && (
-            <RadioGroup value={current ?? ""} onChange={(e) => setResp(q.id, e.target.value)}>
-              {q.choices?.map((c) => (
-                <FormControlLabel key={c.id} value={c.id} control={<Radio />} label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />} />
-              ))}
-            </RadioGroup>
-          )}
-
-          {q.type === "true_false" && (
-            <RadioGroup value={current ?? ""} onChange={(e) => setResp(q.id, e.target.value)}>
-              {(["true", "false"] as const).map((v) => (
-                <FormControlLabel key={v} value={v} control={<Radio />} label={<span style={{ textTransform: "capitalize" }}>{v}</span>} />
-              ))}
-            </RadioGroup>
-          )}
-
-          {q.type === "mcq_multi" && (
-            <FormGroup>
-              {q.choices?.map((c) => {
-                const arr: string[] = Array.isArray(current) ? current : [];
-                const checked = arr.includes(c.id);
-                return (
-                  <FormControlLabel
-                    key={c.id}
-                    control={<Checkbox checked={checked} onChange={(e) => {
-                      const next = new Set(arr);
-                      if (e.target.checked) next.add(c.id); else next.delete(c.id);
-                      setResp(q.id, Array.from(next));
-                    }} />}
-                    label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />}
-                  />
-                );
-              })}
-            </FormGroup>
-          )}
-
-          {q.type === "short_word" && (
-            <TextField fullWidth placeholder="Your answer" value={current || ""} onChange={(e) => setResp(q.id, e.target.value)} />
-          )}
-
-          {q.type === "numeric" && (
-            <TextField type="number" fullWidth placeholder="0" value={current ?? ""} onChange={(e) => setResp(q.id, e.target.value)} />
-          )}
-
-          {q.type === "essay" && (
-            <TextField fullWidth multiline minRows={6} placeholder="Write your answer..." value={current || ""} onChange={(e) => setResp(q.id, e.target.value)} />
-          )}
-        </Stack>
-      </Paper>
-    );
-  }
-
   return (
     <Shell authed={true} onSignOut={onExit} attempt={attempt} progressPct={progressPct} timer={formatTime(secondsLeft)} title={exam.title}>
-      {/* REPLACED: Grid with Stack and Box */}
       <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3}>
         {/* Left rail */}
         <Box sx={{ width: { xs: '100%', lg: '25%' }, display: { xs: "none", lg: "block" } }}>
@@ -444,14 +491,18 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
             {exam && attempt && (
               <Paper variant="outlined" sx={{ p: 2 }}>
                 <Typography fontWeight={600} gutterBottom>Questions</Typography>
-                {/* REPLACED: Nested Grid with a flex-wrapping Box */}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -0.5 }}>
                   {exam.questions.map((q, idx) => {
                     const r = responses[q.id];
                     const done = r != null && r !== "" && (!Array.isArray(r) || r.length > 0);
                     return (
                       <Box key={q.id} sx={{ width: '25%', p: 0.5 }}>
-                        <Button fullWidth size="small" variant={currentQ === idx ? "contained" : (done ? "outlined" : "text")} onClick={() => setCurrentQ(idx)}>
+                        <Button
+                          fullWidth
+                          size="small"
+                          variant={currentQ === idx ? "contained" : (done ? "outlined" : "text")}
+                          onClick={() => setCurrentQ(idx)}
+                        >
                           {idx + 1}
                         </Button>
                       </Box>
@@ -494,7 +545,13 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
                   </FormControl>
                 </Box>
 
-                <QuestionCard q={exam.questions[currentQ]} idx={currentQ} />
+                <QuestionCard
+                  key={exam.questions[currentQ].id}
+                  q={exam.questions[currentQ]}
+                  idx={currentQ}
+                  value={responses[exam.questions[currentQ].id]}
+                  onChange={updateResponse}
+                />
 
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
                   <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(0, i - 1))} disabled={currentQ === 0}>← Prev</Button>
@@ -546,7 +603,7 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
   );
 }
 
-// -------------------- Root App --------------------
+/* -------------------- Root App -------------------- */
 export default function StudentApp() {
   type Screen = "login" | "select" | "exam";
   const [screen, setScreen] = useState<Screen>("login");
@@ -593,10 +650,7 @@ export default function StudentApp() {
   }
 
   const theme = createTheme({
-    palette: {
-      mode: "light",
-      primary: { main: "#3f51b5" },
-    },
+    palette: { mode: "light", primary: { main: "#3f51b5" } },
     shape: { borderRadius: 12 },
     components: {
       MuiPaper: { styleOverrides: { root: { borderRadius: 16 } } },
@@ -607,12 +661,8 @@ export default function StudentApp() {
   return (
     <ThemeProvider theme={theme}>
       {screen === "login" && <LoginScreen busy={busy} onLogin={login} />}
-      {screen === "select" && jwt && (
-        <SelectScreen onBack={signOut} onLoadExam={loadExamById} />
-      )}
-      {screen === "exam" && jwt && loadedExam && (
-        <ExamScreen jwt={jwt} exam={loadedExam} onExit={() => setScreen("select")} />
-      )}
+      {screen === "select" && jwt && <SelectScreen onBack={signOut} onLoadExam={loadExamById} />}
+      {screen === "exam" && jwt && loadedExam && <ExamScreen jwt={jwt} exam={loadedExam} onExit={() => setScreen("select")} />}
     </ThemeProvider>
   );
 }
