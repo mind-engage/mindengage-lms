@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/mind-engage/mindengage-lms/internal/grading"
@@ -180,4 +181,35 @@ func (s *SQLStore) GetExamAdmin(ctx context.Context, id string) (Exam, error) {
 		return Exam{}, err
 	}
 	return e, nil
+}
+
+func (s *SQLStore) ListExams(ctx context.Context, opts ListOpts) ([]ExamSummary, error) {
+	if opts.Limit <= 0 {
+		opts.Limit = 50
+	}
+	if opts.Offset < 0 {
+		opts.Offset = 0
+	}
+	// Case-insensitive title search; works in both SQLite and Postgres
+	rows, err := s.db.QueryContext(ctx, `
+		SELECT id, title, time_limit_sec, created_at
+		FROM exams
+		WHERE ($1 = '' OR LOWER(title) LIKE LOWER('%' || $1 || '%'))
+		ORDER BY created_at DESC
+		LIMIT $2 OFFSET $3
+	`, strings.TrimSpace(opts.Q), opts.Limit, opts.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := []ExamSummary{}
+	for rows.Next() {
+		var e ExamSummary
+		if err := rows.Scan(&e.ID, &e.Title, &e.TimeLimitSec, &e.CreatedAt); err != nil {
+			return nil, err
+		}
+		out = append(out, e)
+	}
+	return out, rows.Err()
 }
