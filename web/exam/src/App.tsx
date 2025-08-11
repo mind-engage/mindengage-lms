@@ -59,6 +59,14 @@ export type Attempt = {
   score?: number;
 };
 
+export type ExamSummary = {
+  id: string;
+  title: string;
+  time_limit_sec?: number;
+  created_at?: number;
+  profile?: string;
+};
+
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
@@ -315,38 +323,117 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
 }
 
 /* -------------------- Screen 2: Select -------------------- */
-function SelectScreen({ onBack, onLoadExam }: { onBack: () => void; onLoadExam: (id: string) => void; }) {
-  const [examId, setExamId] = useState("exam-101");
+/* -------------------- Screen 2: Select -------------------- */
+function SelectScreen({
+  jwt,
+  onBack,
+  onLoadExam,
+}: {
+  jwt: string;
+  onBack: () => void;
+  onLoadExam: (id: string) => void;
+}) {
+  const [examId, setExamId] = useState("");
+  const [q, setQ] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [list, setList] = useState<ExamSummary[]>([]);
+  const snack = useSnack();
+
+  const fetchExams = useCallback(async (query: string) => {
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const url = new URL(`${API_BASE}/exams`);
+      if (query.trim()) url.searchParams.set("q", query.trim());
+      const res = await fetch(url.toString(), { headers: { Authorization: `Bearer ${jwt}` } });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${await res.text()}`);
+      const data: ExamSummary[] = await res.json();
+      setList(data);
+    } catch (err: any) {
+      snack.setErr(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }, [jwt]);
+
+  useEffect(() => {
+    fetchExams("");
+  }, [fetchExams]);
+
+  function startFromRow(id: string) {
+    setExamId(id);
+    onLoadExam(id);
+  }
 
   return (
     <Shell authed={true} title="Select exam or assignment" onSignOut={onBack}>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-        <Box sx={{ width: { xs: '100%', md: `${(8 / 12) * 100}%` } }}>
+        {/* Manual ID entry */}
+        <Box sx={{ width: { xs: '100%', md: `${(5 / 12) * 100}%` } }}>
           <Paper elevation={1} sx={{ p: 3 }}>
             <Typography variant="h6" fontWeight={600}>Enter Exam ID</Typography>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "flex-end" }} sx={{ mt: 2 }}>
               <TextField label="Exam ID" value={examId} onChange={(e) => setExamId(e.target.value)} fullWidth />
-              <Button variant="contained" onClick={() => onLoadExam(examId)} disableElevation>Load</Button>
+              <Button variant="contained" onClick={() => onLoadExam(examId)} disableElevation disabled={!examId.trim()}>
+                Load
+              </Button>
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
-              Example: <Box component="code" sx={{ px: 0.5, py: 0.25, bgcolor: "action.hover", borderRadius: 1 }}>exam-101</Box>
+              Or pick one from the list →
             </Typography>
           </Paper>
         </Box>
-        <Box sx={{ width: { xs: '100%', md: `${(4 / 12) * 100}%` } }}>
+
+        {/* Available exams */}
+        <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%` } }}>
           <Paper elevation={1} sx={{ p: 3 }}>
-            <Typography fontWeight={600}>Recent (example)</Typography>
-            <Stack spacing={1.2} sx={{ mt: 1.5 }}>
-              {["exam-101", "exam-physics", "assignment-essay"].map((id) => (
-                <Button key={id} variant="outlined" onClick={() => onLoadExam(id)}>{id}</Button>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
+              <Box sx={{ flexGrow: 1 }}>
+                <TextField
+                  label="Search exams"
+                  placeholder="title contains…"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  fullWidth
+                />
+              </Box>
+              <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busy}>
+                {busy ? "Searching…" : "Search"}
+              </Button>
+              <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busy}>
+                Reset
+              </Button>
+            </Stack>
+
+            <Stack spacing={1.25} sx={{ mt: 2, maxHeight: 420, overflowY: 'auto' }}>
+              {list.length === 0 && !busy && (
+                <Typography variant="body2" color="text.secondary">No exams found.</Typography>
+              )}
+              {list.map((e) => (
+                <Paper key={e.id} variant="outlined" sx={{ p: 1.5 }}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography fontWeight={600}>{e.title}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        <Box component="span" sx={{ fontFamily: "monospace" }}>{e.id}</Box>
+                        {typeof e.time_limit_sec === "number" && (
+                          <> • ⏱ {Math.round((e.time_limit_sec || 0) / 60)} min</>
+                        )}
+                        {e.profile && <> • {e.profile}</>}
+                      </Typography>
+                    </Box>
+                    <Button variant="outlined" onClick={() => startFromRow(e.id)}>Open</Button>
+                  </Stack>
+                </Paper>
               ))}
             </Stack>
           </Paper>
         </Box>
       </Stack>
+      {snack.node}
     </Shell>
   );
 }
+
 
 /* -------------------- Screen 3: Exam -------------------- */
 function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: () => void; }) {
@@ -480,16 +567,53 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
         <Box sx={{ width: { xs: '100%', lg: '25%' }, display: { xs: "none", lg: "block" } }}>
           <Stack spacing={2} sx={{ position: "sticky", top: 88 }}>
             <Paper variant="outlined" sx={{ p: 2 }}>
-              <Typography variant="caption" color="text.secondary">Step</Typography>
-              <Box component="ol" sx={{ mt: 1, pl: 2 }}>
-                <li>Sign in</li>
-                <li>Select exam</li>
-                <li><b>Take & submit</b></li>
-              </Box>
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Typography variant="body2">
+                  Time Limit: {Math.round((exam.time_limit_sec || 0) / 60)} min
+                </Typography>
+
+                {attempt && (
+                  <Chip
+                    size="small"
+                    label={`Left: ${formatTime(secondsLeft)}`}
+                    color={secondsLeft != null
+                      ? secondsLeft <= 60 ? "error"
+                        : secondsLeft <= 5 * 60 ? "warning"
+                        : "default"
+                      : "default"}
+                    variant="outlined"
+                  />
+                )}
+              </Stack>
+
+              {attempt && exam.time_limit_sec ? (
+                <LinearProgress
+                  sx={{ mt: 1 }}
+                  variant="determinate"
+                  value={
+                    Math.min(
+                      100,
+                      Math.max(
+                        0,
+                        ((exam.time_limit_sec - (secondsLeft || 0)) / exam.time_limit_sec) * 100
+                      )
+                    )
+                  }
+                />
+              ) : null}
             </Paper>
 
             {exam && attempt && (
-              <Paper variant="outlined" sx={{ p: 2 }}>
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  // give the list its own scroll
+                  maxHeight: 'calc(100vh - 88px - 24px - 120px)', // viewport minus appbar & margins (tweak as needed)
+                  overflowY: 'auto',
+                  overscrollBehavior: 'contain',  // prevent wheel from scrolling the page
+                }}
+              >
                 <Typography fontWeight={600} gutterBottom>Questions</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -0.5 }}>
                   {exam.questions.map((q, idx) => {
@@ -661,7 +785,7 @@ export default function StudentApp() {
   return (
     <ThemeProvider theme={theme}>
       {screen === "login" && <LoginScreen busy={busy} onLogin={login} />}
-      {screen === "select" && jwt && <SelectScreen onBack={signOut} onLoadExam={loadExamById} />}
+      {screen === "select" && jwt && <SelectScreen jwt={jwt} onBack={signOut} onLoadExam={loadExamById} />}
       {screen === "exam" && jwt && loadedExam && <ExamScreen jwt={jwt} exam={loadedExam} onExit={() => setScreen("select")} />}
     </ThemeProvider>
   );

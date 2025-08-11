@@ -1,0 +1,2507 @@
+{
+    "id": "act-eng-001",
+    "title": "ACT English – Practice",
+    "profile": "act.v1",
+    "policy": {
+        "sections": [
+            {
+                "id": "english",
+                "title": "English",
+                "modules": [
+                    {
+                        "id": "eng-m1",
+                        "time_limit_sec": 2700
+                    }
+                ]
+            }
+        ],
+        "navigation": {
+            "allow_back": false,
+            "module_locked": true
+        },
+        "item_constraints": {
+            "english": {
+                "mcq_single": {
+                    "choices": 4
+                }
+            }
+        }
+    },
+    "questions": [
+        {
+            "id": "eng-q01-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p><b>Passage I</b></p><p><b>The Art of Animation</b></p><p>[1] Animation, the process of creating the illusion of movement, has a rich and fascinating history. [2] From simple hand-drawn cells to sophisticated computer-generated imagery, the art form <u>have evolved</u> dramatically over the last century. [3] This evolution reflects not only technological advancements but also shifts in storytelling and artistic expression. </p><p>Which choice most effectively corrects the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "has evolved"
+                },
+                {
+                    "id": "C",
+                    "label_html": "are evolving"
+                },
+                {
+                    "id": "D",
+                    "label_html": "evolve"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Subject-Verb Agreement"
+            }
+        },
+        {
+            "id": "eng-q02-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Early forms of animation can be traced back to the 19th century. Devices like the phenakistoscope and zoetrope used rotating discs or drums with sequential images to create a short, looping motion. While primitive by today's standards, these inventions laid the groundwork for the cinematic animation that would follow. The first animated film is often credited to Émile Cohl, a French cartoonist, <u>whom</u> created <i>Fantasmagorie</i> in 1908.</p><p>Which choice is the correct pronoun to use in the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "who"
+                },
+                {
+                    "id": "C",
+                    "label_html": "which"
+                },
+                {
+                    "id": "D",
+                    "label_html": "whose"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Pronoun Case"
+            }
+        },
+        {
+            "id": "eng-q03-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The golden age of American animation began in the 1920s, with Walt Disney at the forefront. Disney’s studio revolutionized the industry by introducing sound with <i>Steamboat Willie</i> and later, full-length feature films like <i>Snow White and the Seven Dwarfs</i>. These films were not just technically innovative; <u>they were also</u> known for their compelling narratives and memorable characters.</p><p>Which of the following alternatives to the underlined portion is LEAST acceptable?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "they were"
+                },
+                {
+                    "id": "B",
+                    "label_html": "they had been"
+                },
+                {
+                    "id": "C",
+                    "label_html": "being also"
+                },
+                {
+                    "id": "D",
+                    "label_html": "they were additionally"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Idiomatic Expression"
+            }
+        },
+        {
+            "id": "eng-q04-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Other studios, such as Warner Bros. and MGM, provided a different, more zany style of animation. Characters like Bugs Bunny and Tom and Jerry offered a comedic counterpoint to Disney’s often earnest fairy tales. The competition between these studios spurred a period of incredible creativity and <u>growth in the industry</u>.</p><p>Given that all choices are true, which one provides the most specific information in the context of this paragraph?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "growth, making lots of cartoons"
+                },
+                {
+                    "id": "C",
+                    "label_html": "growth, defining a classic era of American cartoons"
+                },
+                {
+                    "id": "D",
+                    "label_html": "growth and new developments"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Specificity"
+            }
+        },
+        {
+            "id": "eng-q05-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The rise of television created new opportunities for animation, though often with lower budgets and simpler styles. Shows from Hanna-Barbera, like <i>The Flintstones</i> and <i>The Jetsons</i>, became staples in American homes. <u>However, the transition to television also led to a decline in the cinematic quality of animation for a time.</u></p><p>Which choice best maintains the paragraph's focus on the new opportunities television provided?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "These shows reached a broader audience than ever before, making cartoons a daily part of family life."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Many animators found the work less artistically fulfilling."
+                },
+                {
+                    "id": "D",
+                    "label_html": "DELETE the underlined portion."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Unity"
+            }
+        },
+        {
+            "id": "eng-q06-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>In the late 20th century, a renaissance in animation occurred, partly fueled by the success of Disney films like <i>The Little Mermaid</i> and <i>The Lion King</i>. At the same time, the advent of computer-generated imagery (CGI) opened up new visual possibilities. Pixar Animation Studios, with its release of <i>Toy Story</i> in 1995, demonstrated the potential of CGI to create visually stunning films with <u>emotional, and resonant stories.</u></p><p>What is the best punctuation for the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "emotional and resonant stories."
+                },
+                {
+                    "id": "C",
+                    "label_html": "emotional, resonant stories."
+                },
+                {
+                    "id": "D",
+                    "label_html": "emotional and, resonant stories."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Commas"
+            }
+        },
+        {
+            "id": "eng-q07-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Today, animation is more diverse than ever. Traditional 2D animation, stop-motion, and CGI coexist, each offering a unique aesthetic. Independent animators and international studios from countries like Japan, whose anime style is globally popular, contribute to a vibrant and <u>constantly, evolving</u> landscape.</p><p>Which choice best corrects the punctuation error in the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "constantly evolving"
+                },
+                {
+                    "id": "C",
+                    "label_html": "constantly evolving,"
+                },
+                {
+                    "id": "D",
+                    "label_html": "constant, evolving"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Adverbs"
+            }
+        },
+        {
+            "id": "eng-q08-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The tools may have changed, from pencils and paint to digital styluses and software, but the core of animation remains the same. <u>It’s about bringing characters and worlds to life.</u> To tell stories that captivate and entertain. The enduring appeal of animation lies in its limitless potential to visualize the imagination.</p><p>Which of the following alternatives to the underlined portion is LEAST acceptable?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "It is about bringing characters and worlds to life"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Its about bringing characters and worlds to life"
+                },
+                {
+                    "id": "C",
+                    "label_html": "The goal is bringing characters and worlds to life"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Animation is about bringing characters and worlds to life"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Apostrophes"
+            }
+        },
+        {
+            "id": "eng-q09-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The tools may have changed, from pencils and paint to digital styluses and software, but the core of animation remains the same. It’s about bringing characters and worlds to life. <u>To tell stories that captivate and entertain.</u> The enduring appeal of animation lies in its limitless potential to visualize the imagination.</p><p>Which choice best corrects the sentence fragment?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "and to tell stories that captivate and entertain."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Telling stories that captivate and entertain."
+                },
+                {
+                    "id": "D",
+                    "label_html": "It is to tell stories that captivate and entertain."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Fragments"
+            }
+        },
+        {
+            "id": "eng-q10-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The enduring appeal of animation lies in its limitless potential to visualize the imagination. This potential ensures that animation will continue to be a powerful and <u>beloved medium for generations to come.</u></p><p>The writer wants to add a detail here that emphasizes the global reach of animation. Which choice would best accomplish this?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "beloved medium for moviegoers."
+                },
+                {
+                    "id": "C",
+                    "label_html": "beloved medium, crossing cultural and linguistic barriers."
+                },
+                {
+                    "id": "D",
+                    "label_html": "beloved medium for children and adults alike."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Elaboration"
+            }
+        },
+        {
+            "id": "eng-q11-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The process of creating a feature-length animated film is incredibly complex, involving hundreds of artists and technicians. A single frame of a CGI movie, for instance, can require hours of rendering time on powerful computers. <u>This collaborative effort is</u> meticulously planned, from initial storyboarding to final sound design.</p><p>Which choice provides the most logical transition from the previous sentence?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Therefore, this effort is"
+                },
+                {
+                    "id": "C",
+                    "label_html": "In contrast, this effort is"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Regardless, this effort is"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Transitions"
+            }
+        },
+        {
+            "id": "eng-q12-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The influence of animation extends beyond entertainment. It is used in education to explain complex subjects, in advertising to create memorable brands, and in scientific visualization to model data. <u>Its versatility are</u> a testament to its power as a communicative tool.</p><p>Which choice corrects the error in subject-verb agreement?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Its versatility is"
+                },
+                {
+                    "id": "C",
+                    "label_html": "It's versatility is"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Its versatilities are"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Agreement"
+            }
+        },
+        {
+            "id": "eng-q13-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Looking back, the journey of animation is one of constant innovation. Each era has built upon the discoveries of the <u>past; pushing</u> the boundaries of what is possible. From a simple spinning disk to immersive virtual worlds, animation continues to enchant audiences.</p><p>Which choice best corrects the punctuation error?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "past. Pushing"
+                },
+                {
+                    "id": "C",
+                    "label_html": "past, pushing"
+                },
+                {
+                    "id": "D",
+                    "label_html": "past and pushing"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Semicolons"
+            }
+        },
+        {
+            "id": "eng-q14-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The future of animation promises even more exciting developments. With advances in real-time rendering and virtual reality, the line between animator, content, and audience may become increasingly blurred. <u>One thing is certain the</u> magic of bringing imagination to life will never fade.</p><p>Which choice best corrects the punctuation error?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "One thing is certain, the"
+                },
+                {
+                    "id": "C",
+                    "label_html": "One thing is certain: the"
+                },
+                {
+                    "id": "D",
+                    "label_html": "One thing is certain; the"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Colons"
+            }
+        },
+        {
+            "id": "eng-q15-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Suppose the writer’s primary purpose was to provide a brief overview of the historical development of animation. Would this essay accomplish that purpose?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Yes, because it chronologically covers the major eras and technological shifts in animation, from early devices to modern CGI."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Yes, because it focuses exclusively on the financial success of Disney and Pixar."
+                },
+                {
+                    "id": "C",
+                    "label_html": "No, because it fails to explain the technical process of how animation is created."
+                },
+                {
+                    "id": "D",
+                    "label_html": "No, because it primarily discusses the future of virtual reality instead of the history of animation."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Main Purpose"
+            }
+        },
+        {
+            "id": "eng-q16-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p><b>Passage II</b></p><p><b>The Great Barrier Reef: A World Heritage Site in Peril</b></p><p>[1] The Great Barrier Reef, located off the coast of Queensland, Australia, is the world’s largest coral reef system. [2] Composed of over 2,900 individual reefs and 900 islands stretching for over 2,300 kilometers, it is so vast that it can be seen from outer space. [3] This natural wonder, a designated UNESCO World Heritage Site, <u>teem</u> with an incredible diversity of life. </p><p>Which choice corrects the verb form in the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "are teeming"
+                },
+                {
+                    "id": "C",
+                    "label_html": "has teemed"
+                },
+                {
+                    "id": "D",
+                    "label_html": "teems"
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Subject-Verb Agreement"
+            }
+        },
+        {
+            "id": "eng-q17-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The reef’s ecosystem is a complex and delicate web of interdependence. The coral polyps, tiny animals that form the reef’s structure by secreting calcium carbonate, provide shelter for thousands of species. <u>These species include, fish, turtles, and sharks.</u> This biodiversity makes the reef not only a site of immense natural beauty but also a crucial resource for scientific research and tourism.</p><p>Which choice best corrects the punctuation error?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "These species include fish, turtles, and sharks."
+                },
+                {
+                    "id": "C",
+                    "label_html": "These species, include fish, turtles, and sharks."
+                },
+                {
+                    "id": "D",
+                    "label_html": "These species include: fish, turtles, and sharks."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Unnecessary Commas"
+            }
+        },
+        {
+            "id": "eng-q18-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>However, this vibrant ecosystem is facing unprecedented threats. The most significant of which is climate change. Rising sea temperatures cause coral bleaching, a phenomenon where corals expel the symbiotic algae living in their tissues, causing them to turn completely white. <u>If bleaching is severe and prolonged, the coral will die.</u></p><p>The writer is considering deleting the underlined sentence. Should the sentence be kept or deleted?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Kept, because it explains the ultimate consequence of coral bleaching mentioned in the preceding sentence."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Kept, because it introduces a new scientific term that is important for the rest of the passage."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Deleted, because it distracts from the paragraph's main focus on the causes of the threats."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Deleted, because the information is common knowledge and does not need to be stated."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Unity"
+            }
+        },
+        {
+            "id": "eng-q19-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The most significant <u>of which is</u> climate change. Rising sea temperatures cause coral bleaching, a phenomenon where corals expel the symbiotic algae living in their tissues, causing them to turn completely white.</p><p>Which choice best corrects the sentence fragment?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "of these is"
+                },
+                {
+                    "id": "C",
+                    "label_html": "is"
+                },
+                {
+                    "id": "D",
+                    "label_html": "of them is"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Fragments"
+            }
+        },
+        {
+            "id": "eng-q20-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Ocean acidification, another consequence of increased atmospheric carbon dioxide, also poses a grave danger. As the ocean absorbs CO2, its pH level decreases, making the water more acidic. This change in chemistry inhibits the ability of coral polyps <u>to build there</u> skeletons, weakening the entire reef structure.</p><p>Which choice is the correct word to use in the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "to build their"
+                },
+                {
+                    "id": "C",
+                    "label_html": "to build they're"
+                },
+                {
+                    "id": "D",
+                    "label_html": "in building there"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Word Usage"
+            }
+        },
+        {
+            "id": "eng-q21-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>In addition to these global threats, the reef faces local pressures. <u>Runoff from agriculture carries pesticides and sediment into the reef's waters.</u> This pollution can harm corals and promote the growth of algae that competes with them for light and space. Overfishing disrupts the delicate balance of the food web, while coastal development can destroy marine habitats.</p><p>Which choice most effectively sets up the examples discussed in the rest of the paragraph?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "The Australian government has been criticized for its policies."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Tourism, while economically beneficial, also creates problems."
+                },
+                {
+                    "id": "D",
+                    "label_html": "These include water pollution, overfishing, and coastal development."
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Topic Sentence"
+            }
+        },
+        {
+            "id": "eng-q22-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Conservation efforts are underway to protect the reef. Scientists are working to identify and breed more resilient coral species. <u>Moreover,</u> programs aim to improve water quality by working with farmers to reduce runoff. Marine protected areas have been established to regulate fishing and other activities.</p><p>Which transition word best indicates the relationship between the two sentences?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Consequently,"
+                },
+                {
+                    "id": "C",
+                    "label_html": "For example,"
+                },
+                {
+                    "id": "D",
+                    "label_html": "In contrast,"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Transitions"
+            }
+        },
+        {
+            "id": "eng-q23-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>These efforts, while crucial, face a significant challenge: scale. The vastness of the reef makes comprehensive monitoring and intervention <u>incredible difficult</u>. Many scientists argue that without aggressive global action to reduce greenhouse gas emissions, local conservation efforts alone will not be enough to save the reef.</p><p>Which choice is grammatically correct?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "incredibly difficult"
+                },
+                {
+                    "id": "C",
+                    "label_html": "incredible difficulty"
+                },
+                {
+                    "id": "D",
+                    "label_html": "incredibly difficulty"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Adjectives and Adverbs"
+            }
+        },
+        {
+            "id": "eng-q24-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The fate of the Great Barrier Reef is not just an environmental issue; <u>it’s also an economic one.</u> The reef supports about 64,000 jobs and contributes billions of dollars to the Australian economy annually, primarily through tourism. Its decline would have devastating consequences for the communities that depend on it.</p><p>Which of the following is the most effective alternative to the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "its also an economic one."
+                },
+                {
+                    "id": "C",
+                    "label_html": "it is also a issue of economics."
+                },
+                {
+                    "id": "D",
+                    "label_html": "it is an economic issue, too."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Style - Conciseness"
+            }
+        },
+        {
+            "id": "eng-q25-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Protecting the Great Barrier Reef requires a two-pronged approach. <u>Combating climate change at a global level and improving local management and conservation.</u> The world would lose one of its most precious natural treasures if we fail.</p><p>Which choice best corrects the sentence fragment?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "It must combat climate change at a global level and improve local management and conservation."
+                },
+                {
+                    "id": "C",
+                    "label_html": "We need to combat climate change at a global level while also improving local management and conservation."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Combating climate change at a global level, and improving local management and conservation."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Fragments"
+            }
+        },
+        {
+            "id": "eng-q26-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The reef's decline serves as a stark reminder of the broader impact of human activities on the planet. <u>The reef is a canary in the coal mine for the world’s oceans.</u> Its struggle for survival highlights the urgent need for collective action to preserve our natural heritage for future generations.</p><p>The author wants to use a metaphor to explain the reef's role as an early indicator of a global problem. Is the underlined sentence an effective choice?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Yes, because the 'canary in the coal mine' metaphor effectively conveys the idea of an early warning system for danger."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Yes, because canaries are colorful birds, just as the reef is colorful."
+                },
+                {
+                    "id": "C",
+                    "label_html": "No, because the metaphor is a cliché and should be avoided in formal writing."
+                },
+                {
+                    "id": "D",
+                    "label_html": "No, because the sentence is irrelevant to the paragraph's point about the need for collective action."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Figurative Language"
+            }
+        },
+        {
+            "id": "eng-q27-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The biodiversity of the reef is staggering. It is home to more than 1,500 species of fish, 400 species of coral, 4,000 species of mollusks, and numerous species of sponges, worms, and crustaceans. <u>This list barely scratches the surface.</u></p><p>The writer is considering deleting the preceding sentence. If the writer were to delete the sentence, the essay would primarily lose:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "a specific detail that quantifies the reef's biodiversity."
+                },
+                {
+                    "id": "B",
+                    "label_html": "a statement that emphasizes the vastness of the reef's biodiversity beyond the examples given."
+                },
+                {
+                    "id": "C",
+                    "label_html": "a transition to the next paragraph about threats to the reef."
+                },
+                {
+                    "id": "D",
+                    "label_html": "an unnecessary and distracting piece of information."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Deleting Sentences"
+            }
+        },
+        {
+            "id": "eng-q28-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The Australian government has launched a long-term sustainability plan for the reef. The plan, which extends to 2050, outlines actions to improve water quality, combat invasive species like the crown-of-thorns starfish, and restore damaged sections of the reef. <u>Critics, however, argue that the plan does not adequately address the root cause of the reef's decline climate change.</u></p><p>Which choice provides the correct punctuation?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "decline, climate change."
+                },
+                {
+                    "id": "C",
+                    "label_html": "decline: climate change."
+                },
+                {
+                    "id": "D",
+                    "label_html": "decline; climate change."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Colons"
+            }
+        },
+        {
+            "id": "eng-q29-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Saving the reef is a challenge that extends far beyond Australia's borders. Because the primary threats are global in nature, international cooperation is essential. <u>The future of this natural wonder depends on the choices we make today, both individually and collectively.</u></p><p>Which of the following alternatives to the underlined portion is LEAST acceptable?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The fate of this natural wonder hinges on"
+                },
+                {
+                    "id": "B",
+                    "label_html": "The survival of this natural wonder relies on"
+                },
+                {
+                    "id": "C",
+                    "label_html": "The continuing of this natural wonder depends on"
+                },
+                {
+                    "id": "D",
+                    "label_html": "This natural wonder's future depends on"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Idiomatic Expression"
+            }
+        },
+        {
+            "id": "eng-q30-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The writer wants to add a concluding sentence that summarizes the central argument of the essay. Which choice would be most effective?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Ultimately, only a combination of local action and global commitment to combating climate change can secure the future of the Great Barrier Reef."
+                },
+                {
+                    "id": "B",
+                    "label_html": "In conclusion, the Great Barrier Reef is a beautiful place to visit."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Therefore, more research is needed to understand all the species that live in the reef."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Australia must do more to protect its most famous natural landmark."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Conclusion"
+            }
+        },
+        {
+            "id": "eng-q31-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p><b>Passage III</b></p><p><b>The Unlikeliest of Hobbies</b></p><p>[1] If you had told me a few years ago that my favorite hobby would involve staring at a screen of cryptic text for hours, I would have laughed. [2] I was an outdoor enthusiast, someone who preferred hiking trails to computer files. [3] My journey into the world of computer programming began <u>unexpecting</u> and, at first, reluctantly. </p><p>Which word choice is grammatically correct in the context of the sentence?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "unexpectantly"
+                },
+                {
+                    "id": "C",
+                    "label_html": "unexpected"
+                },
+                {
+                    "id": "D",
+                    "label_html": "unexpectedly"
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Adverbs"
+            }
+        },
+        {
+            "id": "eng-q32-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>It all started with a simple problem. I wanted to create a website to showcase my landscape photography, but the available templates felt too restrictive. A friend, a software developer, suggested I learn a little HTML and CSS. \"It's not as hard as you think,\" he insisted. Skeptical, I borrowed a book from the library and <u>begin</u> to read.</p><p>Which choice is the correct verb tense?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "begun"
+                },
+                {
+                    "id": "C",
+                    "label_html": "began"
+                },
+                {
+                    "id": "D",
+                    "label_html": "had began"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Verb Tense"
+            }
+        },
+        {
+            "id": "eng-q33-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The first few chapters were a struggle. The syntax felt alien, and my initial attempts to write code resulted in nothing but broken pages. I was frustrated and ready to give up. Then, one evening, after hours of tweaking a single line of CSS, a block of text on my screen turned from black to blue. It was a small victory, <u>but it felt monumental.</u></p><p>Which of the following alternatives to the underlined portion would be LEAST acceptable?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "and it felt monumental."
+                },
+                {
+                    "id": "B",
+                    "label_html": "yet it felt monumental."
+                },
+                {
+                    "id": "C",
+                    "label_html": "however, it felt monumental."
+                },
+                {
+                    "id": "D",
+                    "label_html": "though it felt monumental."
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Conjunctions"
+            }
+        },
+        {
+            "id": "eng-q34-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>That small moment of success sparked something in me. I realized that coding wasn't just about memorizing commands; it was about problem-solving. It was a creative process, much like photography. <u>Each line of code was like a brushstroke,</u> contributing to a larger picture. I was hooked.</p><p>Which choice best maintains the tone of the essay and elaborates on the author's realization?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "I found that the logic was very rigorous."
+                },
+                {
+                    "id": "C",
+                    "label_html": "You have to be very careful with syntax."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Each line of code had to be entered correctly."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Figurative Language"
+            }
+        },
+        {
+            "id": "eng-q35-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>My learning journey expanded from HTML and CSS to JavaScript, a more powerful language. I spent my evenings and weekends working through online tutorials and building small projects. I built a weather app, a simple game, and a tool to organize my photo collection. Each project had its own set of challenges <u>and its own rewards.</u></p><p>Which choice is the most concise way to phrase the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "and, in addition, its own rewards."
+                },
+                {
+                    "id": "C",
+                    "label_html": "and also its own rewards too."
+                },
+                {
+                    "id": "D",
+                    "label_html": "and rewards."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Style - Conciseness"
+            }
+        },
+        {
+            "id": "eng-q36-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The more I learned, the more I saw the connections between my new hobby and my old one. Both photography and coding require an eye for detail and a sense of composition. <u>In photography, you compose with light and shadow; in coding, you compose with logic and structure.</u></p><p>At this point, the writer is considering adding the following true statement: \"Photographers often use software like Adobe Photoshop to edit their images.\" Should the writer make this addition here?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Yes, because it provides a direct link between photography and computer software."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Yes, because it gives a helpful, specific example of a software program."
+                },
+                {
+                    "id": "C",
+                    "label_html": "No, because it interrupts the comparison being made between the processes of photography and coding."
+                },
+                {
+                    "id": "D",
+                    "label_html": "No, because it contradicts the author's claim to be an outdoor enthusiast."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Unity"
+            }
+        },
+        {
+            "id": "eng-q37-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Both demand patience and persistence. Just as you might wait hours for the perfect light for a photograph, you might spend hours debugging a single error in a program. The frustration is real, but the satisfaction of finally getting it right <u>are</u> unparalleled.</p><p>Which choice provides the correct verb form?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "is"
+                },
+                {
+                    "id": "C",
+                    "label_html": "have been"
+                },
+                {
+                    "id": "D",
+                    "label_html": "were"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Subject-Verb Agreement"
+            }
+        },
+        {
+            "id": "eng-q38-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>This new hobby has changed the way I look at the world. I now see the digital tools I use every day not as magic boxes but as the products of human ingenuity and logic. <u>I appreciate the elegant design of a well-made app in the same way I appreciate the composition of a beautiful photograph.</u></p><p>Which of the following alternatives to the underlined portion is LEAST acceptable in terms of style and tone?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "My appreciation for the elegant design of a well-made app mirrors my appreciation for a beautiful photograph's composition."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Just as I appreciate a beautiful photograph's composition, I now appreciate the elegant design of a well-made app."
+                },
+                {
+                    "id": "C",
+                    "label_html": "A well-made app, I appreciate its design, a beautiful photograph, I appreciate its composition."
+                },
+                {
+                    "id": "D",
+                    "label_html": "I have come to appreciate the elegant design of a well-made app much as I appreciate the composition of a beautiful photograph."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Awkwardness"
+            }
+        },
+        {
+            "id": "eng-q39-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Learning to code has also made me a better problem-solver in other areas of my life. <u>It trains you to break down complex problems into smaller, manageable parts.</u> This skill is useful whether I'm planning a multi-day hiking trip or troubleshooting a problem with my camera.</p><p>Which choice best maintains the first-person perspective of the essay?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "It trained me to break down complex problems"
+                },
+                {
+                    "id": "C",
+                    "label_html": "It has trained me to break down complex problems"
+                },
+                {
+                    "id": "D",
+                    "label_html": "People are trained to break down complex problems"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Point of View"
+            }
+        },
+        {
+            "id": "eng-q40-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>My friend was right, it wasn't as hard as I thought. It just required a different way of thinking. What began as a practical necessity—building a website for my <u>photos has</u> blossomed into a genuine passion.</p><p>Which choice provides the correct punctuation?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "photos—has"
+                },
+                {
+                    "id": "C",
+                    "label_html": "photos, has"
+                },
+                {
+                    "id": "D",
+                    "label_html": "photos; has"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Dashes"
+            }
+        },
+        {
+            "id": "eng-q41-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>I still love hiking and being outdoors. But now, I also love the intellectual challenge of building something new from scratch, the thrill of solving a complex puzzle, and the satisfaction of seeing my creations come to life on a screen. <u>My laptop now sits beside my hiking boots, both essential tools for exploration.</u></p><p>Which choice best concludes the essay by reinforcing its central theme?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "I have finally finished my photography website."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Learning to code can be a valuable career skill."
+                },
+                {
+                    "id": "D",
+                    "label_html": "There are many different programming languages to learn."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Conclusion"
+            }
+        },
+        {
+            "id": "eng-q42-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Skeptical, I borrowed a book from the library and began to read. The first few chapters were a struggle. The syntax felt alien, and my initial attempts to write code resulted in nothing but broken pages. <u>Frustratingly,</u> I was ready to give up.</p><p>Which choice provides the most appropriate transition?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "As a result,"
+                },
+                {
+                    "id": "C",
+                    "label_html": "Therefore,"
+                },
+                {
+                    "id": "D",
+                    "label_html": "DELETE the underlined word."
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Style - Wordiness"
+            }
+        },
+        {
+            "id": "eng-q43-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The process is similar to learning a foreign language. At first, the grammar and vocabulary are intimidating. But with practice, you start to form sentences, then paragraphs, and eventually, you can express complex ideas fluently. <u>A coder, like a writer, must learn the rules before they can be broken creatively.</u></p><p>Which choice best corrects the pronoun agreement error?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "a writer, must learn the rules before he or she can be creative."
+                },
+                {
+                    "id": "C",
+                    "label_html": "like a writer, must learn the rules before being able to break them creatively."
+                },
+                {
+                    "id": "D",
+                    "label_html": "like writers, must learn the rules before they can be broken creatively."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Pronoun-Antecedent Agreement"
+            }
+        },
+        {
+            "id": "eng-q44-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>I never expected to find a hobby that would so thoroughly engage my mind. It's a pursuit that combines logic and creativity in a way that I find deeply satisfying. It has given me a new lens <u>through which to view the world with.</u></p><p>Which choice is the most clear and concise?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "through which to view the world."
+                },
+                {
+                    "id": "C",
+                    "label_html": "to view the world with."
+                },
+                {
+                    "id": "D",
+                    "label_html": "that I can view the world through."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Prepositions"
+            }
+        },
+        {
+            "id": "eng-q45-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Suppose the writer's goal had been to write an essay persuading others to learn computer programming. Would this essay successfully fulfill that goal?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Yes, because it details the author's positive personal experience and the unexpected benefits of learning to code."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Yes, because it provides a step-by-step guide on how to start learning HTML and CSS."
+                },
+                {
+                    "id": "C",
+                    "label_html": "No, because it focuses more on the author's photography hobby than on programming."
+                },
+                {
+                    "id": "D",
+                    "label_html": "No, because it emphasizes the frustrations and difficulties of coding, which might discourage readers."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Main Purpose"
+            }
+        },
+        {
+            "id": "eng-q46-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p><b>Passage IV</b></p><p><b>Urban Oases: The Importance of City Parks</b></p><p>[1] In the dense, bustling landscape of a modern city, parks are more than just green spaces; they are vital organs in the urban body. [2] They provide a sanctuary from the noise and stress of city life, a place where people can connect with nature and with each other. [3] The benefits of urban parks <u>extends</u> far beyond simple recreation and aesthetics. </p><p>Which choice corrects the verb form?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "are extending"
+                },
+                {
+                    "id": "C",
+                    "label_html": "extend"
+                },
+                {
+                    "id": "D",
+                    "label_html": "have extended"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Subject-Verb Agreement"
+            }
+        },
+        {
+            "id": "eng-q47-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>One of the most significant roles of city parks is <u>it's</u> contribution to public health. Access to green space is consistently linked with improved physical and mental well-being. Parks encourage physical activity, offering space for walking, jogging, and sports. Furthermore, studies have shown that spending time in nature can reduce stress, lower blood pressure, and improve mood.</p><p>Which choice provides the correct form of the possessive pronoun?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "its"
+                },
+                {
+                    "id": "C",
+                    "label_html": "its'"
+                },
+                {
+                    "id": "D",
+                    "label_html": "their"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Apostrophes"
+            }
+        },
+        {
+            "id": "eng-q48-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Environmentally, parks play a crucial role in mitigating the urban heat island effect, a phenomenon where cities are significantly warmer than surrounding rural areas. Trees provide shade and release water vapor through transpiration, which cools the air. <u>Parks also</u> improve air quality by filtering pollutants and producing oxygen. They absorb rainwater, reducing runoff and preventing flooding.</p><p>Which of the following alternatives to the underlined portion is LEAST acceptable?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "In addition, parks"
+                },
+                {
+                    "id": "B",
+                    "label_html": "For example, parks"
+                },
+                {
+                    "id": "C",
+                    "label_html": "Moreover, parks"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Parks, furthermore,"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Transitions"
+            }
+        },
+        {
+            "id": "eng-q49-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Socially, parks are the great equalizers of a city. They are free and open to everyone, regardless of age, income, or background. They serve as a shared backyard for apartment dwellers and a community gathering space where neighbors can interact. <u>Festivals, farmers' markets, and concerts are often held in parks.</u></p><p>Which choice most effectively combines this sentence with the preceding sentence?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "interact, and where festivals, farmers' markets, and concerts are often held."
+                },
+                {
+                    "id": "B",
+                    "label_html": "interact, with festivals, farmers' markets, and concerts often being held there."
+                },
+                {
+                    "id": "C",
+                    "label_html": "interact, and these spaces often host festivals, farmers' markets, and concerts."
+                },
+                {
+                    "id": "D",
+                    "label_html": "interact during community events like festivals, farmers' markets, and concerts."
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Combining Sentences"
+            }
+        },
+        {
+            "id": "eng-q50-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The design of a park can greatly influence its success. A well-designed park includes a variety of spaces to suit different needs: open lawns for recreation, quiet areas for reflection, playgrounds for children, and paths for walking and cycling. <u>The inclusion of amenities like benches, water fountains, and restrooms also enhance the user experience.</u></p><p>Which choice corrects the subject-verb agreement error?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "also enhances"
+                },
+                {
+                    "id": "C",
+                    "label_html": "have also enhanced"
+                },
+                {
+                    "id": "D",
+                    "label_html": "are also enhancing"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Subject-Verb Agreement"
+            }
+        },
+        {
+            "id": "eng-q51-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Historically, the concept of the public park as we know it today emerged in the 19th century. Landscape architects like Frederick Law Olmsted, <u>the designer of New York's Central Park, championed the idea</u> that parks were essential for the health and well-being of a democratic society.</p><p>Which choice is punctuated correctly?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "the designer of New York's Central Park championed the idea"
+                },
+                {
+                    "id": "C",
+                    "label_html": "the designer of New York's Central Park; championed the idea"
+                },
+                {
+                    "id": "D",
+                    "label_html": "the designer of New York's Central Park championed, the idea"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Appositives"
+            }
+        },
+        {
+            "id": "eng-q52-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Olmsted believed that beautiful, naturalistic landscapes could provide a therapeutic escape from the squalor and stress of industrial cities. He and his partner, Calvert Vaux, designed Central Park not as a decorative garden but as a complex system of meadows, woodlands, and lakes, <u>they were all</u> carefully engineered to look natural.</p><p>Which choice best corrects the comma splice?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "all of which were"
+                },
+                {
+                    "id": "C",
+                    "label_html": "being"
+                },
+                {
+                    "id": "D",
+                    "label_html": "and they were"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Comma Splice"
+            }
+        },
+        {
+            "id": "eng-q53-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Despite their clear benefits, many urban parks are underfunded and face threats from development. As cities grow and land becomes more valuable, there is often pressure to build on parkland. <u>Therefore,</u> public advocacy and strong political will are essential to protect these invaluable resources.</p><p>Which transition word best fits the sentence?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Consequently,"
+                },
+                {
+                    "id": "C",
+                    "label_html": "For this reason,"
+                },
+                {
+                    "id": "D",
+                    "label_html": "However,"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Transitions"
+            }
+        },
+        {
+            "id": "eng-q54-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Innovative new parks are being created around the world. The High Line in New York City, built on a defunct elevated railway, has become a global model for repurposing industrial infrastructure. In Seoul, the Cheonggyecheon Stream Restoration Project transformed a concrete highway <u>into a vibrant, green corridor that revitalized the city center.</u></p><p>Given that all are true, which choice provides the most vivid and specific description?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "into a nice park area."
+                },
+                {
+                    "id": "C",
+                    "label_html": "into a place with water and plants."
+                },
+                {
+                    "id": "D",
+                    "label_html": "into a successful urban renewal project."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Word Choice"
+            }
+        },
+        {
+            "id": "eng-q55-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>These projects show that creating green space is possible even in the most developed urban environments. <u>They require creative thinking, community involvement, and long-term investment.</u> The return on this investment is a more livable, resilient, and equitable city.</p><p>The writer is considering deleting the underlined sentence. Should the sentence be kept or deleted?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Kept, because it qualifies the previous statement by explaining what is needed to create such parks."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Kept, because it adds an emotional appeal to the argument."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Deleted, because it is an unsupported claim that weakens the paragraph's focus."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Deleted, because it repeats information presented earlier in the essay."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Organization"
+            }
+        },
+        {
+            "id": "eng-q56-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The economic benefits of parks are also significant. Proximity to a well-maintained park can increase property values, boosting the city’s tax base. Tourism generated by landmark parks also contributes to the local economy. <u>So parks are not a luxury but a wise investment.</u></p><p>Which choice best revises the underlined portion to create a more formal tone?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Therefore, parks should be seen not as a luxury but as a wise investment."
+                },
+                {
+                    "id": "C",
+                    "label_html": "So, it's clear that parks aren't a luxury but a smart buy."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Thus, making parks is a good idea instead of a luxury."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Style - Tone"
+            }
+        },
+        {
+            "id": "eng-q57-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>A park is an investment in the health of the <u>community, the environment, and the economy.</u> As our world becomes increasingly urban, the need for these green oases will only grow. It is our collective responsibility to ensure that they are protected, nurtured, and expanded for generations to come.</p><p>Which choice offers the best punctuation for the underlined portion?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "community the environment and the economy."
+                },
+                {
+                    "id": "C",
+                    "label_html": "community, the environment and the economy."
+                },
+                {
+                    "id": "D",
+                    "label_html": "community; the environment; and the economy."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation - Commas in a Series"
+            }
+        },
+        {
+            "id": "eng-q58-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The writer wants to divide the third paragraph into two. Where would be the most logical place to start a new paragraph?</p><p><i>Socially, parks are the great equalizers of a city. They are free and open to everyone, regardless of age, income, or background. They serve as a shared backyard for apartment dwellers and a community gathering space where neighbors can interact. Festivals, farmers' markets, and concerts are often held in parks, fostering a sense of community. This social cohesion is particularly important in diverse, and often anonymous, urban settings.</i></p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "After the first sentence."
+                },
+                {
+                    "id": "B",
+                    "label_html": "After the second sentence."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Before the sentence beginning 'Festivals, farmers' markets...'"
+                },
+                {
+                    "id": "D",
+                    "label_html": "The paragraph should not be divided."
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Paragraphing"
+            }
+        },
+        {
+            "id": "eng-q59-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>As cities grow and land becomes more valuable, there is often pressure to build on parkland. Citizen groups often form to protest such actions. <u>These groups</u> advocate for the preservation of existing parks and the creation of new ones.</p><p>Which choice is the most concise way to link the sentences?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Citizen groups, which advocate for the preservation of existing parks and the creation of new ones, often form to protest such actions."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Citizen groups often form to protest such actions, and they advocate for the preservation of existing parks and the creation of new ones."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Citizen groups often form to protest such actions by advocating for the preservation of existing parks and the creation of new ones."
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Conciseness"
+            }
+        },
+        {
+            "id": "eng-q60-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Suppose the writer's primary purpose was to argue for the importance of preserving and creating urban parks. Does this essay accomplish that purpose?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Yes, because it details the numerous health, environmental, social, and economic benefits of city parks."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Yes, because it provides a detailed biography of Frederick Law Olmsted."
+                },
+                {
+                    "id": "C",
+                    "label_html": "No, because it focuses more on the problems of cities than on the solutions parks provide."
+                },
+                {
+                    "id": "D",
+                    "label_html": "No, because it fails to provide specific examples of successful parks."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Main Purpose"
+            }
+        },
+        {
+            "id": "eng-q61-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p><b>Passage V</b></p><p><b>The Serendipitous Scientist</b></p><p>[1] Many of the most important discoveries in scientific history were not the result of a deliberate search. [2] Instead, they were products of serendipity—a fortunate accident combined with a prepared mind. [3] The discovery of penicillin by Alexander Fleming is perhaps the most famous example of this phenomenon, a story of a messy lab, a stray mold, and a revolutionary outcome. [4] Fleming, a bacteriologist at St. Mary's Hospital in London, had been studying the staphylococcus bacterium for years. </p><p>Which of the following sentences, if added at the end of the first paragraph, would best serve as a transition to the rest of the essay?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Fleming was known to be a brilliant but sometimes careless researcher."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Staphylococcus is a common bacterium that can cause infections."
+                },
+                {
+                    "id": "C",
+                    "label_html": "This is how his chance observation led to one of modern medicine's greatest breakthroughs."
+                },
+                {
+                    "id": "D",
+                    "label_html": "London in the 1920s was a hub of scientific activity."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Transitions"
+            }
+        },
+        {
+            "id": "eng-q62-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>In 1928, Fleming returned from a two-week vacation to find a stack of Petri dishes on his lab bench that he had forgotten to clean. On one dish, a patch of mold <u>were growing</u>. Around the mold, there was a clear, bacteria-free zone. While many researchers might have simply discarded the contaminated dish, Fleming was intrigued.</p><p>Which choice is grammatically correct?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "is growing"
+                },
+                {
+                    "id": "C",
+                    "label_html": "has been growing"
+                },
+                {
+                    "id": "D",
+                    "label_html": "was growing"
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Subject-Verb Agreement"
+            }
+        },
+        {
+            "id": "eng-q63-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>He correctly hypothesized that the mold was releasing a substance that inhibited bacterial growth. <u>He identified the mold as a member of the *Penicillium* genus, and he named the bacteria-killing substance \"penicillin.\"</u></p><p>Which choice most effectively combines the two clauses?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Identifying the mold as a member of the *Penicillium* genus, he named the substance \"penicillin.\""
+                },
+                {
+                    "id": "C",
+                    "label_html": "He identified the mold as *Penicillium* and also named the substance \"penicillin.\""
+                },
+                {
+                    "id": "D",
+                    "label_html": "The mold was identified as *Penicillium*, and \"penicillin\" was the name he gave the substance."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Combining Sentences"
+            }
+        },
+        {
+            "id": "eng-q64-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Despite the discovery's potential, Fleming struggled to turn his observation into a practical treatment. He found it difficult to isolate and purify the active ingredient, and his initial research paper on the subject received little attention. <u>For over a decade, the promise of penicillin remained largely unfulfilled.</u></p><p>The writer is considering deleting the underlined sentence. Should the sentence be kept or deleted?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Kept, because it effectively shows the long-term consequence of the difficulties mentioned in the previous sentence."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Kept, because it proves that Fleming was not a competent scientist."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Deleted, because it contradicts the essay's main point about the importance of penicillin."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Deleted, because the timeframe is not important to the story of the discovery."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Unity"
+            }
+        },
+        {
+            "id": "eng-q65-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The story of penicillin might have ended there if not for the work of a team of scientists at Oxford University. In the late 1930s, as World War II loomed, researchers Howard Florey and Ernst Chain began searching for antibacterial agents. They stumbled upon <u>Flemings</u> obscure paper.</p><p>Which choice shows the correct possessive form?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Flemings'"
+                },
+                {
+                    "id": "C",
+                    "label_html": "Fleming's"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Flemings's"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Apostrophes"
+            }
+        },
+        {
+            "id": "eng-q66-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Florey and Chain, along with their colleague Norman Heatley, developed a method for purifying penicillin in large quantities. Their initial trials on mice were successful. In 1941, they conducted the first human trial on a police officer with a severe infection. <u>Though the patient initially improved dramatically, their supply of penicillin ran out, and the man ultimately died.</u></p><p>Which of the following alternatives to the underlined portion is LEAST acceptable?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The patient initially improved dramatically; however, their supply of penicillin ran out, and the man ultimately died."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The patient initially improved dramatically, but their supply of penicillin ran out, and the man ultimately died."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Despite the patient's dramatic initial improvement, their supply of penicillin ran out, and the man ultimately died."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The patient initially improved dramatically, their supply of penicillin ran out, the man ultimately died."
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Run-on Sentences"
+            }
+        },
+        {
+            "id": "eng-q67-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>This tragic outcome highlighted the urgent need for mass production. With Britain's chemical industry focused on the war effort, Florey and Chain turned to the United States for help. <u>American pharmaceutical companies, with support from the government, developed methods for industrial-scale fermentation.</u> By 1944, there was enough penicillin being produced to treat all the wounded Allied soldiers.</p><p>Which choice best maintains the active voice used throughout the paragraph?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "methods for industrial-scale fermentation were developed by American pharmaceutical companies with government support."
+                },
+                {
+                    "id": "C",
+                    "label_html": "the development of methods for industrial-scale fermentation was undertaken by American pharmaceutical companies."
+                },
+                {
+                    "id": "D",
+                    "label_html": "industrial-scale fermentation methods were developed by American pharmaceutical companies, which had government support."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Style - Active vs. Passive Voice"
+            }
+        },
+        {
+            "id": "eng-q68-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The impact of penicillin was immediate and profound. It dramatically reduced deaths from bacterial infections, which had previously been a major killer, especially in wartime. <u>It turned once-deadly diseases like pneumonia and strep throat into treatable conditions.</u></p><p>Given that all choices are true, which one provides the most effective transition from the previous sentence?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Its chemical structure is quite complex."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Many soldiers owed their lives to the new drug."
+                },
+                {
+                    "id": "D",
+                    "label_html": "For their work, Fleming, Florey, and Chain shared the Nobel Prize in Physiology or Medicine in 1945."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Organization"
+            }
+        },
+        {
+            "id": "eng-q69-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Penicillin ushered in the age of antibiotics and fundamentally changed the practice of medicine. Surgeries became safer, and life expectancy increased. The discovery was a testament to the unpredictable nature of scientific progress—a journey that began with an accidental observation and culminated in one of the greatest medical advances of the 20th century. <u>It’s success</u> depended not on a single genius but on a chain of discovery.</p><p>Which choice is grammatically correct?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Its success"
+                },
+                {
+                    "id": "C",
+                    "label_html": "Its' success"
+                },
+                {
+                    "id": "D",
+                    "label_html": "The success of it"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar - Word Usage"
+            }
+        },
+        {
+            "id": "eng-q70-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The story of penicillin is not just a history lesson; it's a lesson in the importance of basic research. Fleming wasn't trying to find an antibiotic; he was simply studying bacteria. His prepared mind, however, allowed him to recognize the significance of the unexpected. <u>Without funding for this kind of curiosity-driven science, many future breakthroughs might be missed.</u></p><p>Which choice provides the most logical conclusion for the paragraph?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Fleming should have been more careful in his lab."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Antibiotic resistance is a major problem today."
+                },
+                {
+                    "id": "D",
+                    "label_html": "He won the Nobel Prize for his work."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Conclusion"
+            }
+        },
+        {
+            "id": "eng-q71-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Today, the challenge of antibiotic resistance looms large, a problem that stems in part from the overuse of the very drugs penicillin pioneered. The search for new antibiotics continues, driven by scientists who, like Fleming, combine rigorous research with an openness to the unexpected. <u>Their work is just as important as Fleming's was.</u></p><p>Which choice is the most concise and effective way to phrase the idea?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Their work is of equal importance to that of Fleming."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Their work is no less vital."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The work they do is important, just like Fleming's was."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Style - Conciseness"
+            }
+        },
+        {
+            "id": "eng-q72-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fleming's story illustrates a crucial aspect of science: collaboration. While Fleming made the initial discovery, it was the teamwork of Florey, Chain, and their colleagues <u>whom</u> transformed penicillin from a lab curiosity into a life-saving drug.</p><p>Which pronoun is correct?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "who"
+                },
+                {
+                    "id": "C",
+                    "label_html": "which"
+                },
+                {
+                    "id": "D",
+                    "label_html": "that"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Pronoun Case"
+            }
+        },
+        {
+            "id": "eng-q73-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The chain of events demonstrates that scientific progress is often incremental and collaborative, relying on different people with different skills at different times. <u>Fleming planted the seed, but the Oxford team nurtured it to fruition.</u></p><p>The writer is considering deleting the underlined sentence. Should the sentence be kept or deleted?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Kept, because it provides a strong, metaphorical summary of the collaborative process described in the paragraph."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Kept, because it adds an important detail about agriculture."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Deleted, because the metaphor is confusing and out of place."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Deleted, because it repeats information already stated in the paragraph."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Figurative Language"
+            }
+        },
+        {
+            "id": "eng-q74-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>The legend of penicillin serves as a powerful reminder. <u>A reminder that groundbreaking discoveries can come from the most unexpected places.</u> It highlights the need to foster an environment where curiosity can thrive and where scientists have the freedom to pursue unusual observations.</p><p>Which choice best corrects the sentence fragment?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "NO CHANGE"
+                },
+                {
+                    "id": "B",
+                    "label_html": "This is a reminder that groundbreaking discoveries can come"
+                },
+                {
+                    "id": "C",
+                    "label_html": "It is a reminder that groundbreaking discoveries can come"
+                },
+                {
+                    "id": "D",
+                    "label_html": "A reminder of groundbreaking discoveries coming"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure - Fragments"
+            }
+        },
+        {
+            "id": "eng-q75-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Suppose the writer's goal was to trace the complete process of how penicillin went from accidental discovery to mass-produced drug. Would this essay accomplish that goal?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Yes, because it follows the story from Fleming's initial observation to the work of Florey and Chain and finally to mass production in the US."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Yes, because it focuses entirely on Alexander Fleming's personal life and laboratory habits."
+                },
+                {
+                    "id": "C",
+                    "label_html": "No, because it does not explain the specific chemical process for purifying penicillin."
+                },
+                {
+                    "id": "D",
+                    "label_html": "No, because it fails to mention the role of the Nobel Prize in motivating the scientists."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills - Main Purpose"
+            }
+        }
+    ]
+}

@@ -2,6 +2,11 @@ package exam
 
 import "context"
 
+type ListOpts struct {
+	Q      string
+	Limit  int
+	Offset int
+}
 type Store interface {
 	PutExam(e Exam) error
 	GetExam(id string) (Exam, error)                           // student-safe (no answer keys)
@@ -10,4 +15,7 @@ type Store interface {
 	SaveResponses(attemptID string, resp map[string]interface{}) (Attempt, error)
 	Submit(attemptID string) (Attempt, error)
 	GetAttempt(id string) (Attempt, error)
+
+	ListExams(ctx context.Context, opts ListOpts) ([]ExamSummary, error)
+	AdvanceModule(attemptID string) (Attempt, error)
 }

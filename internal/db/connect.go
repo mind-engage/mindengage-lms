@@ -68,7 +68,9 @@ CREATE TABLE IF NOT EXISTS exams (
   title TEXT NOT NULL,
   time_limit_sec INTEGER NOT NULL,
   questions_json TEXT NOT NULL,
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  profile TEXT NOT NULL DEFAULT '',
+  policy_json TEXT NOT NULL DEFAULT ''  
 );
 
 CREATE TABLE IF NOT EXISTS attempts (
@@ -79,7 +81,12 @@ CREATE TABLE IF NOT EXISTS attempts (
   score REAL NOT NULL DEFAULT 0,
   responses_json TEXT NOT NULL,
   started_at INTEGER NOT NULL,
-  submitted_at INTEGER
+  submitted_at INTEGER,
+
+  module_index INTEGER NOT NULL DEFAULT 0,
+  module_started_at BIGINT,
+  module_deadline BIGINT,
+  overall_deadline BIGINT
 );
 
 CREATE TABLE IF NOT EXISTS event_log (

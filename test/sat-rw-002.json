@@ -1,0 +1,1836 @@
+{
+  "id": "sat-rw-002",
+  "title": "SAT Practice – Reading and Writing",
+  "profile": "sat.v1",
+  "policy": {
+    "sections": [
+      {
+        "id": "rw",
+        "title": "Reading & Writing",
+        "modules": [
+          {
+            "id": "rw-m1",
+            "time_limit_sec": 2340
+          },
+          {
+            "id": "rw-m2",
+            "time_limit_sec": 2340
+          }
+        ]
+      }
+    ],
+    "navigation": {
+      "allow_back": false,
+      "module_locked": true
+    },
+    "calculator": {
+      "allowed_sections": [
+        "math"
+      ],
+      "policy": "desmos",
+      "allow_keypad": true
+    },
+    "scoring": {
+      "raw_to_scale": "sat.v1.scale",
+      "penalty": 0
+    },
+    "item_constraints": {
+      "rw": {
+        "mcq_single": {
+          "choices": 4
+        }
+      }
+    },
+    "proctor": {
+      "screenshot": false,
+      "camera": false
+    },
+    "meta": {
+      "version": "gen-1"
+    }
+  },
+  "questions": [
+    {
+      "id": "rw-q01-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice completes the sentence with the most logical and precise word?</p><p>Despite budget constraints, the committee remained <em></em> about delivering a high-quality program.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "skeptical"
+        },
+        {
+          "id": "B",
+          "label_html": "indifferent"
+        },
+        {
+          "id": "C",
+          "label_html": "optimistic"
+        },
+        {
+          "id": "D",
+          "label_html": "apathetic"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Word Choice"
+      }
+    },
+    {
+      "id": "rw-q02-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best maintains the tone and style of the sentence?</p><p>The field study produced <em></em> evidence that bee populations rebound when pesticide use is reduced.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "a boatload of"
+        },
+        {
+          "id": "B",
+          "label_html": "copious"
+        },
+        {
+          "id": "C",
+          "label_html": "tons of"
+        },
+        {
+          "id": "D",
+          "label_html": "oodles of"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Precision & Tone"
+      }
+    },
+    {
+      "id": "rw-q03-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which transition best connects the ideas?</p><p>Many city planners favor bike lanes for environmental reasons. <em></em>, they can also reduce traffic congestion.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Nevertheless"
+        },
+        {
+          "id": "B",
+          "label_html": "For example"
+        },
+        {
+          "id": "C",
+          "label_html": "Similarly"
+        },
+        {
+          "id": "D",
+          "label_html": "Meanwhile"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Transitions"
+      }
+    },
+    {
+      "id": "rw-q04-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice most effectively combines the sentences?</p><p>The museum extended its hours. The museum hoped more people could visit after work.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Extending its hours, the museum hoped more people could visit after work."
+        },
+        {
+          "id": "B",
+          "label_html": "The museum extended its hours, hoping to allow more people to visit after work."
+        },
+        {
+          "id": "C",
+          "label_html": "The museum extended hours, and people after work could visit."
+        },
+        {
+          "id": "D",
+          "label_html": "Hours were extended by the museum so more people after work could visit."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Sentence Combining"
+      }
+    },
+    {
+      "id": "rw-q05-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice corrects the error in subject–verb agreement?</p><p>The rise in electric car sales <em>have</em> encouraged new charging stations.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "have"
+        },
+        {
+          "id": "B",
+          "label_html": "has"
+        },
+        {
+          "id": "C",
+          "label_html": "having"
+        },
+        {
+          "id": "D",
+          "label_html": "have had"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Subject–Verb Agreement"
+      }
+    },
+    {
+      "id": "rw-q06-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the best replacement for the underlined portion.</p><p>River otters are <em>playful animals, they can be seen sliding down muddy banks</em> in the spring.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "playful animals, they can be seen sliding"
+        },
+        {
+          "id": "B",
+          "label_html": "playful animals; they can be seen sliding"
+        },
+        {
+          "id": "C",
+          "label_html": "playful animals they can be seen sliding"
+        },
+        {
+          "id": "D",
+          "label_html": "playful animals and can be seen sliding"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Run-ons & Punctuation"
+      }
+    },
+    {
+      "id": "rw-q07-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice most logically completes the text?</p><p>Because the volunteer program has grown quickly, the coordinator created a sign-up schedule to prevent <em></em>.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "collaboration"
+        },
+        {
+          "id": "B",
+          "label_html": "overlap"
+        },
+        {
+          "id": "C",
+          "label_html": "efficiency"
+        },
+        {
+          "id": "D",
+          "label_html": "attendance"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Word Choice"
+      }
+    },
+    {
+      "id": "rw-q08-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best states the main idea of the paragraph?</p><p>In recent years, community gardens have helped neighborhoods increase access to fresh produce, foster social connections, and convert vacant lots into productive spaces.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Community gardens are expensive to start."
+        },
+        {
+          "id": "B",
+          "label_html": "Community gardens primarily provide a venue for competition."
+        },
+        {
+          "id": "C",
+          "label_html": "Community gardens benefit neighborhoods in multiple ways."
+        },
+        {
+          "id": "D",
+          "label_html": "Community gardens require expert gardeners."
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Main Idea"
+      }
+    },
+    {
+      "id": "rw-q09-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best supports the claim that early sleep improves memory?</p><p>Claim: Students who go to bed earlier recall more information the next day.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Some students study late because they are busy."
+        },
+        {
+          "id": "B",
+          "label_html": "A study found that participants who slept eight hours remembered 20% more word pairs than those who slept five."
+        },
+        {
+          "id": "C",
+          "label_html": "Caffeine intake varies by student."
+        },
+        {
+          "id": "D",
+          "label_html": "Memory can be affected by many factors."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Evidence"
+      }
+    },
+    {
+      "id": "rw-q10-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best transition.</p><p>The play received mixed reviews for its experimental staging. <em></em>, audiences praised the lead actor's performance.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Consequently"
+        },
+        {
+          "id": "B",
+          "label_html": "Nevertheless"
+        },
+        {
+          "id": "C",
+          "label_html": "Similarly"
+        },
+        {
+          "id": "D",
+          "label_html": "For instance"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Transitions"
+      }
+    },
+    {
+      "id": "rw-q11-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the most concise option.</p><p>The researcher <em>was able to</em> identify a pattern in the data.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "was able to"
+        },
+        {
+          "id": "B",
+          "label_html": "managed to"
+        },
+        {
+          "id": "C",
+          "label_html": "succeeded in being able to"
+        },
+        {
+          "id": "D",
+          "label_html": "identified"
+        }
+      ],
+      "answer_key": [
+        "D"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Concision"
+      }
+    },
+    {
+      "id": "rw-q12-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice corrects the pronoun error?</p><p>If anyone forgets <em>their</em> badge, the front desk can issue a temporary pass.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "their"
+        },
+        {
+          "id": "B",
+          "label_html": "his or her"
+        },
+        {
+          "id": "C",
+          "label_html": "its"
+        },
+        {
+          "id": "D",
+          "label_html": "one's"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Pronouns"
+      }
+    },
+    {
+      "id": "rw-q13-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best states the purpose of the passage?</p><p>The author describes how restoring wetlands can reduce flooding and improve water quality, urging local officials to consider protection policies.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "To narrate a personal story about wetlands"
+        },
+        {
+          "id": "B",
+          "label_html": "To argue for policies that protect wetlands"
+        },
+        {
+          "id": "C",
+          "label_html": "To list unrelated facts about wildlife"
+        },
+        {
+          "id": "D",
+          "label_html": "To compare two unrelated ecosystems"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Purpose"
+      }
+    },
+    {
+      "id": "rw-q14-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best placement for the underlined sentence to maintain logical flow.</p><p><em>These measurements determined how much insulation the walls needed.</em> The builders first surveyed the site, then erected the frame, and finally installed electrical wiring.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "At the beginning, before \"The builders\""
+        },
+        {
+          "id": "B",
+          "label_html": "After \"surveyed the site\""
+        },
+        {
+          "id": "C",
+          "label_html": "After \"erected the frame\""
+        },
+        {
+          "id": "D",
+          "label_html": "After \"installed electrical wiring\""
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Organization"
+      }
+    },
+    {
+      "id": "rw-q15-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the sentence that best introduces the paragraph.</p><p>Paragraph: It lists several examples of low-cost energy upgrades, including LED bulbs and programmable thermostats.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Energy is important for modern life."
+        },
+        {
+          "id": "B",
+          "label_html": "Some upgrades reduce energy use without large investments."
+        },
+        {
+          "id": "C",
+          "label_html": "People often disagree about energy policy."
+        },
+        {
+          "id": "D",
+          "label_html": "Thermostats are sometimes complicated."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Introductions"
+      }
+    },
+    {
+      "id": "rw-q16-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice corrects the modifier placement?</p><p><em>Walking down the trail</em>, the wildflowers caught Maya's eye.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Walking down the trail, Maya's eye was caught by wildflowers."
+        },
+        {
+          "id": "B",
+          "label_html": "Walking down the trail, Maya noticed the wildflowers."
+        },
+        {
+          "id": "C",
+          "label_html": "The wildflowers, walking down the trail, caught Maya's eye."
+        },
+        {
+          "id": "D",
+          "label_html": "Walking down, the trail's wildflowers caught Maya."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Modifiers"
+      }
+    },
+    {
+      "id": "rw-q17-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the most precise word.</p><p>The scientist's explanation was surprisingly <em></em>, even for nonexperts.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "simple"
+        },
+        {
+          "id": "B",
+          "label_html": "simplistic"
+        },
+        {
+          "id": "C",
+          "label_html": "easygoing"
+        },
+        {
+          "id": "D",
+          "label_html": "casual"
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Precision"
+      }
+    },
+    {
+      "id": "rw-q18-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best maintains parallel structure?</p><p>The internship taught time management, <em>collaborating effectively</em>, and how to communicate clearly.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "collaborating effectively"
+        },
+        {
+          "id": "B",
+          "label_html": "how to collaborate effectively"
+        },
+        {
+          "id": "C",
+          "label_html": "effective collaboration"
+        },
+        {
+          "id": "D",
+          "label_html": "collaboration effectively"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Parallelism"
+      }
+    },
+    {
+      "id": "rw-q19-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best revision for style and clarity.</p><p><em>Due to the fact that</em> the library was closing early, we returned our books.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Due to the fact that"
+        },
+        {
+          "id": "B",
+          "label_html": "For the reason that"
+        },
+        {
+          "id": "C",
+          "label_html": "Because"
+        },
+        {
+          "id": "D",
+          "label_html": "In light of"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Concision"
+      }
+    },
+    {
+      "id": "rw-q20-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which sentence best supports the claim that local festivals can boost small businesses?</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Festivals are often held in warm weather."
+        },
+        {
+          "id": "B",
+          "label_html": "During the spring arts fair, shop sales increased by 35% compared with the previous weekend."
+        },
+        {
+          "id": "C",
+          "label_html": "Some people prefer large concerts to small festivals."
+        },
+        {
+          "id": "D",
+          "label_html": "Festival organizers usually announce schedules early."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Evidence"
+      }
+    },
+    {
+      "id": "rw-q21-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best transition.</p><p>The new software reduces errors in data entry. <em>_____</em>, it shortens the training time for new staff.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Furthermore"
+        },
+        {
+          "id": "B",
+          "label_html": "However"
+        },
+        {
+          "id": "C",
+          "label_html": "Meanwhile"
+        },
+        {
+          "id": "D",
+          "label_html": "In contrast"
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Transitions"
+      }
+    },
+    {
+      "id": "rw-q22-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the sentence that best concludes the paragraph by reinforcing its main point.</p><p>The paragraph explains how sharing tools through a neighborhood library saves money and reduces waste.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Neighbors like to talk while borrowing tools."
+        },
+        {
+          "id": "B",
+          "label_html": "Therefore, tool libraries provide affordable access without requiring individual purchases."
+        },
+        {
+          "id": "C",
+          "label_html": "There are many types of hammers and drills."
+        },
+        {
+          "id": "D",
+          "label_html": "Some tools are heavy."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Conclusions"
+      }
+    },
+    {
+      "id": "rw-q23-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the correct punctuation.</p><p>The hikers packed water snacks and a first-aid kit.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "water; snacks and a first-aid kit"
+        },
+        {
+          "id": "B",
+          "label_html": "water, snacks, and a first-aid kit"
+        },
+        {
+          "id": "C",
+          "label_html": "water snacks, and a first-aid kit"
+        },
+        {
+          "id": "D",
+          "label_html": "water, snacks and a first-aid kit"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Commas"
+      }
+    },
+    {
+      "id": "rw-q24-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which option best clarifies the ambiguous pronoun?</p><p>When Sam called Jordan from the car, <em>they</em> said the meeting had started.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Sam said the meeting had started."
+        },
+        {
+          "id": "B",
+          "label_html": "Jordan said the meeting had started."
+        },
+        {
+          "id": "C",
+          "label_html": "They said the meeting had started."
+        },
+        {
+          "id": "D",
+          "label_html": "From the car, the meeting had started, Sam said."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Clarity"
+      }
+    },
+    {
+      "id": "rw-q25-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best inference.</p><p>A survey reported that most respondents prefer public transit when service is frequent and reliable.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "People dislike public transit."
+        },
+        {
+          "id": "B",
+          "label_html": "Improving service may increase transit use."
+        },
+        {
+          "id": "C",
+          "label_html": "Transit is always slower than driving."
+        },
+        {
+          "id": "D",
+          "label_html": "Service changes do not affect ridership."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Inference"
+      }
+    },
+    {
+      "id": "rw-q26-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the option that best preserves formal tone.</p><p>The results were <em>kind of</em> surprising.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "sort of"
+        },
+        {
+          "id": "B",
+          "label_html": "pretty"
+        },
+        {
+          "id": "C",
+          "label_html": "somewhat"
+        },
+        {
+          "id": "D",
+          "label_html": "kinda"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Style & Tone"
+      }
+    },
+    {
+      "id": "rw-q27-m1",
+      "section_id": "rw",
+      "module_id": "rw-m1",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best supports the author's recommendation that residents plant native shrubs?</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Native shrubs are available in many colors."
+        },
+        {
+          "id": "B",
+          "label_html": "Local nurseries report that native shrubs require less water and fertilizer than nonnative varieties."
+        },
+        {
+          "id": "C",
+          "label_html": "Some residents prefer tall trees."
+        },
+        {
+          "id": "D",
+          "label_html": "Shrubs can be planted in spring or fall."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Evidence"
+      }
+    },
+    {
+      "id": "rw-q01-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice completes the sentence logically?</p><p>The historian's argument is <em>_____</em>: it acknowledges counterevidence while explaining why the main conclusion still holds.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "balanced"
+        },
+        {
+          "id": "B",
+          "label_html": "careless"
+        },
+        {
+          "id": "C",
+          "label_html": "contradictory"
+        },
+        {
+          "id": "D",
+          "label_html": "random"
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Word Choice"
+      }
+    },
+    {
+      "id": "rw-q02-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best transition.</p><p>Solar panels can be expensive to install. <em>_____</em>, long-term energy savings often offset the initial cost.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "By contrast"
+        },
+        {
+          "id": "B",
+          "label_html": "Nevertheless"
+        },
+        {
+          "id": "C",
+          "label_html": "For instance"
+        },
+        {
+          "id": "D",
+          "label_html": "However"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Transitions (Example)"
+      }
+    },
+    {
+      "id": "rw-q03-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which revision best improves the sentence's clarity?</p><p>The chef prepared a sauce that was <em>more unique</em> than the others.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "much more unique"
+        },
+        {
+          "id": "B",
+          "label_html": "most unique"
+        },
+        {
+          "id": "C",
+          "label_html": "more unusual"
+        },
+        {
+          "id": "D",
+          "label_html": "very most unique"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Diction & Idiom"
+      }
+    },
+    {
+      "id": "rw-q04-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the sentence that best introduces the topic of bee navigation using the sun.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Bees are insects found worldwide."
+        },
+        {
+          "id": "B",
+          "label_html": "Scientists have long studied how bees use the sun as a compass."
+        },
+        {
+          "id": "C",
+          "label_html": "Flowers are colorful and fragrant."
+        },
+        {
+          "id": "D",
+          "label_html": "Honey is sweet and sticky."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Introductions"
+      }
+    },
+    {
+      "id": "rw-q05-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best evidence to support the claim.</p><p>Claim: Reduced classroom noise improves students' ability to focus.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Some students bring headphones to school."
+        },
+        {
+          "id": "B",
+          "label_html": "A randomized study showed a 12% improvement on attention tasks after installing sound-absorbing panels."
+        },
+        {
+          "id": "C",
+          "label_html": "Teachers disagree on the best seating arrangement."
+        },
+        {
+          "id": "D",
+          "label_html": "Older buildings usually echo more."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Evidence"
+      }
+    },
+    {
+      "id": "rw-q06-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice corrects the comma splice?</p><p>We visited the observatory, it was cloudy.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "We visited the observatory it was cloudy."
+        },
+        {
+          "id": "B",
+          "label_html": "We visited the observatory; it was cloudy."
+        },
+        {
+          "id": "C",
+          "label_html": "We visited, the observatory was cloudy."
+        },
+        {
+          "id": "D",
+          "label_html": "We visited the observatory: cloudy."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Sentence Boundaries"
+      }
+    },
+    {
+      "id": "rw-q07-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which option best maintains a formal academic tone?</p><p>The results are <em>pretty good</em> considering the small sample size.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "pretty good"
+        },
+        {
+          "id": "B",
+          "label_html": "fairly positive"
+        },
+        {
+          "id": "C",
+          "label_html": "kinda solid"
+        },
+        {
+          "id": "D",
+          "label_html": "awesome"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Style & Tone"
+      }
+    },
+    {
+      "id": "rw-q08-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice most effectively combines the sentences?</p><p>Birds gather at the wetland in spring. The wetland is a crucial stopover during migration.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Birds gather at the wetland in spring, it is a crucial stopover during migration."
+        },
+        {
+          "id": "B",
+          "label_html": "Birds gather at the wetland in spring, a crucial stopover during migration."
+        },
+        {
+          "id": "C",
+          "label_html": "Birds gather at the wetland in spring; this site is a crucial stopover during migration."
+        },
+        {
+          "id": "D",
+          "label_html": "Birds gather, the wetland is crucial."
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Sentence Combining"
+      }
+    },
+    {
+      "id": "rw-q09-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the best inference from the passage.</p><p>The author notes that attendance increased after ticket prices fell by 20%.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Lower prices likely encouraged more people to attend."
+        },
+        {
+          "id": "B",
+          "label_html": "People dislike events with high quality."
+        },
+        {
+          "id": "C",
+          "label_html": "Attendance never changes for any reason."
+        },
+        {
+          "id": "D",
+          "label_html": "The event was canceled."
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Inference"
+      }
+    },
+    {
+      "id": "rw-q10-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the answer that best expresses the passage's purpose.</p><p>The passage outlines simple steps households can take to reduce food waste and save money.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "To criticize grocery stores"
+        },
+        {
+          "id": "B",
+          "label_html": "To explain cost-saving strategies that reduce food waste"
+        },
+        {
+          "id": "C",
+          "label_html": "To narrate a chef's career"
+        },
+        {
+          "id": "D",
+          "label_html": "To debate restaurant reviews"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Purpose"
+      }
+    },
+    {
+      "id": "rw-q11-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice corrects the verb tense error?</p><p>By the time the exhibit opens, the curator <em>reviews</em> all submissions.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "reviews"
+        },
+        {
+          "id": "B",
+          "label_html": "reviewed"
+        },
+        {
+          "id": "C",
+          "label_html": "will have reviewed"
+        },
+        {
+          "id": "D",
+          "label_html": "is reviewing"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Grammar: Verb Tense"
+      }
+    },
+    {
+      "id": "rw-q12-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the best conclusion that reinforces the argument.</p><p>Because community science projects invite residents to collect data, they broaden participation in research.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "As a result, these projects can generate large datasets while engaging the public."
+        },
+        {
+          "id": "B",
+          "label_html": "Science is interesting to many people."
+        },
+        {
+          "id": "C",
+          "label_html": "Some people prefer art projects."
+        },
+        {
+          "id": "D",
+          "label_html": "Data can be complicated to analyze."
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Conclusions"
+      }
+    },
+    {
+      "id": "rw-q13-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the grammatically correct sentence.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Neither the coach nor the players was late."
+        },
+        {
+          "id": "B",
+          "label_html": "Neither the coach nor the players were late."
+        },
+        {
+          "id": "C",
+          "label_html": "Neither the coach nor the players is late."
+        },
+        {
+          "id": "D",
+          "label_html": "Neither the coach nor the players be late."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Subject–Verb Agreement (Compound)"
+      }
+    },
+    {
+      "id": "rw-q14-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best clarifies the sentence by eliminating wordiness?</p><p>There are many different ways in which gardeners can in fact reduce water usage.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "There are many different ways in which gardeners can reduce water usage."
+        },
+        {
+          "id": "B",
+          "label_html": "Gardeners can reduce water usage in many ways."
+        },
+        {
+          "id": "C",
+          "label_html": "Gardeners can actually reduce water usage in many different ways."
+        },
+        {
+          "id": "D",
+          "label_html": "There are different ways gardeners can in fact reduce water usage."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Concision"
+      }
+    },
+    {
+      "id": "rw-q15-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which transition best indicates contrast?</p><p>The plan is costly. <em>_____</em>, it may save money in the long run.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Similarly"
+        },
+        {
+          "id": "B",
+          "label_html": "However"
+        },
+        {
+          "id": "C",
+          "label_html": "For example"
+        },
+        {
+          "id": "D",
+          "label_html": "In addition"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Transitions (Contrast)"
+      }
+    },
+    {
+      "id": "rw-q16-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the sentence that best integrates the quotation.</p><p>Scientists call urban trees \"critical infrastructure\" because they cool neighborhoods and filter air.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Scientists call urban trees critical infrastructure, they cool neighborhoods and filter air."
+        },
+        {
+          "id": "B",
+          "label_html": "Scientists call urban trees \"critical infrastructure\" because the trees cool neighborhoods and filter air."
+        },
+        {
+          "id": "C",
+          "label_html": "Scientists call urban trees, \"critical infrastructure\"; because they cool neighborhoods and filter air."
+        },
+        {
+          "id": "D",
+          "label_html": "Scientists call urban trees critical infrastructure because trees cool neighborhoods filtering air."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Quotations & Punctuation"
+      }
+    },
+    {
+      "id": "rw-q17-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which option best preserves the meaning while improving sentence variety?</p><p>The report was long. The report was also detailed.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "The report was long and detailed."
+        },
+        {
+          "id": "B",
+          "label_html": "The report was long, the report was detailed."
+        },
+        {
+          "id": "C",
+          "label_html": "Being long, the report was also detailed."
+        },
+        {
+          "id": "D",
+          "label_html": "The detailed report was long in length."
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Sentence Variety"
+      }
+    },
+    {
+      "id": "rw-q18-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the sentence that correctly uses a semicolon.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "We brought binoculars; and a field guide."
+        },
+        {
+          "id": "B",
+          "label_html": "We brought binoculars; we also brought a field guide."
+        },
+        {
+          "id": "C",
+          "label_html": "We brought binoculars; because we wanted a field guide."
+        },
+        {
+          "id": "D",
+          "label_html": "We brought; binoculars and a field guide."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Punctuation"
+      }
+    },
+    {
+      "id": "rw-q19-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Best revision for clarity and precision?</p><p>Researchers looked at a <em>whole bunch</em> of samples under a microscope.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "whole bunch"
+        },
+        {
+          "id": "B",
+          "label_html": "considerable number"
+        },
+        {
+          "id": "C",
+          "label_html": "tons"
+        },
+        {
+          "id": "D",
+          "label_html": "huge pile"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Precision & Tone"
+      }
+    },
+    {
+      "id": "rw-q20-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best states the central claim of a passage explaining that library fines discourage borrowing?</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Fines make libraries wealthy."
+        },
+        {
+          "id": "B",
+          "label_html": "Eliminating fines can increase returns and access."
+        },
+        {
+          "id": "C",
+          "label_html": "Books are heavy to carry."
+        },
+        {
+          "id": "D",
+          "label_html": "Libraries are quiet places."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Central Claim"
+      }
+    },
+    {
+      "id": "rw-q21-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the sentence that correctly uses a colon.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "We brought three items: water, snacks, and maps."
+        },
+        {
+          "id": "B",
+          "label_html": "We brought: water, snacks, and maps."
+        },
+        {
+          "id": "C",
+          "label_html": "We: brought water, snacks, and maps."
+        },
+        {
+          "id": "D",
+          "label_html": "We brought three: items water, snacks, and maps."
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Punctuation (Colon)"
+      }
+    },
+    {
+      "id": "rw-q22-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which choice best replaces the underlined phrase to maintain formal tone?</p><p>The committee <em>kinda wants</em> to postpone the vote.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "kinda wants"
+        },
+        {
+          "id": "B",
+          "label_html": "sort of wants"
+        },
+        {
+          "id": "C",
+          "label_html": "would like"
+        },
+        {
+          "id": "D",
+          "label_html": "is like wanting"
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Style & Tone"
+      }
+    },
+    {
+      "id": "rw-q23-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Select the best revision to eliminate redundancy.</p><p>Each team collaborated together to finish the project.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Each team collaborated to finish the project."
+        },
+        {
+          "id": "B",
+          "label_html": "Each team collaborated together jointly to finish the project."
+        },
+        {
+          "id": "C",
+          "label_html": "Each and every team collaborated to finish the project."
+        },
+        {
+          "id": "D",
+          "label_html": "Each team together collaborated to finish the project."
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Concision (Redundancy)"
+      }
+    },
+    {
+      "id": "rw-q24-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which sentence most logically follows?</p><p>After the city added shade structures at bus stops, riders reported shorter perceived wait times.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Shade can make hot days feel cooler, improving comfort while waiting."
+        },
+        {
+          "id": "B",
+          "label_html": "Some people don't like buses."
+        },
+        {
+          "id": "C",
+          "label_html": "Drivers also wait at red lights."
+        },
+        {
+          "id": "D",
+          "label_html": "Buses are large vehicles."
+        }
+      ],
+      "answer_key": [
+        "A"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Rhetorical Synthesis"
+      }
+    },
+    {
+      "id": "rw-q25-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the most precise word.</p><p>The engineer proposed a <em>_____</em> solution that used fewer parts without reducing performance.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "complex"
+        },
+        {
+          "id": "B",
+          "label_html": "minimal"
+        },
+        {
+          "id": "C",
+          "label_html": "complicated"
+        },
+        {
+          "id": "D",
+          "label_html": "elaborate"
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Word Choice (Precision)"
+      }
+    },
+    {
+      "id": "rw-q26-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Which option maintains logical order?</p><p>The paragraph describes defining a question, gathering data, analyzing results, and presenting conclusions.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Present conclusions, define a question, analyze results, gather data."
+        },
+        {
+          "id": "B",
+          "label_html": "Gather data, present conclusions, analyze results, define a question."
+        },
+        {
+          "id": "C",
+          "label_html": "Define a question, gather data, analyze results, present conclusions."
+        },
+        {
+          "id": "D",
+          "label_html": "Analyze results, define a question, present conclusions, gather data."
+        }
+      ],
+      "answer_key": [
+        "C"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Organization"
+      }
+    },
+    {
+      "id": "rw-q27-m2",
+      "section_id": "rw",
+      "module_id": "rw-m2",
+      "type": "mcq_single",
+      "prompt_html": "<p>Choose the best support for the claim that labeling allergens on menus improves safety.</p>",
+      "choices": [
+        {
+          "id": "A",
+          "label_html": "Menus often include photos."
+        },
+        {
+          "id": "B",
+          "label_html": "In restaurants that added allergen labels, accidental exposures decreased by 18% over six months."
+        },
+        {
+          "id": "C",
+          "label_html": "Some diners prefer outdoor seating."
+        },
+        {
+          "id": "D",
+          "label_html": "Chefs update menus seasonally."
+        }
+      ],
+      "answer_key": [
+        "B"
+      ],
+      "points": 1,
+      "tags": {
+        "domain": "R&W",
+        "skill": "Evidence"
+      }
+    }
+  ]
+}

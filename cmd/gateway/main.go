@@ -20,6 +20,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/mind-engage/mindengage-lms/internal/grading"
+
+	_ "github.com/mind-engage/mindengage-lms/internal/formats/act"
+	_ "github.com/mind-engage/mindengage-lms/internal/formats/jee"
+	_ "github.com/mind-engage/mindengage-lms/internal/formats/sat"
+	_ "github.com/mind-engage/mindengage-lms/internal/formats/stem"
 )
 
 func main() {
@@ -33,7 +39,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("db open failed: %v", err)
 	}
-	store := exam.NewSQLStore(dbh, cfg.DBDriver)
+	store := exam.NewSQLStore(dbh, cfg.DBDriver, grading.NewDefaultGrader())
 
 	// --- Auth (local JWT for offline/dev) ---
 	secret := getenvOr("AUTH_HMAC_SECRET", "supersecret-dev-key")
@@ -118,6 +124,12 @@ func main() {
 			Post("/qti/import", api.ImportQTIHandler(store, bs))
 		pr.With(rbac.Require("exam:export")).
 			Get("/exams/{id}/export", api.ExportQTIHandler(store))
+
+		pr.With(rbac.Require("exam:view")).
+			Get("/exams", api.ListExamsHandler(store))
+
+		pr.With(rbac.Require("attempt:save")).
+			Post("/attempts/{attemptID}/next-module", api.NextModuleHandler(store))
 	})
 
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })

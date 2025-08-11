@@ -1,5 +1,9 @@
 package exam
 
+import (
+	"encoding/json"
+)
+
 type Choice struct {
 	ID        string `json:"id,omitempty"`
 	LabelHTML string `json:"label_html,omitempty"`
@@ -24,6 +28,11 @@ type Attempt struct {
 	Status    string                 `json:"status"` // in_progress|submitted
 	Score     float64                `json:"score"`
 	Responses map[string]interface{} `json:"responses"` // questionID -> response payload
+
+	ModuleIndex     int   `json:"module_index"`
+	ModuleStartedAt int64 `json:"module_started_at,omitempty"`
+	ModuleDeadline  int64 `json:"module_deadline,omitempty"`
+	OverallDeadline int64 `json:"overall_deadline,omitempty"`
 }
 
 type Exam struct {
@@ -32,5 +41,17 @@ type Exam struct {
 	TimeLimitSec int        `json:"time_limit_sec"`
 	Questions    []Question `json:"questions"`
 
+	// NEW:
+	Profile   string          `json:"profile,omitempty"` // e.g., "sat.v1", "act.v1", "jee.v1"
+	PolicyRaw json.RawMessage `json:"policy,omitempty"`
+
 	CreatedAt int64 `json:"created_at,omitempty"` // NEW: aligns with DB schema
+}
+
+type ExamSummary struct {
+	ID           string `json:"id"`
+	Title        string `json:"title"`
+	TimeLimitSec int    `json:"time_limit_sec"`
+	CreatedAt    int64  `json:"created_at,omitempty"`
+	Profile      string `json:"profile,omitempty"`
 }

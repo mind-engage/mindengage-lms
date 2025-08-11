@@ -85,3 +85,15 @@ func IsAttemptOwner(store exam.Store) func(*http.Request) bool {
 		return r.URL.Query().Get("user_id") == a.UserID
 	}
 }
+
+func NextModuleHandler(store exam.Store) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "attemptID")
+		a, err := store.AdvanceModule(id) // new method
+		if err != nil {
+			http.Error(w, err.Error(), 400)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(a)
+	}
+}

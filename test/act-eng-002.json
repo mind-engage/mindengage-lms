@@ -1,0 +1,2507 @@
+{
+    "id": "act-eng-002",
+    "title": "ACT English – Practice",
+    "profile": "act.v1",
+    "policy": {
+        "sections": [
+            {
+                "id": "english",
+                "title": "English",
+                "modules": [
+                    {
+                        "id": "eng-m1",
+                        "time_limit_sec": 2700
+                    }
+                ]
+            }
+        ],
+        "navigation": {
+            "allow_back": false,
+            "module_locked": true
+        },
+        "item_constraints": {
+            "english": {
+                "mcq_single": {
+                    "choices": 4
+                }
+            }
+        }
+    },
+    "questions": [
+        {
+            "id": "eng-q01-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Which choice corrects the error in subject–verb agreement?</p><p>The list of required readings <u>were</u> posted yesterday.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "no change"
+                },
+                {
+                    "id": "B",
+                    "label_html": "was"
+                },
+                {
+                    "id": "C",
+                    "label_html": "have been"
+                },
+                {
+                    "id": "D",
+                    "label_html": "are"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Agreement"
+            }
+        },
+        {
+            "id": "eng-q02-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the most concise and clear version.</p><p>Because of the fact that the bus was late, we arrived after the show had already started.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Due to the fact the bus was late, we arrived after the show had already started."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Because the bus was late, we arrived after the show started."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The bus being late was the reason we arrived after the show had already started."
+                },
+                {
+                    "id": "D",
+                    "label_html": "We arrived after the show had already started because of the lateness of the bus."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q03-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence that uses commas correctly.</p><p>After finishing her homework she practiced the piano for an hour.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "After finishing her homework, she practiced the piano for an hour."
+                },
+                {
+                    "id": "B",
+                    "label_html": "After finishing, her homework she practiced the piano for an hour."
+                },
+                {
+                    "id": "C",
+                    "label_html": "After finishing her homework she practiced, the piano for an hour."
+                },
+                {
+                    "id": "D",
+                    "label_html": "After, finishing her homework she practiced the piano for an hour."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas"
+            }
+        },
+        {
+            "id": "eng-q04-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct pronoun case.</p><p>The coach handed the schedule to Maya and <u>me</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "I"
+                },
+                {
+                    "id": "B",
+                    "label_html": "myself"
+                },
+                {
+                    "id": "C",
+                    "label_html": "me"
+                },
+                {
+                    "id": "D",
+                    "label_html": "mine"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Pronoun Case"
+            }
+        },
+        {
+            "id": "eng-q05-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the clearest and most logical modifier placement.</p><p><u>Walking down the street</u>, the bakery's aroma drew us inside.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Walking down the street, we were drawn inside by the bakery's aroma."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Walking down the street, the bakery's aroma drew us inside."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The bakery's aroma, walking down the street, drew us inside."
+                },
+                {
+                    "id": "D",
+                    "label_html": "We, walking down the street, inside were drawn by the bakery's aroma."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Modifiers"
+            }
+        },
+        {
+            "id": "eng-q06-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct verb form for the conditional sentence.</p><p>If she <u>would have known</u> about the meeting, she would have attended.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "would have knew"
+                },
+                {
+                    "id": "B",
+                    "label_html": "had known"
+                },
+                {
+                    "id": "C",
+                    "label_html": "would know"
+                },
+                {
+                    "id": "D",
+                    "label_html": "knows"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Verb Tense"
+            }
+        },
+        {
+            "id": "eng-q07-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence that correctly uses apostrophes.</p><p>The musicians cases were stacked behind the stage.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The musician's cases were stacked behind the stage."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The musicians' cases were stacked behind the stage."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The musicians's cases were stacked behind the stage."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The musicians case's were stacked behind the stage."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Apostrophes"
+            }
+        },
+        {
+            "id": "eng-q08-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the most effective transition.</p><p>We reached the cabin before sunset. ___, we started a fire and cooked dinner.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Nevertheless"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Meanwhile"
+                },
+                {
+                    "id": "C",
+                    "label_html": "For example"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Afterward"
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Transitions"
+            }
+        },
+        {
+            "id": "eng-q09-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence that avoids a comma splice.</p><p>The play ended, everyone stood and cheered.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The play ended; everyone stood and cheered."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The play ended, everyone stood and cheered."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The play ended everyone stood and cheered."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The play ended: everyone stood and cheered?"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Run-ons"
+            }
+        },
+        {
+            "id": "eng-q10-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct comparison.</p><p>Of the two routes, this one is <u>more shorter</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "shorter"
+                },
+                {
+                    "id": "B",
+                    "label_html": "the most short"
+                },
+                {
+                    "id": "C",
+                    "label_html": "more short"
+                },
+                {
+                    "id": "D",
+                    "label_html": "most shorter"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Comparatives"
+            }
+        },
+        {
+            "id": "eng-q11-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the sentence with correct colon usage.</p><p>She brought everything for the trip <u>such as</u>: sunscreen, water, and a hat.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "She brought everything for the trip: sunscreen, water, and a hat."
+                },
+                {
+                    "id": "B",
+                    "label_html": "She brought: sunscreen, water, and a hat, for the trip."
+                },
+                {
+                    "id": "C",
+                    "label_html": "She brought everything: for the trip sunscreen, water, and a hat."
+                },
+                {
+                    "id": "D",
+                    "label_html": "She brought everything for the trip such as: sunscreen, water, and a hat."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Colon"
+            }
+        },
+        {
+            "id": "eng-q12-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the best sentence to combine ideas smoothly.</p><p>The lecture ended. The professor answered questions for twenty minutes.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The lecture ended and, the professor answered questions for twenty minutes."
+                },
+                {
+                    "id": "B",
+                    "label_html": "After the lecture ended, the professor answered questions for twenty minutes."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The lecture ended; for twenty minutes the professor answered questions for twenty minutes."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Ending the lecture, twenty minutes of questions were answered by the professor."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Coordination"
+            }
+        },
+        {
+            "id": "eng-q13-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Identify the correct parallel structure.</p><p>The job requires attention to detail, punctuality, and <u>to communicate clearly</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "communicating clearly"
+                },
+                {
+                    "id": "B",
+                    "label_html": "to communication clearly"
+                },
+                {
+                    "id": "C",
+                    "label_html": "to communicate clearly"
+                },
+                {
+                    "id": "D",
+                    "label_html": "clear communication"
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Parallelism"
+            }
+        },
+        {
+            "id": "eng-q14-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct pronoun–antecedent agreement.</p><p>Every one of the students turned in <u>their</u> assignment on time.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "their"
+                },
+                {
+                    "id": "B",
+                    "label_html": "his or her"
+                },
+                {
+                    "id": "C",
+                    "label_html": "its"
+                },
+                {
+                    "id": "D",
+                    "label_html": "they"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Pronoun Agreement"
+            }
+        },
+        {
+            "id": "eng-q15-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the sentence that avoids wordiness.</p><p>At this point in time, we are currently planning our itinerary.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "We are planning our itinerary now."
+                },
+                {
+                    "id": "B",
+                    "label_html": "At this point in time, we are planning our itinerary."
+                },
+                {
+                    "id": "C",
+                    "label_html": "We are currently planning our itinerary at this time."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Currently, at this point in time, we are planning our itinerary."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q16-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct hyphenation.</p><p>The director gave a <u>well thought out</u> explanation.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "well thought-out"
+                },
+                {
+                    "id": "B",
+                    "label_html": "well-thought-out"
+                },
+                {
+                    "id": "C",
+                    "label_html": "well-thought out"
+                },
+                {
+                    "id": "D",
+                    "label_html": "wellthought-out"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Hyphens"
+            }
+        },
+        {
+            "id": "eng-q17-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the faulty comparison.</p><p>Her essay is better <u>than any student in the class</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "than any other student's in the class"
+                },
+                {
+                    "id": "B",
+                    "label_html": "than any student in the class has"
+                },
+                {
+                    "id": "C",
+                    "label_html": "than any student in class"
+                },
+                {
+                    "id": "D",
+                    "label_html": "than that of the class"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Logical Comparison"
+            }
+        },
+        {
+            "id": "eng-q18-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence that corrects a fragment.</p><p>Because the team practiced late into the night.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Because the team practiced late into the night. They were exhausted."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The team practiced late into the night; because they were exhausted."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Because the team practiced late into the night, they were exhausted."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The team practiced late into the night, because they were exhausted."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Fragments"
+            }
+        },
+        {
+            "id": "eng-q19-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct verb tense for a sequence of events.</p><p>By the time we arrived, the concert <u>begins</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "begins"
+                },
+                {
+                    "id": "B",
+                    "label_html": "had begun"
+                },
+                {
+                    "id": "C",
+                    "label_html": "has begun"
+                },
+                {
+                    "id": "D",
+                    "label_html": "was begin"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Verb Tense"
+            }
+        },
+        {
+            "id": "eng-q20-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence that uses dashes appropriately for emphasis.</p><p>He packed the essentials—maps, snacks, and water—for the hike.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "He packed the essentials—maps, snacks, and water—for the hike."
+                },
+                {
+                    "id": "B",
+                    "label_html": "He packed the essentials—maps, snacks, and water, for the hike—."
+                },
+                {
+                    "id": "C",
+                    "label_html": "He—packed the essentials maps, snacks—and water—for the hike."
+                },
+                {
+                    "id": "D",
+                    "label_html": "He packed—the essentials—maps, snacks, and water—for the hike."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Dashes"
+            }
+        },
+        {
+            "id": "eng-q21-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct preposition.</p><p>We were amazed <u>with</u> the artist's attention to detail.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "with"
+                },
+                {
+                    "id": "B",
+                    "label_html": "by"
+                },
+                {
+                    "id": "C",
+                    "label_html": "of"
+                },
+                {
+                    "id": "D",
+                    "label_html": "for"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Idioms/Prepositions"
+            }
+        },
+        {
+            "id": "eng-q22-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the clearest sentence free of redundancy.</p><p>Each and every participant must register in advance beforehand.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Every participant must register in advance."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Each and every participant must register in advance beforehand."
+                },
+                {
+                    "id": "C",
+                    "label_html": "All participants must register beforehand in advance."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Each participant must all register in advance."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q23-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the error in pronoun reference.</p><p>When Jenna met with her sister, she told her that the appointment was canceled.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "When Jenna met with her sister, she told her that the appointment was canceled."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Jenna told her sister that the appointment was canceled."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Meeting with her sister, Jenna, the appointment was canceled."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The appointment was canceled, Jenna told her sister."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Pronoun Reference"
+            }
+        },
+        {
+            "id": "eng-q24-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence with correct semicolon usage.</p><p>We tried to reach you; but your phone was off.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "We tried to reach you; your phone was off."
+                },
+                {
+                    "id": "B",
+                    "label_html": "We tried to reach you; but, your phone was off."
+                },
+                {
+                    "id": "C",
+                    "label_html": "We tried to reach you; but your phone was off."
+                },
+                {
+                    "id": "D",
+                    "label_html": "We tried to reach you your phone was off;"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Semicolons"
+            }
+        },
+        {
+            "id": "eng-q25-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Identify the sentence that maintains formal style.</p><p>The scientist didn't get the results she wanted, so she was like, \"whatever.\"</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The scientist did not get the results she wanted, so she was like, \"whatever.\""
+                },
+                {
+                    "id": "B",
+                    "label_html": "The scientist did not obtain the desired results and decided to stop caring."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The scientist did not obtain the results she expected, so she decided to revise the experiment."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The scientist didn't get the results she wanted; so she was like \"whatever.\""
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Style/Tone"
+            }
+        },
+        {
+            "id": "eng-q26-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Correct the agreement with a collective noun.</p><p>The committee <u>are</u> meeting to discuss its recommendations.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "are"
+                },
+                {
+                    "id": "B",
+                    "label_html": "were"
+                },
+                {
+                    "id": "C",
+                    "label_html": "is"
+                },
+                {
+                    "id": "D",
+                    "label_html": "have been"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Agreement"
+            }
+        },
+        {
+            "id": "eng-q27-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the clearest, least wordy option.</p><p>There are many different kinds of varieties of apples available.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "There are many different kinds of varieties of apples available."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Many different varieties of apples are available."
+                },
+                {
+                    "id": "C",
+                    "label_html": "There are many varieties of apples available."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Many apple kinds of varieties are available."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q28-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the misplaced modifier.</p><p>The waiter served the dessert to the guests on small plates with whipped cream.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The waiter served the guests the dessert with whipped cream on small plates."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The waiter served the dessert with whipped cream to the guests on small plates."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The waiter served the dessert to the guests on small plates with whipped cream."
+                },
+                {
+                    "id": "D",
+                    "label_html": "To the guests on small plates with whipped cream the waiter served the dessert."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Modifiers"
+            }
+        },
+        {
+            "id": "eng-q29-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct idiom.</p><p>The speaker was <u>responsible of</u> organizing the panel.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "responsible of"
+                },
+                {
+                    "id": "B",
+                    "label_html": "responsible about"
+                },
+                {
+                    "id": "C",
+                    "label_html": "responsible for"
+                },
+                {
+                    "id": "D",
+                    "label_html": "responsible to"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Idioms/Prepositions"
+            }
+        },
+        {
+            "id": "eng-q30-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the sentence that correctly uses quotation marks and punctuation.</p><p>\"Did you finish the draft\" asked the editor.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "\"Did you finish the draft?\" asked the editor."
+                },
+                {
+                    "id": "B",
+                    "label_html": "\"Did you finish the draft,\" asked the editor?"
+                },
+                {
+                    "id": "C",
+                    "label_html": "\"Did you finish the draft?\", asked the editor."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Did you finish the draft? asked the editor."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Quotation Marks"
+            }
+        },
+        {
+            "id": "eng-q31-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the best transition for cause and effect.</p><p>We had trained for months; ___, our performance improved dramatically.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "however"
+                },
+                {
+                    "id": "B",
+                    "label_html": "therefore"
+                },
+                {
+                    "id": "C",
+                    "label_html": "meanwhile"
+                },
+                {
+                    "id": "D",
+                    "label_html": "for instance"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Transitions"
+            }
+        },
+        {
+            "id": "eng-q32-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the pronoun shift.</p><p>When a person studies late, <u>you</u> should take breaks.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "they"
+                },
+                {
+                    "id": "B",
+                    "label_html": "he or she"
+                },
+                {
+                    "id": "C",
+                    "label_html": "one"
+                },
+                {
+                    "id": "D",
+                    "label_html": "you"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Pronoun Consistency"
+            }
+        },
+        {
+            "id": "eng-q33-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct restrictive vs. nonrestrictive clause punctuation.</p><p>The hikers who were carrying extra water finished first.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The hikers, who were carrying extra water, finished first."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The hikers who were carrying extra water finished first."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The hikers, who were carrying extra water finished, first."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The hikers who, were carrying extra water, finished first."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas/Clauses"
+            }
+        },
+        {
+            "id": "eng-q34-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct comparative structure with \"than.\"</p><p>The test was more challenging <u>than we expected it to be</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "than we expected"
+                },
+                {
+                    "id": "B",
+                    "label_html": "than us"
+                },
+                {
+                    "id": "C",
+                    "label_html": "then we expected"
+                },
+                {
+                    "id": "D",
+                    "label_html": "than we were expecting it to be"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Comparatives"
+            }
+        },
+        {
+            "id": "eng-q35-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the clearest sentence that avoids passive when active is better.</p><p>The award <u>was given</u> to the youngest researcher by the committee.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The committee gave the award to the youngest researcher."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The award was given to the youngest researcher by the committee."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The youngest researcher was given the award by the committee."
+                },
+                {
+                    "id": "D",
+                    "label_html": "By the committee, the award was given to the youngest researcher."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Clarity/Active Voice"
+            }
+        },
+        {
+            "id": "eng-q36-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the faulty parallelism with correlative conjunctions.</p><p>She is not only talented but also <u>has dedication</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "not only talented but also dedicated"
+                },
+                {
+                    "id": "B",
+                    "label_html": "not only talented but also has dedication"
+                },
+                {
+                    "id": "C",
+                    "label_html": "not only talent but also dedication"
+                },
+                {
+                    "id": "D",
+                    "label_html": "talented not only but also dedicated"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Parallelism"
+            }
+        },
+        {
+            "id": "eng-q37-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence without a dangling modifier.</p><p><u>After reading the report</u>, the conclusion was unclear.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "After reading the report, we found the conclusion unclear."
+                },
+                {
+                    "id": "B",
+                    "label_html": "After reading the report, the conclusion was unclear."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The conclusion was unclear after reading the report by us."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Reading the report, the conclusion remained unclear for us."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Modifiers"
+            }
+        },
+        {
+            "id": "eng-q38-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct article usage.</p><p>She adopted <u>a</u> honest approach to the problem.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "a"
+                },
+                {
+                    "id": "B",
+                    "label_html": "an"
+                },
+                {
+                    "id": "C",
+                    "label_html": "the"
+                },
+                {
+                    "id": "D",
+                    "label_html": "no article"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Articles"
+            }
+        },
+        {
+            "id": "eng-q39-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence with correct subject–verb agreement involving intervening phrases.</p><p>The bouquet of roses <u>smell</u> wonderful.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "smell"
+                },
+                {
+                    "id": "B",
+                    "label_html": "smells"
+                },
+                {
+                    "id": "C",
+                    "label_html": "are smelling"
+                },
+                {
+                    "id": "D",
+                    "label_html": "have smelled"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Agreement"
+            }
+        },
+        {
+            "id": "eng-q40-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Pick the sentence that correctly uses commas with coordinate adjectives.</p><p>The museum featured a <u>vivid modern</u> exhibit.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "vivid modern"
+                },
+                {
+                    "id": "B",
+                    "label_html": "vivid, modern"
+                },
+                {
+                    "id": "C",
+                    "label_html": "vivid-modern"
+                },
+                {
+                    "id": "D",
+                    "label_html": "vivid; modern"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas"
+            }
+        },
+        {
+            "id": "eng-q41-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the run-on sentence.</p><p>The festival was crowded it rained for an hour.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The festival was crowded; it rained for an hour."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The festival was crowded, it rained for an hour."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Being crowded, the festival, it rained for an hour."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The festival was crowded raining for an hour."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Run-ons"
+            }
+        },
+        {
+            "id": "eng-q42-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct placement of an essential appositive.</p><p>My friend <u>the poet</u> is reading tonight.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "My friend, the poet, is reading tonight."
+                },
+                {
+                    "id": "B",
+                    "label_html": "My friend the poet, is reading tonight."
+                },
+                {
+                    "id": "C",
+                    "label_html": "My friend the poet is reading tonight."
+                },
+                {
+                    "id": "D",
+                    "label_html": "My friend, the poet is reading tonight."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Appositives"
+            }
+        },
+        {
+            "id": "eng-q43-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct verb mood for suggestions.</p><p>The teacher recommended that he <u>takes</u> notes.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "takes"
+                },
+                {
+                    "id": "B",
+                    "label_html": "take"
+                },
+                {
+                    "id": "C",
+                    "label_html": "has taken"
+                },
+                {
+                    "id": "D",
+                    "label_html": "would take"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Subjunctive"
+            }
+        },
+        {
+            "id": "eng-q44-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the clearest sentence combining ideas.</p><p>We could not attend the ceremony. We had a prior commitment.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "We could not attend the ceremony because we had a prior commitment."
+                },
+                {
+                    "id": "B",
+                    "label_html": "We could not attend the ceremony, because we had a prior commitment."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Because we had a prior commitment. We could not attend the ceremony."
+                },
+                {
+                    "id": "D",
+                    "label_html": "We had a prior commitment, as a result we could not attend the ceremony."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Subordination"
+            }
+        },
+        {
+            "id": "eng-q45-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Identify the sentence with correct comma usage for introductory elements.</p><p>In order to succeed you must practice daily.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "In order, to succeed you must practice daily."
+                },
+                {
+                    "id": "B",
+                    "label_html": "In order to succeed you must practice daily."
+                },
+                {
+                    "id": "C",
+                    "label_html": "In order to succeed, you must practice daily."
+                },
+                {
+                    "id": "D",
+                    "label_html": "In order to succeed you, must practice daily."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas"
+            }
+        },
+        {
+            "id": "eng-q46-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct usage between \"fewer\" and \"less.\"</p><p>This recipe uses <u>less</u> eggs than the other one.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "less"
+                },
+                {
+                    "id": "B",
+                    "label_html": "few"
+                },
+                {
+                    "id": "C",
+                    "label_html": "fewer"
+                },
+                {
+                    "id": "D",
+                    "label_html": "fewest"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Usage – Word Choice"
+            }
+        },
+        {
+            "id": "eng-q47-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the ambiguous modifier.</p><p>She nearly watched the movie for three hours.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "She watched the movie for nearly three hours."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Nearly she watched the movie for three hours."
+                },
+                {
+                    "id": "C",
+                    "label_html": "She watched nearly the movie for three hours."
+                },
+                {
+                    "id": "D",
+                    "label_html": "She watched the nearly movie for three hours."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Modifiers"
+            }
+        },
+        {
+            "id": "eng-q48-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the sentence with correct comma usage in a compound sentence.</p><p>He set up the tent and we built the fire.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "He set up the tent, and we built the fire."
+                },
+                {
+                    "id": "B",
+                    "label_html": "He set up the tent, and, we built the fire."
+                },
+                {
+                    "id": "C",
+                    "label_html": "He set up the tent and, we built the fire."
+                },
+                {
+                    "id": "D",
+                    "label_html": "He set up the tent and we built, the fire."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas/Coordination"
+            }
+        },
+        {
+            "id": "eng-q49-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the best transition showing contrast.</p><p>The storm threatened the coast; ___, the inland towns remained calm.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "therefore"
+                },
+                {
+                    "id": "B",
+                    "label_html": "however"
+                },
+                {
+                    "id": "C",
+                    "label_html": "similarly"
+                },
+                {
+                    "id": "D",
+                    "label_html": "consequently"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Transitions"
+            }
+        },
+        {
+            "id": "eng-q50-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence free of double negatives.</p><p>We couldn't hardly hear the announcement.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "We could hardly hear the announcement."
+                },
+                {
+                    "id": "B",
+                    "label_html": "We couldn't hardly hear the announcement."
+                },
+                {
+                    "id": "C",
+                    "label_html": "We couldn't hear hardly the announcement."
+                },
+                {
+                    "id": "D",
+                    "label_html": "We could not hear nothing of the announcement."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Usage – Double Negatives"
+            }
+        },
+        {
+            "id": "eng-q51-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the agreement with an indefinite pronoun.</p><p>Neither of the options <u>are</u> appealing.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "are"
+                },
+                {
+                    "id": "B",
+                    "label_html": "were"
+                },
+                {
+                    "id": "C",
+                    "label_html": "is"
+                },
+                {
+                    "id": "D",
+                    "label_html": "have been"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Agreement"
+            }
+        },
+        {
+            "id": "eng-q52-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the clearest sentence by avoiding expletive constructions.</p><p>There are many reasons that cause plants to wilt.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Many reasons cause plants to wilt."
+                },
+                {
+                    "id": "B",
+                    "label_html": "There exist many reasons that cause plants to wilt."
+                },
+                {
+                    "id": "C",
+                    "label_html": "There are many reasons causing plants to wilt."
+                },
+                {
+                    "id": "D",
+                    "label_html": "It is that many reasons cause plants to wilt."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q53-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct word form.</p><p>She was the <u>most fastest</u> runner on the team.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "fast"
+                },
+                {
+                    "id": "B",
+                    "label_html": "faster"
+                },
+                {
+                    "id": "C",
+                    "label_html": "fastest"
+                },
+                {
+                    "id": "D",
+                    "label_html": "most fast"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Comparatives/Superlatives"
+            }
+        },
+        {
+            "id": "eng-q54-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correctly punctuated nonrestrictive clause.</p><p>The library which was renovated last year now hosts concerts.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The library, which was renovated last year, now hosts concerts."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The library which, was renovated last year now hosts concerts."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The library which was renovated last year, now hosts concerts."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The library, which was renovated last year now hosts concerts."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas/Clauses"
+            }
+        },
+        {
+            "id": "eng-q55-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Simplify the sentence while preserving meaning.</p><p>In the event that the weather turns bad, the festival will be canceled.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "If the weather turns bad, the festival will be canceled."
+                },
+                {
+                    "id": "B",
+                    "label_html": "In the event that bad weather turns, the festival will be canceled."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The festival will be canceled in the event of the weather turning bad."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Weather turning bad will be in the event the festival is canceled."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q56-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the shift in verb tense.</p><p>We walk to the station and then <u>took</u> the bus.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "take"
+                },
+                {
+                    "id": "B",
+                    "label_html": "took"
+                },
+                {
+                    "id": "C",
+                    "label_html": "had took"
+                },
+                {
+                    "id": "D",
+                    "label_html": "were taking"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Tense Consistency"
+            }
+        },
+        {
+            "id": "eng-q57-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence with correct comma usage around an interrupter.</p><p>The plan, however should be revised.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The plan however, should be revised."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The plan, however, should be revised."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The plan however should, be revised."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The plan should be revised, however,"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas/Interruptors"
+            }
+        },
+        {
+            "id": "eng-q58-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose the correct comparison of quantity.</p><p>We spent <u>less</u> dollars this time.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "less"
+                },
+                {
+                    "id": "B",
+                    "label_html": "fewer"
+                },
+                {
+                    "id": "C",
+                    "label_html": "few"
+                },
+                {
+                    "id": "D",
+                    "label_html": "least"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Usage – Count vs. Noncount"
+            }
+        },
+        {
+            "id": "eng-q59-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Simplify the sentence to avoid nominalizations.</p><p>We conducted an analysis of the data to make a decision regarding expansion.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "We analyzed the data to decide about expansion."
+                },
+                {
+                    "id": "B",
+                    "label_html": "We did an analysis of the data to make a decision regarding expansion."
+                },
+                {
+                    "id": "C",
+                    "label_html": "An analysis was conducted on the data to make a decision regarding expansion."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Regarding expansion, a decision was made by analyzing the data."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q60-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Correct the placement of a limiting modifier (only).</p><p>She only <u>told</u> the director about the change.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "She told only the director about the change."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Only she told the director about the change."
+                },
+                {
+                    "id": "C",
+                    "label_html": "She told the only director about the change."
+                },
+                {
+                    "id": "D",
+                    "label_html": "She told the director about only the change."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Usage – Modifier Placement"
+            }
+        },
+        {
+            "id": "eng-q61-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence that avoids awkward repetition.</p><p>We will plan a plan for the event.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "We will plan a plan for the event."
+                },
+                {
+                    "id": "B",
+                    "label_html": "We will make plans to plan the event."
+                },
+                {
+                    "id": "C",
+                    "label_html": "We will plan the event."
+                },
+                {
+                    "id": "D",
+                    "label_html": "We will be planning plans for the event."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q62-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Fix the ambiguous pronoun reference.</p><p>When Leah spoke to Mia about her project, she was excited.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Leah was excited when she spoke to Mia about her project."
+                },
+                {
+                    "id": "B",
+                    "label_html": "When Leah spoke to Mia about Mia's project, Leah was excited."
+                },
+                {
+                    "id": "C",
+                    "label_html": "When Leah spoke to Mia about the project, Leah was excited."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Speaking to Mia about her project was exciting."
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Pronoun Reference"
+            }
+        },
+        {
+            "id": "eng-q63-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct punctuation with titles.</p><p>Have you read <u>\"The Moths Journey\"</u> for class?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Have you read \"The Moths Journey\" for class?"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Have you read \"The Moth's Journey\" for class?"
+                },
+                {
+                    "id": "C",
+                    "label_html": "Have you read \"The Moths' Journey\" for class?"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Have you read \"The Moths Journey,\" for class?"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Apostrophes/Titles"
+            }
+        },
+        {
+            "id": "eng-q64-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Simplify wordy expressions.</p><p>Due to the fact that the roads were icy, school was closed.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Because the roads were icy, school was closed."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Due to the fact that the roads were icy, school was closed."
+                },
+                {
+                    "id": "C",
+                    "label_html": "On account of the fact of icy roads, school was closed."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Seeing as how the roads were icy, school was closed."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q65-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose correct verb form after a singular subject joined by \"as well as.\"</p><p>The photographer as well as the editor <u>are</u> arriving at noon.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "are"
+                },
+                {
+                    "id": "B",
+                    "label_html": "were"
+                },
+                {
+                    "id": "C",
+                    "label_html": "is"
+                },
+                {
+                    "id": "D",
+                    "label_html": "have been"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Agreement"
+            }
+        },
+        {
+            "id": "eng-q66-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Avoid informal diction in formal writing.</p><p>The results were <u>kind of</u> surprising.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "kind of"
+                },
+                {
+                    "id": "B",
+                    "label_html": "somewhat"
+                },
+                {
+                    "id": "C",
+                    "label_html": "sort of"
+                },
+                {
+                    "id": "D",
+                    "label_html": "kinda"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Style/Tone"
+            }
+        },
+        {
+            "id": "eng-q67-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select correct comma usage with direct address.</p><p>Could you, Maria pass the salt?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Could you Maria, pass the salt?"
+                },
+                {
+                    "id": "B",
+                    "label_html": "Could you, Maria, pass the salt?"
+                },
+                {
+                    "id": "C",
+                    "label_html": "Could, you Maria pass the salt?"
+                },
+                {
+                    "id": "D",
+                    "label_html": "Could you Maria pass, the salt?"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Commas/Direct Address"
+            }
+        },
+        {
+            "id": "eng-q68-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Avoid choppy sentences by appropriate coordination.</p><p>The wind howled. The windows rattled. The cat hid.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The wind howled, the windows rattled, the cat hid."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The wind howled and the windows rattled; the cat hid."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The wind howled, and the windows rattled, and the cat hid."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Howling wind, rattling windows, the cat hid."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Coordination"
+            }
+        },
+        {
+            "id": "eng-q69-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Avoid vague demonstratives.</p><p>Many believe that technology can isolate people; <u>this</u> is harmful.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "this"
+                },
+                {
+                    "id": "B",
+                    "label_html": "this trend"
+                },
+                {
+                    "id": "C",
+                    "label_html": "this thing"
+                },
+                {
+                    "id": "D",
+                    "label_html": "this situation here"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Usage – Precise Language"
+            }
+        },
+        {
+            "id": "eng-q70-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select correct punctuation with conjunction adverbs.</p><p>We missed the bus, however we arrived on time.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "We missed the bus; however, we arrived on time."
+                },
+                {
+                    "id": "B",
+                    "label_html": "We missed the bus however, we arrived on time."
+                },
+                {
+                    "id": "C",
+                    "label_html": "We missed the bus, however, we arrived on time."
+                },
+                {
+                    "id": "D",
+                    "label_html": "We missed the bus however we arrived on time."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Punctuation – Semicolons/Commas"
+            }
+        },
+        {
+            "id": "eng-q71-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Avoid cliché and maintain formal tone.</p><p>The plan worked like a charm, and everyone was super happy.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "The plan worked like a charm, and everyone was super happy."
+                },
+                {
+                    "id": "B",
+                    "label_html": "The plan was effective, and everyone was very pleased."
+                },
+                {
+                    "id": "C",
+                    "label_html": "The plan worked magically, and everyone was super-duper happy."
+                },
+                {
+                    "id": "D",
+                    "label_html": "The plan worked; like a charm everyone was happy."
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Style/Tone"
+            }
+        },
+        {
+            "id": "eng-q72-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Choose precise diction.</p><p>The instructions were <u>basically</u> unclear.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "basically"
+                },
+                {
+                    "id": "B",
+                    "label_html": "somewhat"
+                },
+                {
+                    "id": "C",
+                    "label_html": "unclear"
+                },
+                {
+                    "id": "D",
+                    "label_html": "not that clear"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Usage – Word Choice"
+            }
+        },
+        {
+            "id": "eng-q73-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Avoid faulty logic in comparisons.</p><p>Our town's library is larger than <u>the neighboring city</u>.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "the neighboring city's library"
+                },
+                {
+                    "id": "B",
+                    "label_html": "the library of the neighboring city has"
+                },
+                {
+                    "id": "C",
+                    "label_html": "the neighboring city"
+                },
+                {
+                    "id": "D",
+                    "label_html": "the neighboring city's"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Grammar – Logical Comparison"
+            }
+        },
+        {
+            "id": "eng-q74-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Simplify to avoid wordiness and maintain clarity.</p><p>It is important to note that students should submit their assignments by Friday.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "Students should submit their assignments by Friday."
+                },
+                {
+                    "id": "B",
+                    "label_html": "It is important to note that by Friday students should submit their assignments."
+                },
+                {
+                    "id": "C",
+                    "label_html": "Students should, by Friday, submit their assignments, it is important to note."
+                },
+                {
+                    "id": "D",
+                    "label_html": "Assignments, by Friday, are to be submitted, it is important to note."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Rhetorical Skills – Concision"
+            }
+        },
+        {
+            "id": "eng-q75-m1",
+            "section_id": "english",
+            "module_id": "eng-m1",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the sentence that corrects the misplaced modifier.</p><p>She nearly drove her kids to school every day.</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "She drove her kids to school nearly every day."
+                },
+                {
+                    "id": "B",
+                    "label_html": "Nearly she drove her kids to school every day."
+                },
+                {
+                    "id": "C",
+                    "label_html": "She drove nearly her kids to school every day."
+                },
+                {
+                    "id": "D",
+                    "label_html": "She drove her kids nearly to school every day."
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 1,
+            "tags": {
+                "domain": "English",
+                "skill": "Sentence Structure – Modifiers"
+            }
+        }
+    ]
+}

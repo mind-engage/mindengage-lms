@@ -1,0 +1,611 @@
+{
+    "id": "sat-math-001",
+    "title": "SAT Practice – Full Length",
+    "profile": "sat.v1",
+    "policy": {
+      "sections": [
+        {
+          "id": "math",
+          "title": "Math",
+          "modules": [
+            { "id": "math-m1", "time_limit_sec": 2580 },
+            { "id": "math-m2", "time_limit_sec": 2580 }
+          ]
+        }
+      ],
+      "navigation": { "allow_back": false, "module_locked": true },
+      "calculator": { "allowed_sections": ["math"], "policy": "desmos", "allow_keypad": true },
+      "scoring": { "raw_to_scale": "sat.v1.scale", "penalty": 0 },
+      "item_constraints": {
+        "math": { "mcq_single": { "choices": 4 } }
+      },
+      "proctor": { "screenshot": false, "camera": false },
+      "meta": { "version": "gen-1" }
+    },
+    "questions": [
+      {
+        "id": "math-q01-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>If 2x + 5 = 11, what is the value of x?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>2</p>"},
+          {"id":"B","label_html":"<p>3</p>"},
+          {"id":"C","label_html":"<p>6</p>"},
+          {"id":"D","label_html":"<p>8</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Linear Equations"}
+      },
+      {
+        "id": "math-q02-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>A rectangular garden is 10 meters long and 5 meters wide. What is the area of the garden in square meters?</p>",
+        "answer_key": ["50"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q03-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>What is 20% of 150?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>20</p>"},
+          {"id":"B","label_html":"<p>25</p>"},
+          {"id":"C","label_html":"<p>30</p>"},
+          {"id":"D","label_html":"<p>40</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Ratios & Percents"}
+      },
+      {
+        "id": "math-q04-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The figure shows a line in the xy-plane. What is the slope of the line?</p><svg width=\"200\" height=\"200\" viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"100\" y1=\"0\" x2=\"100\" y2=\"200\" stroke=\"#ccc\" stroke-width=\"1\"/><line x1=\"0\" y1=\"100\" x2=\"200\" y2=\"100\" stroke=\"#ccc\" stroke-width=\"1\"/><line x1=\"0\" y1=\"160\" x2=\"200\" y2=\"60\" stroke=\"black\" stroke-width=\"2\"/><text x=\"190\" y=\"95\" font-size=\"12\">x</text><text x=\"105\" y=\"10\" font-size=\"12\">y</text></svg>",
+        "choices": [
+          {"id":"A","label_html":"<p>2</p>"},
+          {"id":"B","label_html":"<p>-2</p>"},
+          {"id":"C","label_html":"<p>1/2</p>"},
+          {"id":"D","label_html":"<p>-1/2</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Functions"}
+      },
+      {
+        "id": "math-q05-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>If f(x) = 3x - 7, what is the value of f(4)?</p>",
+        "answer_key": ["5"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Functions"}
+      },
+      {
+        "id": "math-q06-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>A bag contains 5 red marbles, 3 blue marbles, and 2 green marbles. If a marble is drawn at random, what is the probability that it is blue?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>1/10</p>"},
+          {"id":"B","label_html":"<p>1/5</p>"},
+          {"id":"C","label_html":"<p>3/10</p>"},
+          {"id":"D","label_html":"<p>1/3</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Statistics/Probability"}
+      },
+      {
+        "id": "math-q07-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>A car travels at a constant speed of 60 miles per hour. How many miles does it travel in 2.5 hours?</p>",
+        "answer_key": ["150"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Ratios & Percents"}
+      },
+      {
+        "id": "math-q08-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following is equivalent to the expression (2a + 3b) - (a - 2b)?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>a + b</p>"},
+          {"id":"B","label_html":"<p>a + 5b</p>"},
+          {"id":"C","label_html":"<p>3a + b</p>"},
+          {"id":"D","label_html":"<p>3a + 5b</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Algebraic Manipulation"}
+      },
+      {
+        "id": "math-q09-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>The sum of two consecutive integers is 37. What is the value of the smaller integer?</p>",
+        "answer_key": ["18"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Linear Equations"}
+      },
+      {
+        "id": "math-q10-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>In the right triangle shown, what is the length of the hypotenuse AC?</p><svg width=\"180\" height=\"150\" viewBox=\"0 0 180 150\" xmlns=\"http://www.w3.org/2000/svg\"><polyline points=\"20,130 20,30 140,130 20,130\" fill=\"none\" stroke=\"black\" stroke-width=\"2\"/><rect x=\"20\" y=\"30\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"black\"/><text x=\"10\" y=\"140\" font-size=\"12\">B</text><text x=\"10\" y=\"28\" font-size=\"12\">A</text><text x=\"142\" y=\"140\" font-size=\"12\">C</text><text x=\"5\" y=\"85\" font-size=\"12\">5</text><text x=\"75\" y=\"145\" font-size=\"12\">12</text></svg>",
+        "choices": [
+          {"id":"A","label_html":"<p>13</p>"},
+          {"id":"B","label_html":"<p>14</p>"},
+          {"id":"C","label_html":"<p>15</p>"},
+          {"id":"D","label_html":"<p>17</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q11-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>A store offers a 30% discount on a shirt that originally costs $40. What is the price of the shirt after the discount?</p>",
+        "answer_key": ["28"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Ratios & Percents"}
+      },
+      {
+        "id": "math-q12-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>If y = kx and y=10 when x=4, what is the value of y when x=6?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>12</p>"},
+          {"id":"B","label_html":"<p>14</p>"},
+          {"id":"C","label_html":"<p>15</p>"},
+          {"id":"D","label_html":"<p>18</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Linear Equations"}
+      },
+      {
+        "id": "math-q13-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>The average (arithmetic mean) of three numbers is 20. If two of the numbers are 15 and 22, what is the third number?</p>",
+        "answer_key": ["23"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Statistics/Probability"}
+      },
+      {
+        "id": "math-q14-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following points is a solution to the system of inequalities?<br>y > 2x - 1<br>y &le; -x + 4</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>(3, 2)</p>"},
+          {"id":"B","label_html":"<p>(0, 5)</p>"},
+          {"id":"C","label_html":"<p>(2, 1)</p>"},
+          {"id":"D","label_html":"<p>(1, 2)</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Linear Inequalities"}
+      },
+      {
+        "id": "math-q15-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>A circle has a radius of 4. What is its area? (Enter the answer in terms of &pi;, for example 16pi)</p>",
+        "answer_key": ["16pi"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q16-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>If (x - 2)<sup>2</sup> = 49, which of the following could be the value of x?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>-5</p>"},
+          {"id":"B","label_html":"<p>-7</p>"},
+          {"id":"C","label_html":"<p>5</p>"},
+          {"id":"D","label_html":"<p>7</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Quadratic Equations"}
+      },
+      {
+        "id": "math-q17-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>A company's profits increased by 10% from 2021 to 2022 and then decreased by 5% from 2022 to 2023. If the profit in 2021 was $200,000, what was the profit in 2023? (Enter your answer in dollars, without commas).</p>",
+        "answer_key": ["209000"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Ratios & Percents"}
+      },
+      {
+        "id": "math-q18-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The function h is defined by h(t) = -16t<sup>2</sup> + 64t. What is the maximum value of h?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>16</p>"},
+          {"id":"B","label_html":"<p>32</p>"},
+          {"id":"C","label_html":"<p>64</p>"},
+          {"id":"D","label_html":"<p>128</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Quadratic/Exponential"}
+      },
+      {
+        "id": "math-q19-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>In the xy-plane, the line with equation y = 2x + b passes through the point (3, 10). What is the value of b?</p>",
+        "answer_key": ["4"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Linear Equations"}
+      },
+      {
+        "id": "math-q20-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>A survey of 200 students found that 120 students own a bike, 80 students own a skateboard, and 30 students own both. How many students own neither a bike nor a skateboard?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>10</p>"},
+          {"id":"B","label_html":"<p>20</p>"},
+          {"id":"C","label_html":"<p>30</p>"},
+          {"id":"D","label_html":"<p>50</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Statistics/Probability"}
+      },
+      {
+        "id": "math-q21-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "numeric",
+        "prompt_html": "<p>If i = &radic;(-1), what is the value of (3 + 2i)(4 - i)? (Enter your answer in the form a+bi)</p>",
+        "answer_key": ["14+5i"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Complex Numbers"}
+      },
+      {
+        "id": "math-q22-m1",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>A sphere has a volume of 36&pi; cubic centimeters. What is the radius of the sphere?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>2</p>"},
+          {"id":"B","label_html":"<p>3</p>"},
+          {"id":"C","label_html":"<p>4</p>"},
+          {"id":"D","label_html":"<p>6</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q01-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>If 3(x - 1) = 18, what is the value of x?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>5</p>"},
+          {"id":"B","label_html":"<p>6</p>"},
+          {"id":"C","label_html":"<p>7</p>"},
+          {"id":"D","label_html":"<p>8</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Linear Equations"}
+      },
+      {
+        "id": "math-q02-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>What is the value of 8<sup>2/3</sup>?</p>",
+        "answer_key": ["4"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Algebraic Manipulation"}
+      },
+      {
+        "id": "math-q03-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>The price of a computer is $800. If the sales tax is 7.5%, what is the total cost of the computer?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>$807.50</p>"},
+          {"id":"B","label_html":"<p>$860.00</p>"},
+          {"id":"C","label_html":"<p>$875.00</p>"},
+          {"id":"D","label_html":"<p>$950.00</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Ratios & Percents"}
+      },
+      {
+        "id": "math-q04-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>In the figure, line L is parallel to line M. What is the value of x?</p><svg width=\"250\" height=\"150\" viewBox=\"0 0 250 150\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"0\" y1=\"40\" x2=\"250\" y2=\"40\" stroke=\"black\" stroke-width=\"2\"/><line x1=\"0\" y1=\"110\" x2=\"250\" y2=\"110\" stroke=\"black\" stroke-width=\"2\"/><line x1=\"50\" y1=\"10\" x2=\"200\" y2=\"140\" stroke=\"#555\" stroke-width=\"2\"/><text x=\"10\" y=\"35\" font-size=\"14\">L</text><text x=\"10\" y=\"105\" font-size=\"14\">M</text><text x=\"100\" y=\"35\" font-size=\"14\">115°</text><text x=\"145\" y=\"105\" font-size=\"14\">x°</text></svg>",
+        "choices": [
+          {"id":"A","label_html":"<p>55</p>"},
+          {"id":"B","label_html":"<p>65</p>"},
+          {"id":"C","label_html":"<p>75</p>"},
+          {"id":"D","label_html":"<p>115</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q05-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>If f(x) = x<sup>2</sup> + 3x - 5, what is the value of f(-2)?</p>",
+        "answer_key": ["-7"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Functions"}
+      },
+      {
+        "id": "math-q06-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>The data set is: 5, 8, 12, 12, 15, 20. What is the median of the data set?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>10</p>"},
+          {"id":"B","label_html":"<p>11</p>"},
+          {"id":"C","label_html":"<p>12</p>"},
+          {"id":"D","label_html":"<p>13.5</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Statistics/Probability"}
+      },
+      {
+        "id": "math-q07-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>A cylindrical tank has a radius of 5 meters and a height of 10 meters. What is the volume of the tank in cubic meters? (Enter the answer in terms of &pi;, for example 100pi)</p>",
+        "answer_key": ["250pi"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q08-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>x + 2y = 8<br>3x - y = 3<br>For the system of equations above, what is the value of x?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>1</p>"},
+          {"id":"B","label_html":"<p>2</p>"},
+          {"id":"C","label_html":"<p>3</p>"},
+          {"id":"D","label_html":"<p>4</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Systems of Equations"}
+      },
+      {
+        "id": "math-q09-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>A population of bacteria doubles every 20 minutes. If the initial population is 100, what will the population be after 2 hours?</p>",
+        "answer_key": ["6400"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Quadratic/Exponential"}
+      },
+      {
+        "id": "math-q10-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>What are the solutions to the equation x<sup>2</sup> - 5x + 6 = 0?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>x = -2 and x = -3</p>"},
+          {"id":"B","label_html":"<p>x = 2 and x = 3</p>"},
+          {"id":"C","label_html":"<p>x = -1 and x = -6</p>"},
+          {"id":"D","label_html":"<p>x = 1 and x = 6</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Quadratic Equations"}
+      },
+      {
+        "id": "math-q11-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>The length of a rectangle is 3 more than twice its width. If the perimeter of the rectangle is 60, what is the width?</p>",
+        "answer_key": ["9"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q12-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>A line in the xy-plane passes through the points (1, 4) and (3, 8). Which of the following is an equation of the line?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>y = 2x + 2</p>"},
+          {"id":"B","label_html":"<p>y = x + 3</p>"},
+          {"id":"C","label_html":"<p>y = 2x - 2</p>"},
+          {"id":"D","label_html":"<p>y = 4x</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Linear Equations"}
+      },
+      {
+        "id": "math-q13-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>If sin(x) = 0.6, and x is an acute angle, what is the value of cos(x)? (Enter your answer as a decimal)</p>",
+        "answer_key": ["0.8"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Trigonometry"}
+      },
+      {
+        "id": "math-q14-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>The graph of y = f(x) is shown. How many x-intercepts does the graph have?</p><svg width=\"220\" height=\"180\" viewBox=\"0 0 220 180\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"10\" y1=\"0\" x2=\"10\" y2=\"180\" stroke=\"#ccc\" stroke-width=\"1\"/><line x1=\"0\" y1=\"90\" x2=\"220\" y2=\"90\" stroke=\"#ccc\" stroke-width=\"1\"/><path d=\"M 20 140 C 60 10, 150 170, 210 50\" fill=\"none\" stroke=\"blue\" stroke-width=\"2\"/><text x=\"210\" y=\"85\" font-size=\"12\">x</text><text x=\"15\" y=\"10\" font-size=\"12\">y</text></svg>",
+        "choices": [
+          {"id":"A","label_html":"<p>0</p>"},
+          {"id":"B","label_html":"<p>1</p>"},
+          {"id":"C","label_html":"<p>2</p>"},
+          {"id":"D","label_html":"<p>3</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Functions"}
+      },
+      {
+        "id": "math-q15-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>The equation of a circle in the xy-plane is (x - 3)<sup>2</sup> + (y + 4)<sup>2</sup> = 25. What is the radius of the circle?</p>",
+        "answer_key": ["5"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q16-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>If f(x) = 2x + 1 and g(x) = x<sup>2</sup>, what is f(g(3))?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>7</p>"},
+          {"id":"B","label_html":"<p>13</p>"},
+          {"id":"C","label_html":"<p>19</p>"},
+          {"id":"D","label_html":"<p>49</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Functions"}
+      },
+      {
+        "id": "math-q17-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>An investment of $1,000 earns 5% annual interest, compounded annually. What is the total value of the investment after 3 years? (Round your answer to the nearest cent)</p>",
+        "answer_key": ["1157.63"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Quadratic/Exponential"}
+      },
+      {
+        "id": "math-q18-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>A right circular cone has a height of 12 and a base radius of 5. What is the volume of the cone?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>60&pi;</p>"},
+          {"id":"B","label_html":"<p>100&pi;</p>"},
+          {"id":"C","label_html":"<p>240&pi;</p>"},
+          {"id":"D","label_html":"<p>300&pi;</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q19-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>In a school of 800 students, the ratio of students who play a sport to students who do not is 3 to 5. How many students play a sport?</p>",
+        "answer_key": ["300"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Ratios & Percents"}
+      },
+      {
+        "id": "math-q20-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following expressions is equivalent to (x<sup>6</sup>y<sup>4</sup>)<sup>1/2</sup> / (x<sup>-2</sup>y)?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>x<sup>5</sup>y</p>"},
+          {"id":"B","label_html":"<p>x y<sup>3</sup></p>"},
+          {"id":"C","label_html":"<p>x<sup>4</sup>y</p>"},
+          {"id":"D","label_html":"<p>x<sup>5</sup>y<sup>2</sup></p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Algebraic Manipulation"}
+      },
+      {
+        "id": "math-q21-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "numeric",
+        "prompt_html": "<p>The sum of the measures of the interior angles of a polygon is 1080 degrees. How many sides does the polygon have?</p>",
+        "answer_key": ["8"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Geometry"}
+      },
+      {
+        "id": "math-q22-m2",
+        "section_id": "math",
+        "module_id": "math-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>A parabola in the xy-plane has vertex (3, -2) and opens upward. Which of the following could be an equation for the parabola?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>y = (x + 3)<sup>2</sup> - 2</p>"},
+          {"id":"B","label_html":"<p>y = (x - 3)<sup>2</sup> + 2</p>"},
+          {"id":"C","label_html":"<p>y = -(x - 3)<sup>2</sup> - 2</p>"},
+          {"id":"D","label_html":"<p>y = (x - 3)<sup>2</sup> - 2</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"Math","skill":"Quadratic/Exponential"}
+      }
+    ]
+  }
