@@ -1,11 +1,41 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+// REMOVED: No more Grid import is necessary.
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Stack,
+  LinearProgress,
+  Chip,
+  Divider,
+  IconButton,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  ToggleButtonGroup,
+  ToggleButton,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-// === MindEngage • Student (UX Refresh) ===
-// One-file component with improved flow, layout, and styling.
-// - Clear 3-step journey: Sign in → Load exam → Take & submit
-// - Sticky action bar, question navigator, progress, timer, autosave
-// - Better empty states & error handling
-// - TailwindCSS for all styling (no extra imports)
 
 const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8080";
 
@@ -48,90 +78,204 @@ function htmlify(s?: string) {
   return { __html: s || "" };
 }
 
-function classNames(...arr: Array<string | false | null | undefined>) {
-  return arr.filter(Boolean).join(" ");
+function formatTime(s?: number | null) {
+  if (s == null) return "--:--";
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
 }
 
-// -------------------- Main --------------------
-export default function StudentExamApp() {
-  // auth
-  const [jwt, setJwt] = useState("");
-  const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
+// -------------------- Shared Shell --------------------
+function Shell({
+  children,
+  authed,
+  onSignOut,
+  attempt,
+  progressPct,
+  timer,
+  title,
+}: {
+  children: React.ReactNode;
+  authed: boolean;
+  onSignOut?: () => void;
+  attempt?: Attempt | null;
+  progressPct?: number;
+  timer?: string | null;
+  title?: string;
+}) {
+  return (
+    <>
+      <AppBar position="sticky" color="inherit" elevation={1} sx={{ backdropFilter: "saturate(180%) blur(6px)", background: "rgba(255,255,255,0.9)" }}>
+        <Toolbar>
+          <Box sx={{ width: 10, height: 10, bgcolor: "primary.main", borderRadius: 2, mr: 1.5 }} />
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>MindEngage • Student</Typography>
+          {title && (
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2, display: { xs: "none", md: "block" } }}>{title}</Typography>
+          )}
+          <Box sx={{ flexGrow: 1 }} />
+          {attempt && typeof progressPct === "number" && (
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mr: 2, display: { xs: "none", sm: "flex" } }}>
+              <Typography variant="body2" color="text.secondary">Progress</Typography>
+              <Box sx={{ width: 160 }}>
+                <LinearProgress variant="determinate" value={Math.round(progressPct)} />
+              </Box>
+              <Chip size="small" label={`${Math.round(progressPct)}%`} />
+            </Stack>
+          )}
+          {attempt && timer && (
+            <Chip label={`⏱ ${timer}`} variant="outlined" sx={{ mr: 2 }} />
+          )}
+          {authed && onSignOut && (
+            <IconButton onClick={onSignOut} color="primary" aria-label="sign out">
+              <LogoutIcon />
+            </IconButton>
+          )}
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="lg" sx={{ py: 4 }}>{children}</Container>
+    </>
+  );
+}
+
+function useSnack() {
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  return {
+    msg,
+    err,
+    setMsg,
+    setErr,
+    node: (
+      <>
+        <Snackbar open={!!msg} autoHideDuration={3000} onClose={() => setMsg(null)} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+          <Alert severity="info" variant="filled" onClose={() => setMsg(null)}>{msg}</Alert>
+        </Snackbar>
+        <Snackbar open={!!err} autoHideDuration={4500} onClose={() => setErr(null)} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+          <Alert severity="error" variant="filled" onClose={() => setErr(null)}>{err}</Alert>
+        </Snackbar>
+      </>
+    ),
+  } as const;
+}
+
+// -------------------- Screen 1: Login --------------------
+function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string, r: "student" | "teacher" | "admin") => void; }) {
   const [username, setUsername] = useState("student");
   const [password, setPassword] = useState("student");
+  const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
 
-  // exam state
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    onLogin(username, password, role);
+  }
+
+  return (
+    <Shell authed={false} title="Sign in">
+      {/* REPLACED: Grid with Stack and Box */}
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+        <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%`, lg: '50%' } }}>
+          <Paper elevation={1} sx={{ p: 3 }}>
+            <Typography variant="h5" fontWeight={600}>Sign in</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Use your test credentials to continue.</Typography>
+            <Box component="form" onSubmit={submit} sx={{ mt: 2 }}>
+              <Stack spacing={2}>
+                <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth />
+                <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
+                <FormControl fullWidth>
+                  <InputLabel id="role-lbl">Role</InputLabel>
+                  <Select labelId="role-lbl" label="Role" value={role} onChange={(e) => setRole(e.target.value as any)}>
+                    <MenuItem value="student">student</MenuItem>
+                    <MenuItem value="teacher">teacher</MenuItem>
+                    <MenuItem value="admin">admin</MenuItem>
+                  </Select>
+                </FormControl>
+                <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
+              </Stack>
+            </Box>
+          </Paper>
+        </Box>
+        <Box sx={{ width: { xs: '100%', md: `${(5 / 12) * 100}%`, lg: '50%' } }}>
+          <Paper elevation={0} sx={{ p: 3, height: "100%" }}>
+            <Typography variant="subtitle1" fontWeight={600}>Three-step flow</Typography>
+            <Box component="ol" sx={{ mt: 1.5, pl: 3 }}>
+              <li>Sign in</li>
+              <li>Select exam or assignment</li>
+              <li>Take the exam and submit</li>
+            </Box>
+          </Paper>
+        </Box>
+      </Stack>
+    </Shell>
+  );
+}
+
+// -------------------- Screen 2: Select --------------------
+function SelectScreen({ onBack, onLoadExam }: { onBack: () => void; onLoadExam: (id: string) => void; }) {
   const [examId, setExamId] = useState("exam-101");
-  const [exam, setExam] = useState<Exam | null>(null);
+
+  return (
+    <Shell authed={true} title="Select exam or assignment" onSignOut={onBack}>
+      {/* REPLACED: Grid with Stack and Box */}
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+        <Box sx={{ width: { xs: '100%', md: `${(8 / 12) * 100}%` } }}>
+          <Paper elevation={1} sx={{ p: 3 }}>
+            <Typography variant="h6" fontWeight={600}>Enter Exam ID</Typography>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "flex-end" }} sx={{ mt: 2 }}>
+              <TextField label="Exam ID" value={examId} onChange={(e) => setExamId(e.target.value)} fullWidth />
+              <Button variant="contained" onClick={() => onLoadExam(examId)} disableElevation>Load</Button>
+            </Stack>
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>Example: <Box component="code" sx={{ px: 0.5, py: 0.25, bgcolor: "action.hover", borderRadius: 1 }}>exam-101</Box></Typography>
+          </Paper>
+        </Box>
+        <Box sx={{ width: { xs: '100%', md: `${(4 / 12) * 100}%` } }}>
+          <Paper elevation={1} sx={{ p: 3 }}>
+            <Typography fontWeight={600}>Recent (example)</Typography>
+            <Stack spacing={1.2} sx={{ mt: 1.5 }}>
+              {["exam-101", "exam-physics", "assignment-essay"].map((id) => (
+                <Button key={id} variant="outlined" onClick={() => onLoadExam(id)}>{id}</Button>
+              ))}
+            </Stack>
+          </Paper>
+        </Box>
+      </Stack>
+    </Shell>
+  );
+}
+
+// -------------------- Screen 3: Exam --------------------
+function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: () => void; }) {
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [responses, setResponses] = useState<Record<string, any>>({});
-
-  // ui state
   const [busy, setBusy] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [currentQ, setCurrentQ] = useState(0);
   const [uploading, setUploading] = useState(false);
-
-  // timer
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const timerRef = useRef<number | null>(null);
-  const [showConfirm, setShowConfirm] = useState(false);
 
-  const authed = useMemo(() => Boolean(jwt), [jwt]);
+  const total = exam?.questions.length ?? 0;
+  const answered = useMemo(() => {
+    if (!exam) return 0;
+    return exam.questions.reduce((n, q) => (responses[q.id] == null || responses[q.id] === "" || (Array.isArray(responses[q.id]) && responses[q.id].length === 0) ? n : n + 1), 0);
+  }, [exam, responses]);
+  const progressPct = total ? (answered / total) * 100 : 0;
 
-  // -------------- Actions --------------
-  async function login(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true); setError(null); setToast(null);
-    try {
-      const data = await api<{ access_token: string }>("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, role }),
-      });
-      setJwt(data.access_token);
-      setToast("Logged in.");
-    } catch (err: any) {
-      setError(err.message);
-    } finally { setBusy(false); }
-  }
+  const snack = useSnack();
 
-  async function fetchExam() {
-    if (!examId) return;
-    setBusy(true); setError(null); setToast(null);
-    try {
-      const data = await api<Exam>(`/exams/${encodeURIComponent(examId)}`, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
-      setExam(data);
-      setResponses({});
-      setAttempt(null);
-      setCurrentQ(0);
-      setToast("Exam loaded.");
-    } catch (err: any) {
-      setError(err.message);
-    } finally { setBusy(false); }
-  }
-
+  // actions
   async function startAttempt() {
-    if (!exam) return;
-    setBusy(true); setError(null); setToast(null);
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
       const data = await api<Attempt>("/attempts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify({ exam_id: exam.id, user_id: username || "student" }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify({ exam_id: exam.id, user_id: "student" }),
       });
       setAttempt(data);
-      setToast(`Attempt ${data.id} started.`);
-      // local timer starts when attempt starts (best-effort)
+      snack.setMsg(`Attempt ${data.id} started.`);
       if (exam.time_limit_sec) setSecondsLeft(exam.time_limit_sec);
     } catch (err: any) {
-      setError(err.message);
+      snack.setErr(err.message);
     } finally { setBusy(false); }
   }
 
@@ -143,31 +287,30 @@ export default function StudentExamApp() {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
         body: JSON.stringify(responses),
       });
-      if (manual) setToast("Responses saved.");
+      if (manual) snack.setMsg("Responses saved.");
     } catch (err: any) {
-      setError(err.message);
+      snack.setErr(err.message);
     }
   }
 
   async function submitAttempt() {
     if (!attempt) return;
-    //if (!confirm("Submit now? You won’t be able to edit after submitting.")) return;
-    setBusy(true); setError(null); setToast(null);
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
       const data = await api<Attempt>(`/attempts/${attempt.id}/submit`, {
         method: "POST",
         headers: { Authorization: `Bearer ${jwt}` },
       });
       setAttempt(data);
-      setToast(`Submitted. Score: ${data.score ?? 0}`);
+      snack.setMsg(`Submitted. Score: ${data.score ?? 0}`);
     } catch (err: any) {
-      setError(err.message);
+      snack.setErr(err.message);
     } finally { setBusy(false); }
   }
 
   async function uploadAsset(file: File) {
-    if (!attempt) { setError("Start an attempt first."); return; }
-    setUploading(true); setError(null); setToast(null);
+    if (!attempt) { snack.setErr("Start an attempt first."); return; }
+    setUploading(true); snack.setErr(null); snack.setMsg(null);
     try {
       const form = new FormData();
       form.append("file", file);
@@ -178,45 +321,24 @@ export default function StudentExamApp() {
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setToast(`Uploaded: ${data.key}`);
+      snack.setMsg(`Uploaded: ${data.key}`);
     } catch (err: any) {
-      setError(err.message);
+      snack.setErr(err.message);
     } finally { setUploading(false); }
   }
 
-  function logout() {
-    setJwt("");
-    setExam(null);
-    setAttempt(null);
-    setResponses({});
-    setSecondsLeft(null);
-    setToast("Signed out.");
-  }
-
-
-  function handleSubmitClick() {
-    setShowConfirm(true);
-  }
-
-  async function handleConfirmSubmit() {
-    async function handleConfirmSubmit() {
-      setShowConfirm(false);
-      await submitAttempt(); // use your existing submit function
-    }
-  }
-
-  // -------------- Autosave (debounced) --------------
+  // autosave
   const respJsonRef = useRef("");
   useEffect(() => {
     if (!attempt) return;
     const s = JSON.stringify(responses);
     if (s === respJsonRef.current) return;
     respJsonRef.current = s;
-    const t = setTimeout(() => saveResponses(false), 1200); // 1.2s debounce
+    const t = setTimeout(() => saveResponses(false), 1200);
     return () => clearTimeout(t);
   }, [responses, attempt]);
 
-  // -------------- Timer tick --------------
+  // timer
   useEffect(() => {
     if (secondsLeft == null) return;
     if (timerRef.current) window.clearInterval(timerRef.current);
@@ -225,7 +347,6 @@ export default function StudentExamApp() {
         if (prev == null) return prev;
         if (prev <= 1) {
           window.clearInterval(timerRef.current!);
-          // auto-submit when time is up (best-effort)
           submitAttempt();
           return 0;
         }
@@ -236,324 +357,262 @@ export default function StudentExamApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attempt?.id]);
 
-  // -------------- Render helpers --------------
   function setResp(qid: string, val: any) {
     setResponses((r) => ({ ...r, [qid]: val }));
   }
 
-  function renderQuestion(q: Question) {
-    const prompt = q.prompt_html || q.prompt || "";
+  function QuestionCard({ q, idx }: { q: Question; idx: number }) {
     const current = responses[q.id];
-    const index = exam?.questions.findIndex((x) => x.id === q.id) ?? 0;
-
     return (
-      <section key={q.id} className="rounded-2xl p-5 shadow mb-5 bg-white border border-gray-100">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="text-xs text-gray-500 mb-1">Q{index + 1} • {q.type.replace("_", "-")}{q.points ? `  ( ${q.points} pt )` : ""}</div>
-            <div className="prose max-w-none" dangerouslySetInnerHTML={htmlify(prompt)} />
-          </div>
-        </div>
+      <Paper variant="outlined" sx={{ p: 2.5 }}>
+        <Stack spacing={2}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="caption" color="text.secondary">
+              Q{idx + 1} • {q.type.replace("_", "-")}{q.points ? `  ( ${q.points} pt )` : ""}
+            </Typography>
+          </Stack>
+          <Box sx={{ "& p": { my: 0.5 } }} dangerouslySetInnerHTML={htmlify(q.prompt_html || q.prompt)} />
 
-        {/* Inputs by type */}
-        {q.type === "mcq_single" && (
-          <div className="mt-4 space-y-2">
-            {q.choices?.map((c) => (
-              <label key={c.id} className="flex items-center gap-3 cursor-pointer select-none">
-                <input type="radio" name={q.id} checked={current === c.id} onChange={() => setResp(q.id, c.id)} />
-                <span dangerouslySetInnerHTML={htmlify(c.label_html)} />
-              </label>
-            ))}
-          </div>
-        )}
+          {q.type === "mcq_single" && (
+            <RadioGroup value={current ?? ""} onChange={(e) => setResp(q.id, e.target.value)}>
+              {q.choices?.map((c) => (
+                <FormControlLabel key={c.id} value={c.id} control={<Radio />} label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />} />
+              ))}
+            </RadioGroup>
+          )}
 
-        {q.type === "mcq_multi" && (
-          <div className="mt-4 space-y-2">
-            {q.choices?.map((c) => {
-              const arr: string[] = Array.isArray(current) ? current : [];
-              const checked = arr.includes(c.id);
-              return (
-                <label key={c.id} className="flex items-center gap-3 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={(e) => {
+          {q.type === "true_false" && (
+            <RadioGroup value={current ?? ""} onChange={(e) => setResp(q.id, e.target.value)}>
+              {(["true", "false"] as const).map((v) => (
+                <FormControlLabel key={v} value={v} control={<Radio />} label={<span style={{ textTransform: "capitalize" }}>{v}</span>} />
+              ))}
+            </RadioGroup>
+          )}
+
+          {q.type === "mcq_multi" && (
+            <FormGroup>
+              {q.choices?.map((c) => {
+                const arr: string[] = Array.isArray(current) ? current : [];
+                const checked = arr.includes(c.id);
+                return (
+                  <FormControlLabel
+                    key={c.id}
+                    control={<Checkbox checked={checked} onChange={(e) => {
                       const next = new Set(arr);
                       if (e.target.checked) next.add(c.id); else next.delete(c.id);
                       setResp(q.id, Array.from(next));
-                    }}
+                    }} />}
+                    label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />}
                   />
-                  <span dangerouslySetInnerHTML={htmlify(c.label_html)} />
-                </label>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </FormGroup>
+          )}
 
-        {q.type === "true_false" && (
-          <div className="mt-4 flex gap-6">
-            {(["true", "false"] as Array<"true" | "false">).map((v) => (
-              <label key={v} className="flex items-center gap-3 cursor-pointer select-none">
-                <input type="radio" name={q.id} checked={current === v} onChange={() => setResp(q.id, v)} />
-                <span className="capitalize">{v}</span>
-              </label>
-            ))}
-          </div>
-        )}
+          {q.type === "short_word" && (
+            <TextField fullWidth placeholder="Your answer" value={current || ""} onChange={(e) => setResp(q.id, e.target.value)} />
+          )}
 
-        {q.type === "short_word" && (
-          <input
-            className="mt-4 w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Your answer"
-            value={current || ""}
-            onChange={(e) => setResp(q.id, e.target.value)}
-          />
-        )}
+          {q.type === "numeric" && (
+            <TextField type="number" fullWidth placeholder="0" value={current ?? ""} onChange={(e) => setResp(q.id, e.target.value)} />
+          )}
 
-        {q.type === "numeric" && (
-          <input
-            type="number"
-            className="mt-4 w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="0"
-            value={current ?? ""}
-            onChange={(e) => setResp(q.id, e.target.value)}
-          />
-        )}
-
-        {q.type === "essay" && (
-          <textarea
-            className="mt-4 w-full border rounded-xl px-3 py-2 min-h-[140px] focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Write your answer..."
-            value={current || ""}
-            onChange={(e) => setResp(q.id, e.target.value)}
-          />
-        )}
-      </section>
+          {q.type === "essay" && (
+            <TextField fullWidth multiline minRows={6} placeholder="Write your answer..." value={current || ""} onChange={(e) => setResp(q.id, e.target.value)} />
+          )}
+        </Stack>
+      </Paper>
     );
   }
 
-  // -------------- Layout --------------
-  const total = exam?.questions.length ?? 0;
-  const answered = useMemo(() => {
-    if (!exam) return 0;
-    return exam.questions.reduce((n, q) => (responses[q.id] == null || responses[q.id] === "" || (Array.isArray(responses[q.id]) && responses[q.id].length === 0) ? n : n + 1), 0);
-  }, [exam, responses]);
-
-  function formatTime(s?: number | null) {
-    if (s == null) return "--:--";
-    const m = Math.floor(s / 60);
-    const r = s % 60;
-    return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 text-gray-900">
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-indigo-600" />
-            <h1 className="font-semibold">MindEngage • Student</h1>
-          </div>
-          <div className="ml-auto flex items-center gap-3 text-sm">
-            {attempt && (
-              <div className="hidden sm:flex items-center gap-2 text-gray-600">
-                <span className="font-medium">Progress</span>
-                <div className="w-40 h-2 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-indigo-600" style={{ width: `${Math.round((answered / (total || 1)) * 100)}%` }} /></div>
-                <span>{answered}/{total}</span>
-              </div>
-            )}
-            {attempt && exam?.time_limit_sec ? (
-              <div className="px-3 py-1 rounded-lg border bg-white font-mono">⏱ {formatTime(secondsLeft)}</div>
-            ) : null}
-            {authed ? (
-              <button onClick={logout} className="px-3 py-1 rounded-lg border hover:bg-gray-50">Sign out</button>
-            ) : null}
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-[260px,1fr] gap-6">
+    <Shell authed={true} onSignOut={onExit} attempt={attempt} progressPct={progressPct} timer={formatTime(secondsLeft)} title={exam.title}>
+      {/* REPLACED: Grid with Stack and Box */}
+      <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3}>
         {/* Left rail */}
-        <aside className="hidden lg:block">
-          <div className="sticky top-20 space-y-4">
-            <div className="bg-white rounded-2xl shadow border p-4">
-              <div className="text-xs text-gray-500">Step</div>
-              <ol className="mt-2 text-sm space-y-2">
-                <li className={classNames("flex items-center gap-2", authed ? "text-gray-700" : "font-semibold")}>1. Sign in</li>
-                <li className={classNames("flex items-center gap-2", exam ? "text-gray-700" : "font-semibold")}>2. Load exam</li>
-                <li className={classNames("flex items-center gap-2", attempt ? "text-gray-700" : "font-semibold")}>3. Take & submit</li>
-              </ol>
-            </div>
+        <Box sx={{ width: { xs: '100%', lg: '25%' }, display: { xs: "none", lg: "block" } }}>
+          <Stack spacing={2} sx={{ position: "sticky", top: 88 }}>
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="caption" color="text.secondary">Step</Typography>
+              <Box component="ol" sx={{ mt: 1, pl: 2 }}>
+                <li>Sign in</li>
+                <li>Select exam</li>
+                <li><b>Take & submit</b></li>
+              </Box>
+            </Paper>
 
             {exam && attempt && (
-              <div className="bg-white rounded-2xl shadow border p-4">
-                <div className="text-sm font-medium mb-2">Questions</div>
-                <div className="grid grid-cols-5 gap-2">
+              <Paper variant="outlined" sx={{ p: 2 }}>
+                <Typography fontWeight={600} gutterBottom>Questions</Typography>
+                {/* REPLACED: Nested Grid with a flex-wrapping Box */}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -0.5 }}>
                   {exam.questions.map((q, idx) => {
-                    const done = responses[q.id] != null && responses[q.id] !== "" && (!Array.isArray(responses[q.id]) || responses[q.id].length > 0);
+                    const r = responses[q.id];
+                    const done = r != null && r !== "" && (!Array.isArray(r) || r.length > 0);
                     return (
-                      <button
-                        key={q.id}
-                        onClick={() => setCurrentQ(idx)}
-                        className={classNames(
-                          "aspect-square rounded-lg text-sm border flex items-center justify-center",
-                          currentQ === idx ? "bg-indigo-600 text-white border-indigo-600" : done ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-white hover:bg-gray-50"
-                        )}
-                        title={`Go to Q${idx + 1}`}
-                      >
-                        {idx + 1}
-                      </button>
+                      <Box key={q.id} sx={{ width: '25%', p: 0.5 }}>
+                        <Button fullWidth size="small" variant={currentQ === idx ? "contained" : (done ? "outlined" : "text")} onClick={() => setCurrentQ(idx)}>
+                          {idx + 1}
+                        </Button>
+                      </Box>
                     );
                   })}
-                </div>
-              </div>
+                </Box>
+              </Paper>
             )}
-          </div>
-        </aside>
+          </Stack>
+        </Box>
 
         {/* Right content */}
-        <section>
-          {!authed && (
-            <form onSubmit={login} className="bg-white rounded-2xl shadow p-6 border max-w-lg">
-              <h2 className="text-xl font-semibold">Sign in</h2>
-              <p className="text-sm text-gray-600 mt-1">Use your test credentials to continue.</p>
-              <div className="mt-4 grid gap-3">
-                <div>
-                  <label className="text-sm">Username</label>
-                  <input className="mt-1 w-full border rounded-xl px-3 py-2" value={username} onChange={(e) => setUsername(e.target.value)} />
-                </div>
-                <div>
-                  <label className="text-sm">Password</label>
-                  <input type="password" className="mt-1 w-full border rounded-xl px-3 py-2" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <div>
-                  <label className="text-sm">Role</label>
-                  <select className="mt-1 w-full border rounded-xl px-3 py-2" value={role} onChange={(e) => setRole(e.target.value as any)}>
-                    <option value="student">student</option>
-                    <option value="teacher">teacher</option>
-                    <option value="admin">admin</option>
-                  </select>
-                </div>
-                <button disabled={busy} className="bg-gray-900 text-white rounded-xl px-4 py-2">{busy ? "…" : "Login"}</button>
-              </div>
-            </form>
-          )}
+        <Box sx={{ width: { xs: '100%', lg: '75%' } }}>
+          <Paper elevation={1} sx={{ p: 3 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+              <Box>
+                <Typography variant="h6" fontWeight={600}>{exam.title}</Typography>
+                {exam.time_limit_sec ? (
+                  <Typography variant="caption" color="text.secondary">Time limit: {Math.round((exam.time_limit_sec || 0) / 60)} min</Typography>
+                ) : null}
+              </Box>
+              {!attempt ? (
+                <Button onClick={startAttempt} variant="contained" disableElevation>{busy ? "Starting…" : "Start Attempt"}</Button>
+              ) : (
+                <Typography variant="body2">Attempt: <Box component="span" sx={{ fontFamily: "monospace" }}>{attempt.id}</Box> • {attempt.status}</Typography>
+              )}
+            </Stack>
 
-          {authed && !exam && (
-            <div className="bg-white rounded-2xl shadow p-6 border max-w-lg">
-              <h2 className="text-xl font-semibold">Load an exam</h2>
-              <div className="mt-4 flex gap-2 items-end">
-                <div className="flex-1">
-                  <label className="text-sm">Exam ID</label>
-                  <input className="mt-1 w-full border rounded-xl px-3 py-2" value={examId} onChange={(e) => setExamId(e.target.value)} />
-                </div>
-                <button onClick={fetchExam} className="bg-indigo-600 text-white rounded-xl px-4 py-2">Load</button>
-              </div>
-              <p className="text-xs text-gray-500 mt-3">Example: <code className="px-1.5 py-0.5 bg-gray-100 rounded">exam-101</code></p>
-            </div>
-          )}
+            {attempt && (
+              <Box sx={{ mt: 3 }}>
+                {/* Mobile question nav */}
+                <Box sx={{ display: { lg: "none" }, mb: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="jump-q">Jump to question</InputLabel>
+                    <Select labelId="jump-q" label="Jump to question" value={currentQ} onChange={(e) => setCurrentQ(Number(e.target.value))}>
+                      {exam.questions.map((q, idx) => (
+                        <MenuItem key={q.id} value={idx}>Q{idx + 1}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
 
-          {exam && (
-            <div className="bg-transparent">
-              <div className="bg-white rounded-2xl shadow p-6 border">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <h2 className="text-xl font-semibold">{exam.title}</h2>
-                    {exam.time_limit_sec ? (
-                      <div className="text-xs text-gray-500">Time limit: {Math.round((exam.time_limit_sec || 0) / 60)} min</div>
-                    ) : null}
-                  </div>
-                  {!attempt ? (
-                    <button onClick={startAttempt} className="bg-emerald-600 text-white rounded-xl px-4 py-2">Start Attempt</button>
-                  ) : (
-                    <div className="text-sm">Attempt: <span className="font-mono">{attempt.id}</span> • {attempt.status}</div>
-                  )}
-                </div>
+                <QuestionCard q={exam.questions[currentQ]} idx={currentQ} />
 
-                {attempt && (
-                  <div className="mt-6">
-                    {/* Mobile question nav */}
-                    <div className="lg:hidden mb-4">
-                      <label className="text-sm">Jump to question</label>
-                      <select
-                        className="mt-1 border rounded-xl px-3 py-2 w-full"
-                        value={currentQ}
-                        onChange={(e) => setCurrentQ(Number(e.target.value))}
-                      >
-                        {exam.questions.map((q, idx) => (
-                          <option key={q.id} value={idx}>Q{idx + 1}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Single-question view */}
-                    {renderQuestion(exam.questions[currentQ])}
-
-                    {/* Prev/Next */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="px-4 py-2 rounded-xl border hover:bg-gray-50"
-                        onClick={() => setCurrentQ((i) => Math.max(0, i - 1))}
-                        disabled={currentQ === 0}
-                      >
-                        ← Prev
-                      </button>
-                      <button
-                        className="px-4 py-2 rounded-xl border hover:bg-gray-50"
-                        onClick={() => setCurrentQ((i) => Math.min((exam.questions.length - 1), i + 1))}
-                        disabled={currentQ >= exam.questions.length - 1}
-                      >
-                        Next →
-                      </button>
-                      <div className="ml-auto text-sm text-gray-500">Answered {answered} of {total}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </section>
-      </main>
-
-      {/* Sticky action bar (only during attempt) */}
-      {attempt && (
-        <div className="sticky bottom-0 z-40 border-t bg-white/95 backdrop-blur">
-          <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap gap-2 items-center">
-            <div className="text-xs text-gray-600">Autosaves as you type.</div>
-            <button onClick={() => saveResponses(true)} className="ml-2 px-4 py-2 rounded-xl border hover:bg-gray-50">Save now</button>
-            <label className={classNames("cursor-pointer px-4 py-2 rounded-xl border", uploading ? "opacity-60" : "hover:bg-gray-50 ml-1") }>
-              <input type="file" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAsset(f); }} />
-              {uploading ? "Uploading…" : "Upload scan"}
-            </label>
-            <button onClick={handleSubmitClick} className="ml-auto bg-blue-600 text-white rounded-xl px-4 py-2">Submit</button>
-            {attempt?.score !== undefined && (
-              <div className="ml-3 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-800">Score: <b>{attempt.score}</b></div>
+                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
+                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(0, i - 1))} disabled={currentQ === 0}>← Prev</Button>
+                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.min((exam.questions.length - 1), i + 1))} disabled={currentQ >= exam.questions.length - 1}>Next →</Button>
+                  <Box sx={{ flexGrow: 1 }} />
+                  <Typography variant="caption" color="text.secondary">Answered {answered} of {total}</Typography>
+                </Stack>
+              </Box>
             )}
-          </div>
-        </div>
-      )}
+          </Paper>
 
-      {/* Toasts */}
-      {(toast || error) && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2">
-          <div className={classNames("rounded-xl shadow-xl px-4 py-2 text-sm", error ? "bg-red-600 text-white" : "bg-gray-900 text-white")}>
-            {error || toast}
-          </div>
-        </div>
-      )}
+          {/* Sticky actions */}
+          {attempt && (
+            <Paper elevation={3} sx={{ position: "sticky", bottom: 0, mt: 3, p: 1.5, borderRadius: 2 }}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>Autosaves as you type.</Typography>
+                <Button onClick={() => saveResponses(true)} variant="outlined">Save now</Button>
+                <Button component="label" variant="outlined" disabled={uploading}>
+                  {uploading ? "Uploading…" : "Upload scan"}
+                  <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAsset(f); }} />
+                </Button>
+                <Box sx={{ flexGrow: 1 }} />
+                <Button onClick={() => setConfirmOpen(true)} variant="contained" disableElevation>Submit</Button>
+                {attempt?.score !== undefined && (
+                  <Chip color="success" label={`Score: ${attempt.score}`} sx={{ ml: 1 }} />
+                )}
+              </Stack>
+            </Paper>
+          )}
+        </Box>
+      </Stack>
 
-    {showConfirm && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <p className="mb-4">Submit now? You won’t be able to edit after submitting.</p>
-          <div className="flex gap-3">
-            <button onClick={handleConfirmSubmit} className="bg-blue-600 text-white px-4 py-2 rounded-lg">Yes</button>
-            <button onClick={() => setShowConfirm(false)} className="border px-4 py-2 rounded-lg">Cancel</button>
-          </div>
-        </div>
-      </div>
-    )}
-    </div>
+      {/* Confirm submit */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Submit attempt?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Submit now? You won’t be able to edit after submitting.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={() => { setConfirmOpen(false); submitAttempt(); }} variant="contained" disableElevation>Yes, submit</Button>
+        </DialogActions>
+      </Dialog>
+
+      {snack.node}
+    </Shell>
+  );
+}
+
+// -------------------- Root App --------------------
+export default function StudentApp() {
+  type Screen = "login" | "select" | "exam";
+  const [screen, setScreen] = useState<Screen>("login");
+  const [jwt, setJwt] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [loadedExam, setLoadedExam] = useState<Exam | null>(null);
+  const snack = useSnack();
+
+  async function login(username: string, password: string, role: "student" | "teacher" | "admin") {
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<{ access_token: string }>("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, role }),
+      });
+      setJwt(data.access_token);
+      snack.setMsg("Logged in.");
+      setScreen("select");
+    } catch (err: any) {
+      snack.setErr(err.message);
+    } finally { setBusy(false); }
+  }
+
+  function signOut() {
+    setJwt("");
+    setLoadedExam(null);
+    setScreen("login");
+    snack.setMsg("Signed out.");
+  }
+
+  async function loadExamById(examId: string) {
+    snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<Exam>(`/exams/${encodeURIComponent(examId)}`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setLoadedExam(data);
+      snack.setMsg("Exam loaded.");
+      setScreen("exam");
+    } catch (err: any) {
+      snack.setErr(err.message);
+    }
+  }
+
+  const theme = createTheme({
+    palette: {
+      mode: "light",
+      primary: { main: "#3f51b5" },
+    },
+    shape: { borderRadius: 12 },
+    components: {
+      MuiPaper: { styleOverrides: { root: { borderRadius: 16 } } },
+      MuiButton: { defaultProps: { disableRipple: true } },
+    },
+  });
+
+  return (
+    <ThemeProvider theme={theme}>
+      {screen === "login" && <LoginScreen busy={busy} onLogin={login} />}
+      {screen === "select" && jwt && (
+        <SelectScreen onBack={signOut} onLoadExam={loadExamById} />
+      )}
+      {screen === "exam" && jwt && loadedExam && (
+        <ExamScreen jwt={jwt} exam={loadedExam} onExit={() => setScreen("select")} />
+      )}
+    </ThemeProvider>
   );
 }
