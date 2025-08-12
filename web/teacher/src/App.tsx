@@ -39,7 +39,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
-const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8080";
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8080/api";
 
 /* -------------------- Types -------------------- */
 export type Exam = {
