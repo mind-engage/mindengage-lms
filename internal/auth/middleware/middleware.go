@@ -59,7 +59,7 @@ func LoginHandler(a *AuthService) http.HandlerFunc {
 			http.Error(w, "bad json", http.StatusBadRequest)
 			return
 		}
-		valid := (req.Username == req.Password) && (req.Role == "teacher" || req.Role == "student")
+		valid := (req.Username == req.Password) && (req.Role == "teacher" || req.Role == "student" || req.Role == "admin")
 		if !valid {
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)
 			return
