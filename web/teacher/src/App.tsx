@@ -39,7 +39,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
-const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8080/api";
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
 
 /* -------------------- Types -------------------- */
 export type Exam = {
@@ -270,20 +270,49 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
     } catch (e: any) { snack.setErr(e.message); }
   }
 
+  /** ---- NEW: shared normalizer & saver for JSON-based exam creation/import ---- */
+  function normalizeExamPayload(parsed: any) {
+    // Backend expects policy as raw JSON bytes; send as `policy_raw`
+    const { policy, ...rest } = parsed || {};
+    return policy ? { ...rest, policy_raw: policy } : rest;
+  }
+
+  async function saveExam(parsed: any, sourceLabel?: string) {
+    const payload = normalizeExamPayload(parsed);
+    const res = await fetch(`${API_BASE}/exams`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    await res.json();
+    snack.setMsg(sourceLabel ? `Exam saved from ${sourceLabel}.` : "Exam saved.");
+    fetchExams(q);
+  }
+
+  /** ---- UPDATED: uses shared saveExam ---- */
   async function createExamFromJSON() {
     try {
       const parsed = JSON.parse(createJson);
-      // map policy -> policy_raw as backend expects raw JSON in Exam.PolicyRaw
-      const body = { ...parsed, policy: undefined, policy_raw: parsed.policy ? JSON.stringify(parsed.policy) : undefined };
-      // However your server expects `policy` inside exam JSON as raw bytes; sending as `policy` is fine if your handler passes it through.
-      const res = await fetch(`${API_BASE}/exams`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ ...parsed, policy: undefined, policy_raw: parsed.policy }) });
-      if (!res.ok) throw new Error(await res.text());
-      await res.json();
-      snack.setMsg("Exam saved.");
+      await saveExam(parsed);
       setOpenCreate(false);
-      fetchExams(q);
     } catch (e: any) {
-      snack.setErr(e.message);
+      snack.setErr(e.message?.startsWith("Unexpected token") ? "Invalid JSON in editor." : e.message);
+    }
+  }
+
+  /** ---- NEW: import a local .json file and call the same create endpoint ---- */
+  async function importExamJSON(file: File) {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      await saveExam(parsed, file.name);
+    } catch (e: any) {
+      if (e instanceof SyntaxError) {
+        snack.setErr(`Invalid JSON in ${file.name}: ${e.message}`);
+      } else {
+        snack.setErr(e.message);
+      }
     }
   }
 
@@ -297,10 +326,39 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
           <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busy}>{busy ? "Searching…" : "Search"}</Button>
           <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busy}>Reset</Button>
           <Divider flexItem orientation="vertical" sx={{ display: { xs: 'none', sm: 'block' } }} />
-          <Button startIcon={<AddIcon />} variant="contained" disableElevation onClick={() => setOpenCreate(true)}>New Exam (JSON)</Button>
+
+          {/* Existing: open JSON editor */}
+          <Button startIcon={<AddIcon />} variant="contained" disableElevation onClick={() => setOpenCreate(true)}>
+            New Exam (JSON)
+          </Button>
+
+          {/* NEW: Upload a local JSON exam file */}
+          <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">
+            Import JSON
+            <input
+              type="file"
+              accept=".json,application/json"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) importExamJSON(f);
+                e.currentTarget.value = "";
+              }}
+            />
+          </Button>
+
+          {/* Existing: Import QTI zip */}
           <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">
             Import QTI
-            <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) importQTI(f); e.currentTarget.value = ""; }} />
+            <input
+              type="file"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) importQTI(f);
+                e.currentTarget.value = "";
+              }}
+            />
           </Button>
         </Stack>
       </Paper>

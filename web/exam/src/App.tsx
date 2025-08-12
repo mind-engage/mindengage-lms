@@ -32,7 +32,7 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8080/api";
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
 
 /* -------------------- Types -------------------- */
 export type Exam = {

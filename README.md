@@ -104,7 +104,32 @@ htpasswd -bnBC 12 admin 'YourStrongPassword' | cut -d: -f2
 Set env variables using either .env.lan(offline) or .env.online(online) template
 
 ```
+MODE=offline
+ADMIN_USER=admin
+ADMIN_PASS_HASH='$2y$12$pyZAiWaTfVtM7UElIRStvOC3gNbnp70nmQU4eYopLGBfCJr1DOvji'
 
+HTTP_ADDR=0.0.0.0:8080
+
+DB_DRIVER=sqlite
+DB_DSN=file:mindengage.db?cache=shared&mode=rwc&_pragma=busy_timeout(5000)
+
+BLOB_DRIVER=fs
+BLOB_BASE_PATH=./data
+
+ENABLE_LOCAL_AUTH=1
+ENABLE_LTI=0
+ENABLE_JWKS=0
+
+```
+
+## Running with docker
+
+```
+docker run -p 8080:8080 \
+  -e DB_DRIVER=sqlite \
+  -e DB_DSN='file:/tmp/mindengage.db?cache=shared&mode=rwc' \
+  -e BLOB_BASE_PATH=/tmp/assets \
+  mindengale-lms
 ```
 
 ```bash
