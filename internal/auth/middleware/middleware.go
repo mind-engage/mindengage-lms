@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/mind-engage/mindengage-lms/internal/config"
 	"github.com/mind-engage/mindengage-lms/internal/rbac"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService struct{ hmac []byte }
@@ -47,7 +49,7 @@ func (a *AuthService) Parse(tokenStr string) (*Claims, error) {
 }
 
 // POST /auth/login  { "username": "...", "password": "...", "role": "teacher|student" }
-func LoginHandler(a *AuthService) http.HandlerFunc {
+func LoginHandler(a *AuthService, cfg config.Config) http.HandlerFunc {
 	// ultra-minimal: "teacher:teacher" and "student:student" (replace with your own)
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
@@ -59,7 +61,25 @@ func LoginHandler(a *AuthService) http.HandlerFunc {
 			http.Error(w, "bad json", http.StatusBadRequest)
 			return
 		}
-		valid := (req.Username == req.Password) && (req.Role == "teacher" || req.Role == "student" || req.Role == "admin")
+		if req.Role == "admin" {
+			if cfg.AdminUser == "" || cfg.AdminPassHash == "" {
+				http.Error(w, "admin login disabled", http.StatusUnauthorized)
+				return
+			}
+			if req.Username != cfg.AdminUser ||
+				bcrypt.CompareHashAndPassword([]byte(cfg.AdminPassHash), []byte(req.Password)) != nil {
+				http.Error(w, "invalid credentials", http.StatusUnauthorized)
+				return
+			}
+			tok, err := a.IssueJWT(req.Username, "admin")
+			if err != nil {
+				http.Error(w, "issue token", 500)
+				return
+			}
+			_ = json.NewEncoder(w).Encode(map[string]string{"access_token": tok})
+			return
+		}
+		valid := (req.Username == req.Password) && (req.Role == "teacher" || req.Role == "student")
 		if !valid {
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)
 			return

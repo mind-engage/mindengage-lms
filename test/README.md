@@ -106,4 +106,9 @@ curl -s -X POST "http://localhost:8080/qti/import" \
 # export qti zip
 curl -s -H "Authorization: Bearer $TOK" \
   "http://localhost:8080/exams/exam-101/export?format=qti" \
-  --output exported.zip  
+  --output exported.zip
+
+# login as admin
+ATOK=$(curl -s -X POST http://localhost:8080/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"admin","role":"admin"}' | jq -r .access_token)

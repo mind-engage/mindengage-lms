@@ -72,7 +72,7 @@ func main() {
 
 	// Local login (enabled in offline mode by default; can be enabled online via env)
 	if cfg.EnableLocalAuth {
-		r.Post("/auth/login", auth.LoginHandler(authSvc))
+		r.Post("/auth/login", auth.LoginHandler(authSvc, cfg))
 	}
 
 	bs, err := storage.NewFSStore(cfg.BlobBasePath)

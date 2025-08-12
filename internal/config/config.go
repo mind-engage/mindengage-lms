@@ -25,6 +25,9 @@ type Config struct {
 	EnableLocalAuth bool
 	EnableLTI       bool
 	EnableJWKS      bool
+
+	AdminUser     string
+	AdminPassHash string // bcrypt
 }
 
 func FromEnv() Config {
@@ -47,6 +50,8 @@ func FromEnv() Config {
 		EnableLocalAuth: envBool("ENABLE_LOCAL_AUTH", true),
 		EnableLTI:       envBool("ENABLE_LTI", mode == ModeOnline),
 		EnableJWKS:      envBool("ENABLE_JWKS", mode == ModeOnline),
+		AdminUser:       envOr("ADMIN_USER", "admin"),
+		AdminPassHash:   envOr("ADMIN_PASS_HASH", "$2y$12$pyZAiWaTfVtM7UElIRStvOC3gNbnp70nmQU4eYopLGBfCJr1DOvji"),
 	}
 }
 func envOr(k, def string) string {

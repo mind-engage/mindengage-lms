@@ -95,10 +95,20 @@ Planned:
 - (Online mode) Access to OIDC/LTI platforms.
 
 ### Run (Offline Mode)
+
+Generate admin password and hash it.
+```
+htpasswd -bnBC 12 admin 'YourStrongPassword' | cut -d: -f2
+```
+
+Set env variables using either .env.lan(offline) or .env.online(online) template
+
+```
+
+```
+
 ```bash
-MODE=offline DB_DRIVER=sqlite DB_DSN=./mindengage.db \
-AUTH_HMAC_SECRET=changeme \
-BLOB_BASE_PATH=./data \
+
 go run ./cmd/gateway
 ```
 
