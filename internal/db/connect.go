@@ -63,6 +63,15 @@ func ensureSchema(ctx context.Context, db *sql.DB, driver Driver) error {
 const schemaSQLite = `
 PRAGMA foreign_keys=ON;
 
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL CHECK (role IN ('student','teacher','admin')),
+  created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+
 CREATE TABLE IF NOT EXISTS exams (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
@@ -106,7 +115,9 @@ CREATE TABLE IF NOT EXISTS exams (
   title TEXT NOT NULL,
   time_limit_sec INTEGER NOT NULL,
   questions_json TEXT NOT NULL,
-  created_at BIGINT NOT NULL
+  created_at BIGINT NOT NULL,
+  profile TEXT NOT NULL DEFAULT '',
+  policy_json TEXT NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS attempts (
@@ -117,7 +128,19 @@ CREATE TABLE IF NOT EXISTS attempts (
   score DOUBLE PRECISION NOT NULL DEFAULT 0,
   responses_json TEXT NOT NULL,
   started_at BIGINT NOT NULL,
-  submitted_at BIGINT
+  submitted_at BIGINT,
+  module_index INTEGER NOT NULL DEFAULT 0,
+  module_started_at BIGINT,
+  module_deadline BIGINT,
+  overall_deadline BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL CHECK (role IN ('student','teacher','admin')),
+  created_at BIGINT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS event_log (

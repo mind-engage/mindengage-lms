@@ -109,15 +109,17 @@ func main() {
 		}
 
 		if cfg.EnableLocalAuth {
-			apiR.Post("/auth/login", auth.LoginHandler(authSvc, cfg))
+			apiR.Post("/auth/login", auth.LoginHandler(authSvc, cfg, dbh))
 		}
 
 		bs, err := storage.NewFSStore(cfg.BlobBasePath)
 		if err != nil {
 			log.Fatalf("blob store: %v", err)
 		}
+		allowClaimFallback := cfg.Mode == config.ModeOffline || cfg.EnableLocalAuth
 		apiR.Group(func(pr chi.Router) {
 			pr.Use(auth.JWTMiddleware(authSvc))
+			pr.Use(auth.AttachRoleFromDB(dbh, allowClaimFallback))
 			pr.Route("/assets", func(ar chi.Router) {
 				api.MountAssets(ar, bs)
 			})
@@ -125,6 +127,7 @@ func main() {
 
 		apiR.Group(func(pr chi.Router) {
 			pr.Use(auth.JWTMiddleware(authSvc))
+			pr.Use(auth.AttachRoleFromDB(dbh, allowClaimFallback))
 			pr.With(rbac.Require("exam:create")).
 				Post("/exams", api.UploadExamHandler(store))
 			pr.With(rbac.Require("exam:view")).

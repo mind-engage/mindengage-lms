@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -49,7 +50,7 @@ func (a *AuthService) Parse(tokenStr string) (*Claims, error) {
 }
 
 // POST /auth/login  { "username": "...", "password": "...", "role": "teacher|student" }
-func LoginHandler(a *AuthService, cfg config.Config) http.HandlerFunc {
+func LoginHandler(a *AuthService, cfg config.Config, db *sql.DB) http.HandlerFunc {
 	// ultra-minimal: "teacher:teacher" and "student:student" (replace with your own)
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
@@ -78,6 +79,24 @@ func LoginHandler(a *AuthService, cfg config.Config) http.HandlerFunc {
 			}
 			_ = json.NewEncoder(w).Encode(map[string]string{"access_token": tok})
 			return
+		}
+		if db != nil {
+			var id, role, phash string
+			err := db.QueryRow(`SELECT id, role, password_hash FROM users WHERE username=$1`, req.Username).Scan(&id, &role, &phash)
+			if err == nil {
+				if bcrypt.CompareHashAndPassword([]byte(phash), []byte(req.Password)) != nil {
+					http.Error(w, "invalid credentials", http.StatusUnauthorized)
+					return
+				}
+				tok, err := a.IssueJWT(id, role) // subject = user ID, role from DB
+				if err != nil {
+					http.Error(w, "issue token", 500)
+					return
+				}
+				_ = json.NewEncoder(w).Encode(map[string]string{"access_token": tok})
+				return
+			}
+			// if not found, fall through to dev fallback when allowed
 		}
 		valid := (req.Username == req.Password) && (req.Role == "teacher" || req.Role == "student")
 		if !valid {

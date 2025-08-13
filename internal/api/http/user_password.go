@@ -7,7 +7,7 @@ import (
 	"errors"
 	"net/http"
 
-	authmw "github.com/mind-engage/mindengage-lms/internal/auth/middleware"
+	"github.com/mind-engage/mindengage-lms/internal/rbac"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,7 +18,7 @@ type changePasswordReq struct {
 
 func ChangePasswordHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := authmw.SubjectFromContext(r.Context())
+		userID := rbac.SubjectFromContext(r.Context())
 		if userID == "" {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
