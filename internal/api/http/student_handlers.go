@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/mind-engage/mindengage-lms/internal/exam"
+	"github.com/mind-engage/mindengage-lms/internal/rbac"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -73,6 +74,7 @@ func GetAttemptHandler(store exam.Store) http.HandlerFunc {
 	}
 }
 
+// IsAttemptOwner validates if the bearer subject owns the attempt.
 func IsAttemptOwner(store exam.Store) func(*http.Request) bool {
 	return func(r *http.Request) bool {
 		id := chi.URLParam(r, "attemptID")
@@ -80,9 +82,8 @@ func IsAttemptOwner(store exam.Store) func(*http.Request) bool {
 		if err != nil {
 			return false
 		}
-		// read role/subject from JWT (we stashed role only; add sub if you want exact match)
-		// quick version: accept ?user_id= query as a stand-in for now:
-		return r.URL.Query().Get("user_id") == a.UserID
+		sub := rbac.SubjectFromContext(r.Context())
+		return sub != "" && sub == a.UserID
 	}
 }
 

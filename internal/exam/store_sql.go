@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -174,6 +175,7 @@ func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
 		Status:    "in_progress",
 		Score:     0,
 		Responses: resp,
+		StartedAt: now,
 	}, nil
 }
 
@@ -263,8 +265,9 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 	a.Score = score
 	a.Status = "submitted"
 	buf, _ := json.Marshal(a.Responses)
+	now := time.Now().Unix()
 	_, err = s.db.Exec(`UPDATE attempts SET status='submitted', score=$1, responses_json=$2, submitted_at=$3 WHERE id=$4`,
-		a.Score, string(buf), time.Now().Unix(), attemptID)
+		a.Score, string(buf), now, attemptID)
 	if err != nil {
 		return Attempt{}, err
 	}
@@ -280,10 +283,10 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 }
 
 func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
-	row := s.db.QueryRow(`SELECT id,exam_id,user_id,status,score,responses_json FROM attempts WHERE id=$1`, id)
+	row := s.db.QueryRow(`SELECT id,exam_id,user_id,status,score,responses_json,started_at,submitted_at FROM attempts WHERE id=$1`, id)
 	var a Attempt
 	var rjson string
-	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson); err != nil {
+	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson, &a.StartedAt, &a.SubmittedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -297,8 +300,6 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 
 /* ------------------ Multi-module support ------------------ */
 
-// AdvanceModule moves an attempt to the next module and resets the per-module timer.
-// It uses the exam's stored policy_json to determine module durations.
 func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	// load attempt (need exam_id and current module_index + deadlines)
 	var a Attempt
@@ -343,6 +344,74 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	}
 	// return fresh view (without timing fields in struct)
 	return s.GetAttempt(attemptID)
+}
+
+/* ---------------------- Attempt listing ------------------- */
+
+func (s *SQLStore) ListAttempts(ctx context.Context, opts AttemptListOpts) ([]Attempt, error) {
+	if opts.Limit <= 0 {
+		opts.Limit = 50
+	}
+	if opts.Offset < 0 {
+		opts.Offset = 0
+	}
+	where := []string{"1=1"}
+	args := []any{}
+	i := 1
+	if strings.TrimSpace(opts.ExamID) != "" {
+		where = append(where, fmt.Sprintf("exam_id=$%d", i))
+		args = append(args, strings.TrimSpace(opts.ExamID))
+		i++
+	}
+	if strings.TrimSpace(opts.UserID) != "" {
+		where = append(where, fmt.Sprintf("user_id=$%d", i))
+		args = append(args, strings.TrimSpace(opts.UserID))
+		i++
+	}
+	if strings.TrimSpace(opts.Status) != "" {
+		where = append(where, fmt.Sprintf("status=$%d", i))
+		args = append(args, strings.TrimSpace(opts.Status))
+		i++
+	}
+	order := "started_at DESC"
+	switch strings.ToLower(strings.TrimSpace(opts.Sort)) {
+	case "submitted_at asc":
+		order = "submitted_at ASC NULLS LAST"
+	case "submitted_at desc":
+		order = "submitted_at DESC NULLS LAST"
+	case "started_at asc":
+		order = "started_at ASC"
+	case "started_at desc", "":
+		order = "started_at DESC"
+	}
+
+	q := fmt.Sprintf(`
+		SELECT id, exam_id, user_id, status, score, responses_json, started_at, submitted_at
+		FROM attempts
+		WHERE %s
+		ORDER BY %s
+		LIMIT %d OFFSET %d
+	`, strings.Join(where, " AND "), order, opts.Limit, opts.Offset)
+
+	rows, err := s.db.QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := []Attempt{}
+	for rows.Next() {
+		var a Attempt
+		var rjson string
+		if err := rows.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson, &a.StartedAt, &a.SubmittedAt); err != nil {
+			return nil, err
+		}
+		if err := json.Unmarshal([]byte(rjson), &a.Responses); err != nil {
+			a.Responses = map[string]interface{}{}
+		}
+		out = append(out, a)
+	}
+	return out, rows.Err()
 }
 
 /* ------------------------- Helpers ------------------------ */

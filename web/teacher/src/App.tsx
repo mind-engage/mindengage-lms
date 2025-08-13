@@ -76,6 +76,8 @@ export type Attempt = {
   status: string;
   score?: number;
   responses?: Record<string, any>;
+  started_at?: number;
+  submitted_at?: number;
 };
 
 /* -------------------- Helpers -------------------- */
@@ -437,40 +439,130 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
 
 /* -------------------- Attempts Panel -------------------- */
 function AttemptsPanel({ jwt }: { jwt: string; }) {
-  const [attemptId, setAttemptId] = useState("");
-  const [attempt, setAttempt] = useState<Attempt | null>(null);
+  const [filters, setFilters] = useState<{ exam_id: string; user_id: string; status: string; sort: string; pageSize: number; }>({
+    exam_id: "",
+    user_id: "",
+    status: "",
+    sort: "started_at desc",
+    pageSize: 50,
+  });
+  const [page, setPage] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [list, setList] = useState<Attempt[]>([]);
+  const [selected, setSelected] = useState<Attempt | null>(null);
   const snack = useSnack();
 
-  async function loadAttempt(id: string) {
+  const canPrev = page > 0;
+  const canNext = list.length >= filters.pageSize;
+
+  const load = useCallback(async () => {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
+      const params = new URLSearchParams();
+      if (filters.exam_id.trim()) params.set("exam_id", filters.exam_id.trim());
+      if (filters.user_id.trim()) params.set("user_id", filters.user_id.trim());
+      if (filters.status.trim()) params.set("status", filters.status.trim());
+      if (filters.sort.trim()) params.set("sort", filters.sort.trim());
+      params.set("limit", String(filters.pageSize));
+      params.set("offset", String(page * filters.pageSize));
+
+      const data = await api<Attempt[]>(`/attempts?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setList(data);
+    } catch (e: any) {
+      snack.setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }, [jwt, filters, page]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function openAttemptDetails(id: string) {
+    try {
       const data = await api<Attempt>(`/attempts/${encodeURIComponent(id)}`, { headers: { Authorization: `Bearer ${jwt}` } });
-      setAttempt(data);
-      if (data) snack.setMsg(`Loaded attempt ${data.id}`);
-    } catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
+      setSelected(data);
+      snack.setMsg(`Loaded attempt ${data.id}`);
+    } catch (e: any) { snack.setErr(e.message); }
   }
 
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <TextField label="Attempt ID" value={attemptId} onChange={(e) => setAttemptId(e.target.value)} fullWidth />
-          </Box>
-          <Button variant="contained" disableElevation onClick={() => loadAttempt(attemptId)} disabled={!attemptId.trim() || busy}>{busy ? "Loading…" : "Open"}</Button>
+          <TextField label="Exam ID (course)" value={filters.exam_id} onChange={(e) => setFilters((f) => ({ ...f, exam_id: e.target.value }))} fullWidth />
+          <TextField label="Student ID" value={filters.user_id} onChange={(e) => setFilters((f) => ({ ...f, user_id: e.target.value }))} fullWidth />
+          <FormControl sx={{ minWidth: 160 }}>
+            <InputLabel id="status-filter">Status</InputLabel>
+            <Select labelId="status-filter" label="Status" value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: String(e.target.value) }))}>
+              <MenuItem value="">(any)</MenuItem>
+              <MenuItem value="in_progress">in_progress</MenuItem>
+              <MenuItem value="submitted">submitted</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel id="sort-by">Sort</InputLabel>
+            <Select labelId="sort-by" label="Sort" value={filters.sort} onChange={(e) => setFilters((f) => ({ ...f, sort: String(e.target.value) }))}>
+              <MenuItem value="started_at desc">started_at desc</MenuItem>
+              <MenuItem value="started_at asc">started_at asc</MenuItem>
+              <MenuItem value="submitted_at desc">submitted_at desc</MenuItem>
+              <MenuItem value="submitted_at asc">submitted_at asc</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: 120 }}>
+            <InputLabel id="page-size">Page size</InputLabel>
+            <Select labelId="page-size" label="Page size" value={filters.pageSize} onChange={(e) => setFilters((f) => ({ ...f, pageSize: Number(e.target.value) }))}>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </FormControl>
+          <Button variant="contained" disableElevation onClick={() => { setPage(0); load(); }} disabled={busy}>{busy ? "Loading…" : "Refresh"}</Button>
         </Stack>
       </Paper>
 
-      {attempt && (
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Stack spacing={1.25} sx={{ maxHeight: 480, overflowY: 'auto' }}>
+          {list.length === 0 && !busy && (
+            <Typography variant="body2" color="text.secondary">No attempts found.</Typography>
+          )}
+          {list.map((a) => (
+            <Paper key={a.id} variant="outlined" sx={{ p: 1.5 }}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography fontWeight={600}>Attempt <Box component="span" sx={{ fontFamily: 'monospace' }}>{a.id}</Box></Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Exam: <Box component="span" sx={{ fontFamily: 'monospace' }}>{a.exam_id}</Box> • Student: <Box component="span" sx={{ fontFamily: 'monospace' }}>{a.user_id}</Box> • Status: {a.status}
+                    {typeof a.score === 'number' && <> • Score: {a.score}</>}
+                    {a.started_at && <> • Started: {ms2date(a.started_at)}</>}
+                    {a.submitted_at && <> • Submitted: {ms2date(a.submitted_at)}</>}
+                  </Typography>
+                </Box>
+                <Button variant="text" onClick={() => openAttemptDetails(a.id)}>Open</Button>
+              </Stack>
+            </Paper>
+          ))}
+        </Stack>
+        <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between" sx={{ mt: 1 }}>
+          <Typography variant="caption" color="text.secondary">Loaded {list.length} item(s)</Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Button variant="outlined" disabled={!canPrev || busy} onClick={() => { if (canPrev) { setPage((p) => p - 1); } }}>{busy ? "…" : "Prev"}</Button>
+            <Typography variant="caption" color="text.secondary">Page {page + 1}</Typography>
+            <Button variant="outlined" disabled={!canNext || busy} onClick={() => { if (canNext) { setPage((p) => p + 1); } }}>{busy ? "…" : "Next"}</Button>
+          </Stack>
+        </Stack>
+      </Paper>
+
+      {selected && (
         <Paper elevation={1} sx={{ p: 2.5 }}>
           <Stack spacing={1}>
-            <Typography variant="h6" fontWeight={600}>Attempt {attempt.id}</Typography>
-            <Typography variant="body2" color="text.secondary">Exam: <Box component="span" sx={{ fontFamily: 'monospace' }}>{attempt.exam_id}</Box> • User: {attempt.user_id} • Status: {attempt.status} {typeof attempt.score === 'number' && (<Chip size="small" color="success" label={`Score: ${attempt.score}`} sx={{ ml: 1 }} />)}</Typography>
+            <Typography variant="h6" fontWeight={600}>Attempt {selected.id}</Typography>
+            <Typography variant="body2" color="text.secondary">Exam: <Box component="span" sx={{ fontFamily: 'monospace' }}>{selected.exam_id}</Box> • User: {selected.user_id} • Status: {selected.status} {typeof selected.score === 'number' && (<Chip size="small" color="success" label={`Score: ${selected.score}`} sx={{ ml: 1 }} />)}</Typography>
             <Divider sx={{ my: 1 }} />
             <Typography variant="subtitle2">Responses (raw)</Typography>
             <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', whiteSpace: 'pre-wrap' }}>
-              {JSON.stringify(attempt.responses ?? {}, null, 2)}
+              {JSON.stringify(selected.responses ?? {}, null, 2)}
             </Paper>
           </Stack>
         </Paper>

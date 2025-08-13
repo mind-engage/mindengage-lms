@@ -33,6 +33,10 @@ type Attempt struct {
 	ModuleStartedAt int64 `json:"module_started_at,omitempty"`
 	ModuleDeadline  int64 `json:"module_deadline,omitempty"`
 	OverallDeadline int64 `json:"overall_deadline,omitempty"`
+
+	// Timestamps (useful for teacher/admin list views)
+	StartedAt   int64 `json:"started_at,omitempty"`
+	SubmittedAt int64 `json:"submitted_at,omitempty"`
 }
 
 type Exam struct {

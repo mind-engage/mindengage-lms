@@ -7,6 +7,16 @@ type ListOpts struct {
 	Limit  int
 	Offset int
 }
+
+type AttemptListOpts struct {
+	ExamID string // filter by exam/course
+	UserID string // filter by student
+	Status string // optional: in_progress|submitted
+	Limit  int
+	Offset int
+	Sort   string // started_at|submitted_at desc (default: started_at desc)
+}
+
 type Store interface {
 	PutExam(e Exam) error
 	GetExam(id string) (Exam, error)                           // student-safe (no answer keys)
@@ -18,4 +28,7 @@ type Store interface {
 
 	ListExams(ctx context.Context, opts ListOpts) ([]ExamSummary, error)
 	AdvanceModule(attemptID string) (Attempt, error)
+
+	// NEW: list attempts with filters for teacher/admin dashboards (and student “my attempts”)
+	ListAttempts(ctx context.Context, opts AttemptListOpts) ([]Attempt, error)
 }

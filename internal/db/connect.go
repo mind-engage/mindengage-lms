@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS attempts (
   score REAL NOT NULL DEFAULT 0,
   responses_json TEXT NOT NULL,
   started_at INTEGER NOT NULL,
-  submitted_at INTEGER,
+  submitted_at INTEGER NOT NULL DEFAULT 0,
 
   module_index INTEGER NOT NULL DEFAULT 0,
   module_started_at BIGINT,
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS attempts (
   score DOUBLE PRECISION NOT NULL DEFAULT 0,
   responses_json TEXT NOT NULL,
   started_at BIGINT NOT NULL,
-  submitted_at BIGINT,
+  submitted_at BIGINT NOT NULL DEFAULT 0,
   module_index INTEGER NOT NULL DEFAULT 0,
   module_started_at BIGINT,
   module_deadline BIGINT,

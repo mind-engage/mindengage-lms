@@ -128,34 +128,45 @@ func main() {
 		apiR.Group(func(pr chi.Router) {
 			pr.Use(auth.JWTMiddleware(authSvc))
 			pr.Use(auth.AttachRoleFromDB(dbh, allowClaimFallback))
+
+			// Exams
 			pr.With(rbac.Require("exam:create")).
 				Post("/exams", api.UploadExamHandler(store))
 			pr.With(rbac.Require("exam:view")).
 				Get("/exams/{examID}", api.GetExamHandler(store))
+			pr.With(rbac.Require("exam:create")).
+				Post("/qti/import", api.ImportQTIHandler(store, bs))
+			pr.With(rbac.Require("exam:export")).
+				Get("/exams/{id}/export", api.ExportQTIHandler(store))
+			pr.With(rbac.Require("exam:view")).
+				Get("/exams", api.ListExamsHandler(store))
+
+			// Attempts (create/save/submit/next)
 			pr.With(rbac.Require("attempt:create")).
 				Post("/attempts", api.CreateAttemptHandler(store))
 			pr.With(rbac.Require("attempt:save")).
 				Post("/attempts/{attemptID}/responses", api.SaveResponsesHandler(store))
 			pr.With(rbac.Require("attempt:submit")).
 				Post("/attempts/{attemptID}/submit", api.SubmitAttemptHandler(store))
-			pr.With(rbac.RequireAny("attempt:view-own", "attempt:view-all")).
+			pr.With(rbac.Require("attempt:save")).
+				Post("/attempts/{attemptID}/next-module", api.NextModuleHandler(store))
+
+			// Attempts (read)
+			// Single attempt: owner OR role with attempt:view-all
+			pr.With(rbac.RequireOwnerOr("attempt:view-all", api.IsAttemptOwner(store))).
 				Get("/attempts/{attemptID}", api.GetAttemptHandler(store))
+
+			// List attempts: teachers/admins see all; students only their own (enforced in handler too)
+			pr.With(rbac.RequireAny("attempt:view-all", "attempt:view-own")).
+				Get("/attempts", api.ListAttemptsHandler(store))
+
+			// Users admin
 			pr.With(rbac.Require("users:bulk_upsert")).
 				Post("/users/bulk", api.BulkUpsertUsersHandler(dbh))
 			pr.With(rbac.Require("users:list")).
 				Get("/users", api.ListUsersHandler(dbh))
 			pr.With(rbac.Require("user:change_password")).
 				Post("/users/change-password", api.ChangePasswordHandler(dbh))
-			pr.With(rbac.Require("exam:create")).
-				Post("/qti/import", api.ImportQTIHandler(store, bs))
-			pr.With(rbac.Require("exam:export")).
-				Get("/exams/{id}/export", api.ExportQTIHandler(store))
-
-			pr.With(rbac.Require("exam:view")).
-				Get("/exams", api.ListExamsHandler(store))
-
-			pr.With(rbac.Require("attempt:save")).
-				Post("/attempts/{attemptID}/next-module", api.NextModuleHandler(store))
 		})
 	})
 
