@@ -11,7 +11,7 @@ WORKDIR /repo
 COPY web/exam/package*.json web/exam/
 RUN --mount=type=cache,target=/root/.npm cd web/exam && npm ci
 COPY web/exam web/exam
-RUN --mount=type=cache,target=/root/.npm sh -lc 'cd web/exam && PUBLIC_URL=/exam REACT_APP_API_BASE=/api npm run build || npm run build -- --base=/exam/'
+RUN --mount=type=cache,target=/root/.npm sh -lc 'cd web/exam && PUBLIC_URL=/exam REACT_APP_API_BASE=/api npm run build || npm run build'
 
 # teacher (served at /teacher)
 COPY web/teacher/package*.json web/teacher/
