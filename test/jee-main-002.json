@@ -1,0 +1,2646 @@
+{
+    "id": "jee-main-p1-001",
+    "title": "JEE (Main) Paper 1 – Full Length",
+    "profile": "jee.v1",
+    "policy": {
+        "sections": [
+            {
+                "id": "phy",
+                "title": "Physics",
+                "modules": [
+                    {
+                        "id": "phy-m1",
+                        "time_limit_sec": 10800
+                    }
+                ]
+            },
+            {
+                "id": "chem",
+                "title": "Chemistry",
+                "modules": [
+                    {
+                        "id": "chem-m1",
+                        "time_limit_sec": 10800
+                    }
+                ]
+            },
+            {
+                "id": "math",
+                "title": "Mathematics",
+                "modules": [
+                    {
+                        "id": "math-m1",
+                        "time_limit_sec": 10800
+                    }
+                ]
+            }
+        ],
+        "navigation": {
+            "allow_back": true,
+            "module_locked": false,
+            "subject_tabs": true
+        },
+        "scoring": {
+            "phy": {
+                "A": {
+                    "correct": 4,
+                    "wrong": -1,
+                    "unattempted": 0
+                },
+                "B": {
+                    "correct": 4,
+                    "wrong": 0,
+                    "unattempted": 0,
+                    "attempt_limit": 5,
+                    "offered": 10
+                }
+            },
+            "chem": {
+                "A": {
+                    "correct": 4,
+                    "wrong": -1,
+                    "unattempted": 0
+                },
+                "B": {
+                    "correct": 4,
+                    "wrong": 0,
+                    "unattempted": 0,
+                    "attempt_limit": 5,
+                    "offered": 10
+                }
+            },
+            "math": {
+                "A": {
+                    "correct": 4,
+                    "wrong": -1,
+                    "unattempted": 0
+                },
+                "B": {
+                    "correct": 4,
+                    "wrong": 0,
+                    "unattempted": 0,
+                    "attempt_limit": 5,
+                    "offered": 10
+                }
+            }
+        },
+        "item_constraints": {
+            "phy": {
+                "mcq_single": {
+                    "choices": 4
+                },
+                "numeric": {
+                    "tolerance": 0,
+                    "allow_fraction": true
+                }
+            },
+            "chem": {
+                "mcq_single": {
+                    "choices": 4
+                },
+                "numeric": {
+                    "tolerance": 0,
+                    "allow_fraction": true
+                }
+            },
+            "math": {
+                "mcq_single": {
+                    "choices": 4
+                },
+                "numeric": {
+                    "tolerance": 0,
+                    "allow_fraction": true
+                }
+            }
+        },
+        "proctor": {
+            "screenshot": false,
+            "camera": false
+        },
+        "meta": {
+            "version": "gen-1"
+        }
+    },
+    "questions": [
+        {
+            "id": "phy-a-q01",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A car accelerates uniformly from rest and covers 100 m in 5 s. What is its acceleration?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>4 m/s^2</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>8 m/s^2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>20 m/s^2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>2 m/s^2</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Kinematics"
+            }
+        },
+        {
+            "id": "phy-a-q02",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A block of mass m is pulled on a horizontal surface with constant velocity by a force F making angle θ with the horizontal. The coefficient of kinetic friction is μ. The magnitude of F is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>μmg / (1 + \u00a0μ \u00a0\tanθ)</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>\u00a0μmg / \u00a0cosθ</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>\u00a0μmg \u00a0cosθ</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>mg / (\u00a0μ \u00a0cosθ)</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Laws of Motion"
+            }
+        },
+        {
+            "id": "phy-a-q03",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The work done by a variable force F(x)=kx acting along x from x=0 to x=a is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>ka</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>ka^2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>(1/2)ka^2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>(1/2)k^2a</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Work-Energy"
+            }
+        },
+        {
+            "id": "phy-a-q04",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A body of mass m moves in a circle of radius R with angular speed \u03c9. Its kinetic energy is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>(1/2)mR^2\u03c9</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>(1/2)mR^2\u03c9^2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>mR\u03c9^2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>(1/2)m\u03c9^2</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Circular Motion"
+            }
+        },
+        {
+            "id": "phy-a-q05",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Escape speed from the surface of a planet of mass M and radius R is proportional to:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>\u221a(M/R)</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>M/R^2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>R/M</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>\u221a(R/M)</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Gravitation"
+            }
+        },
+        {
+            "id": "phy-a-q06",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A liquid of density \u03c1 flows through a horizontal tube. At a narrow region the speed increases. The pressure at the narrow region is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>higher</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>lower</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>same</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>zero</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Fluid Dynamics (Bernoulli)"
+            }
+        },
+        {
+            "id": "phy-a-q07",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>In an adiabatic process for an ideal gas, PV^\u03b3 = constant. Here \u03b3 equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>C_p/C_v</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>C_v/C_p</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>C_p - C_v</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>1</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Thermodynamics"
+            }
+        },
+        {
+            "id": "phy-a-q08",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The speed of a transverse wave on a stretched string of tension T and linear mass density \u03bc is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>\u221a(T\u03bc)</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>T/\u03bc</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>\u221a(T/\u03bc)</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>\u03bc/T</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Waves"
+            }
+        },
+        {
+            "id": "phy-a-q09",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>For a thin convex lens of focal length f, the power is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>1/f (in dioptre if f in meters)</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>f</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>-1/f</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>-f</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Optics"
+            }
+        },
+        {
+            "id": "phy-a-q10",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Two resistors R and R are connected in parallel. The equivalent resistance is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>R/2</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>2R</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>R</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>1/R</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "DC Circuits"
+            }
+        },
+        {
+            "id": "phy-a-q11",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>An electron enters a uniform magnetic field perpendicular to its velocity. Its path is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>straight line</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>circle</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>ellipse</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>parabola</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Magnetism"
+            }
+        },
+        {
+            "id": "phy-a-q12",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The induced emf in a coil with N turns when magnetic flux through it changes at a rate d\u03a6/dt is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>N\u00a0d\u03a6/dt</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>-N\u00a0d\u03a6/dt</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>d(N\u03a6)/dt</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>-d(N\u03a6)/Ndt</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Electromagnetic Induction"
+            }
+        },
+        {
+            "id": "phy-a-q13",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A hydrogen atom makes a transition from n=3 to n=2. The emitted photon lies in:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>Lyman series</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>Balmer series</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>Paschen series</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>Brackett series</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Atomic Physics"
+            }
+        },
+        {
+            "id": "phy-a-q14",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The dimensional formula of Planck's constant h is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>ML^2T^-1</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>MLT^-2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>ML^2T^-2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>MT^-1</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Units & Dimensions"
+            }
+        },
+        {
+            "id": "phy-a-q15",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A capacitor is fully charged by a battery and then disconnected. If plate separation is increased, the energy stored will:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>increase</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>decrease</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>remain same</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>be zero</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Electrostatics & Capacitors"
+            }
+        },
+        {
+            "id": "phy-a-q16",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>For a prism of small angle A and refractive index \u03bc, the angle of minimum deviation is approximately:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>(\u03bc - 1)A</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>(\u03bc + 1)A</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>A/\u03bc</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>\u03bc/A</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Optics (Prisms)"
+            }
+        },
+        {
+            "id": "phy-a-q17",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The displacement x(t)=A cos(\u03c9t+\u03c6) represents simple harmonic motion. The maximum speed is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>A\u03c9</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>A/\u03c9</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>A\u03c9^2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>\u03c9/A</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "SHM"
+            }
+        },
+        {
+            "id": "phy-a-q18",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Which statement is correct for a perfectly inelastic collision in 1D?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>Momentum and kinetic energy are conserved.</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>Momentum is conserved; kinetic energy decreases.</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>Momentum decreases; kinetic energy is conserved.</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>Both decrease.</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Collisions"
+            }
+        },
+        {
+            "id": "phy-a-q19",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A transistor in common emitter configuration provides:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>no current gain</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>voltage gain only</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>current and voltage gain</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>power loss</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Electronics"
+            }
+        },
+        {
+            "id": "phy-a-q20",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Radiation falling on a perfectly black body is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>partly reflected</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>completely absorbed</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>completely transmitted</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>amplified</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Thermal Radiation"
+            }
+        },
+        {
+            "id": "phy-b-q01",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>In the circuit shown, R1=4 \u03a9 and R2=6 \u03a9 are in series with an ideal 24 V source. Find current I in amperes.</p><svg xmlns='http://www.w3.org/2000/svg' width='360' height='140' viewBox='0 0 360 140'><rect x='20' y='40' width='70' height='60' fill='none' stroke='black'/><text x='35' y='70' font-size='12'>24 V</text><line x1='90' y1='70' x2='150' y2='70' stroke='black'/><rect x='150' y='55' width='50' height='30' fill='none' stroke='black'/><text x='165' y='73' font-size='12'>R1</text><line x1='200' y1='70' x2='260' y2='70' stroke='black'/><rect x='260' y='55' width='50' height='30' fill='none' stroke='black'/><text x='275' y='73' font-size='12'>R2</text><line x1='310' y1='70' x2='340' y2='70' stroke='black'/><line x1='340' y1='70' x2='340' y2='100' stroke='black'/><line x1='340' y1='100' x2='20' y2='100' stroke='black'/><line x1='20' y1='100' x2='20' y2='70' stroke='black'/></svg><p>Enter a decimal if required.</p>",
+            "answer_key": [
+                "2.4"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "DC Circuits"
+            }
+        },
+        {
+            "id": "phy-b-q02",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A projectile is fired with speed 20 m/s at 30° above the horizontal. Take g=10 m/s^2. Find the time of flight in seconds.</p>",
+            "answer_key": [
+                "2"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Projectile Motion"
+            }
+        },
+        {
+            "id": "phy-b-q03",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A mass m=0.50 kg is attached to a spring of constant k=200 N/m. Find the period T (in seconds) of small oscillations. Use \u03c0 \u2248 3.14.</p>",
+            "answer_key": [
+                "0.314"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "SHM"
+            }
+        },
+        {
+            "id": "phy-b-q04",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A rod of initial length 2.0 m has linear expansion coefficient 1.2×10^-5 K^-1. For a temperature rise of 50 K, find the increase in length (in meters).</p>",
+            "answer_key": [
+                "0.0012"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Thermal Expansion"
+            }
+        },
+        {
+            "id": "phy-b-q05",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>An object is placed 30 cm in front of a thin convex lens of focal length 15 cm. Find the image distance (in cm). Positive for real image.</p><svg xmlns='http://www.w3.org/2000/svg' width='360' height='140' viewBox='0 0 360 140'><line x1='20' y1='70' x2='340' y2='70' stroke='black'/><path d='M180 40 Q190 70 180 100' fill='none' stroke='black'/><path d='M180 40 Q170 70 180 100' fill='none' stroke='black'/><text x='172' y='30' font-size='12'>Lens</text><line x1='60' y1='60' x2='60' y2='80' stroke='black'/><text x='48' y='55' font-size='12'>Object</text><text x='140' y='120' font-size='12'>f=15 cm</text><text x='50' y='120' font-size='12'>u= -30 cm</text></svg>",
+            "answer_key": [
+                "30"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Geometrical Optics"
+            }
+        },
+        {
+            "id": "phy-b-q06",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A spring (k=10 N/m) is compressed by 0.10 m. Find the stored energy in joules.</p>",
+            "answer_key": [
+                "0.05"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Work-Energy"
+            }
+        },
+        {
+            "id": "phy-b-q07",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>An infinite line charge has linear charge density \u03bb=3.0\u00d710^-6 C/m. Find the electric field magnitude at r=3.0 cm in N/C. Use k=9.0\u00d710^9 SI.</p>",
+            "answer_key": [
+                "1800000"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Electrostatics"
+            }
+        },
+        {
+            "id": "phy-b-q08",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A charge q=1.0\u00d710^-6 C moves at v=2.0\u00d710^6 m/s perpendicular to a uniform field B=0.50 T. Find magnetic force (in N).</p>",
+            "answer_key": [
+                "1"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Magnetic Force"
+            }
+        },
+        {
+            "id": "phy-b-q09",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A 12 V battery is connected across an 8 \u03a9 resistor. Find the power dissipated (in W).</p>",
+            "answer_key": [
+                "18"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "DC Circuits"
+            }
+        },
+        {
+            "id": "phy-b-q10",
+            "section_id": "phy",
+            "module_id": "phy-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Light of frequency 1.0\u00d710^15 Hz falls on a metal of work function \u03c6=2.0\u00d710^-19 J. Using h=6.6\u00d710^-34 J\u00b7s and e=1.6\u00d710^-19 C, find the stopping potential (in volts).</p>",
+            "answer_key": [
+                "2.875"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Physics",
+                "skill": "Photoelectric Effect"
+            }
+        },
+        {
+            "id": "chem-a-q01",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The number of moles in 11.2 L of an ideal gas at STP is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>0.25</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>0.50</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>1.00</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>2.00</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Gaseous State"
+            }
+        },
+        {
+            "id": "chem-a-q02",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The hybridization of carbon in ethyne (acetylene) is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>sp^3</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>sp^2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>sp</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>none</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Chemical Bonding"
+            }
+        },
+        {
+            "id": "chem-a-q03",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Which has highest first ionization enthalpy?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>Na</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>K</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>Rb</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>Cs</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Periodic Trends"
+            }
+        },
+        {
+            "id": "chem-a-q04",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The order of acidity is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>CH3COOH &gt; CH3OH &gt; H2O</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>H2O &gt; CH3COOH &gt; CH3OH</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>CH3OH &gt; H2O &gt; CH3COOH</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>CH3COOH &gt; H2O &gt; CH3OH</p>"
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Acid-Base Strength"
+            }
+        },
+        {
+            "id": "chem-a-q05",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Van 't Hoff factor i for Na2SO4 (complete dissociation) is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>2</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>3</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>4</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>1</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Colligative Properties"
+            }
+        },
+        {
+            "id": "chem-a-q06",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The main product of hydration of propene (acid-catalyzed) is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>1-propanol</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>2-propanol</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>propanoic acid</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>propanal</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Organic Reactions (Markovnikov)"
+            }
+        },
+        {
+            "id": "chem-a-q07",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Which has maximum conductivity at infinite dilution (molar conductivity)?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>CH3COONa</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>NaCl</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>KCl</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>MgCl2</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Electrochemistry (Transport)"
+            }
+        },
+        {
+            "id": "chem-a-q08",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The geometry of SF6 is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>octahedral</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>square planar</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>trigonal bipyramidal</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>see-saw</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "VSEPR"
+            }
+        },
+        {
+            "id": "chem-a-q09",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The reagent to convert alcohol to aldehyde (selective, PCC) is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>KMnO4 (hot, acidic)</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>PCC</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>H2/Pd</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>NaBH4</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Organic Reagents"
+            }
+        },
+        {
+            "id": "chem-a-q10",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>A buffer solution resists change in pH when small amounts of acid/base are added because it contains:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>strong acid and strong base</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>weak acid and its salt</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>weak base only</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>neutral salt only</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Acid-Base Equilibria"
+            }
+        },
+        {
+            "id": "chem-a-q11",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Which complex shows highest crystal field splitting in octahedral field (strong field ligand)?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>[Fe(H2O)6]^2+</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>[Fe(NH3)6]^2+</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>[Fe(CN)6]^4-</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>[FeCl6]^4-</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Coordination Chemistry"
+            }
+        },
+        {
+            "id": "chem-a-q12",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Mole fraction of solute in a dilute solution is approximately equal to:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>molarity</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>molality</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>normality</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>number of moles of solute / total moles</p>"
+                }
+            ],
+            "answer_key": [
+                "D"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Concentration Terms"
+            }
+        },
+        {
+            "id": "chem-a-q13",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The trend in thermal stability of Group 2 carbonates (down the group) is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>decreases</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>increases</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>constant</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>random</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Inorganic Trends"
+            }
+        },
+        {
+            "id": "chem-a-q14",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The order of SN1 reactivity is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>3&deg; &gt; 2&deg; &gt; 1&deg;</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>1&deg; &gt; 2&deg; &gt; 3&deg;</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>2&deg; &gt; 3&deg; &gt; 1&deg;</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>allylic &lt; 1&deg; &lt; 3&deg;</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Reaction Mechanisms"
+            }
+        },
+        {
+            "id": "chem-a-q15",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Molecular shape of NH3 according to VSEPR is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>tetrahedral</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>trigonal planar</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>trigonal pyramidal</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>linear</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Molecular Geometry"
+            }
+        },
+        {
+            "id": "chem-a-q16",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The half-life (t1/2) of a first-order reaction is related to rate constant k by:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>t1/2 = 1/k</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>t1/2 = 0.693/k</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>t1/2 = 2.303/k</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>t1/2 = k/0.693</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Chemical Kinetics"
+            }
+        },
+        {
+            "id": "chem-a-q17",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Conjugate base of HCO3^- is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>CO3^2-</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>H2CO3</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>HCO3^- (itself)</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>HCOO^-</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Acid-Base Concepts"
+            }
+        },
+        {
+            "id": "chem-a-q18",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Which pair forms a buffer?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>HCl and NaCl</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>CH3COOH and CH3COONa</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>NaOH and NaCl</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>NH3 and NaCl</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Buffer Solutions"
+            }
+        },
+        {
+            "id": "chem-a-q19",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Select the correct statement about adsorption:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>It is a bulk phenomenon.</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>It increases with surface area.</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>It is independent of temperature.</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>Chemisorption is reversible at all temps.</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Surface Chemistry"
+            }
+        },
+        {
+            "id": "chem-a-q20",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Kohlrausch's law is related to:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>osmotic pressure</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>conductance at infinite dilution</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>phase equilibria</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>colligative elevation of boiling point</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Electrochemistry"
+            }
+        },
+        {
+            "id": "chem-b-q01",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Calculate molarity of 9.8 g H2SO4 in 1.0 L solution. (Molar mass=98 g/mol)</p>",
+            "answer_key": [
+                "0.1"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Solutions"
+            }
+        },
+        {
+            "id": "chem-b-q02",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>At 27&deg;C (300 K), 2.0 mol of an ideal gas occupies 49.2 L at pressure P. Using R=0.082 L\u00b7atm\u00b7mol^-1\u00b7K^-1, find P (in atm) to two decimals.</p>",
+            "answer_key": [
+                "1.00"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Gas Laws"
+            }
+        },
+        {
+            "id": "chem-b-q03",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A solution has [H+] = 1.0\u00d710^-5 M. Find pH.</p>",
+            "answer_key": [
+                "5"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "pH Calculations"
+            }
+        },
+        {
+            "id": "chem-b-q04",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>The rate constant k of a first-order reaction is 0.0693 min^-1. Find its half-life (in minutes). Use ln2=0.693.</p>",
+            "answer_key": [
+                "10"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Kinetics"
+            }
+        },
+        {
+            "id": "chem-b-q05",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>For the reaction A \u21cc B, Kc=4 at 298 K. Initially, 1.0 mol A and 0 mol B in 1.0 L. At equilibrium, moles of B = ?</p>",
+            "answer_key": [
+                "0.67"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Chemical Equilibrium"
+            }
+        },
+        {
+            "id": "chem-b-q06",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>50.0 mL of 0.200 M HCl is titrated with 0.250 M NaOH. Volume (in mL) of NaOH at equivalence point = ?</p>",
+            "answer_key": [
+                "40"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Titrations"
+            }
+        },
+        {
+            "id": "chem-b-q07",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Freezing point depression \u0394T_f for 1.00 molal solution (K_f=1.86 K\u00b7kg/mol) is (in K):</p>",
+            "answer_key": [
+                "1.86"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Colligative Properties"
+            }
+        },
+        {
+            "id": "chem-b-q08",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Nernst: E = E\u00b0 - (0.059/ n) log(Q). For a cell with n=2 and Q=1.0\u00d710^2, if E\u00b0=1.10 V, find E (in V) to two decimals.</p>",
+            "answer_key": [
+                "1.04"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Electrochemistry"
+            }
+        },
+        {
+            "id": "chem-b-q09",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>The enthalpy change for reaction is -92 kJ for 2 mol product. Find \u0394H (in kJ) per mol product.</p>",
+            "answer_key": [
+                "-46"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Thermochemistry"
+            }
+        },
+        {
+            "id": "chem-b-q10",
+            "section_id": "chem",
+            "module_id": "chem-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A simple energy profile is shown. The activation energy forward is the difference between peak (60 kJ/mol) and reactant level (10 kJ/mol). Find E_a (kJ/mol).</p><svg xmlns='http://www.w3.org/2000/svg' width='360' height='200' viewBox='0 0 360 200'><line x1='30' y1='160' x2='330' y2='160' stroke='black'/><polyline points='40,150 120,60 200,150 280,120' fill='none' stroke='black' stroke-width='2'/><text x='110' y='50' font-size='12'>60</text><text x='40' y='150' font-size='12'>10</text><text x='50' y='180' font-size='12'>Reaction Coordinate</text><text x='5' y='80' font-size='12' transform='rotate(-90 15,100)'>Energy (kJ/mol)</text></svg>",
+            "answer_key": [
+                "50"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Chemistry",
+                "skill": "Reaction Energetics"
+            }
+        },
+        {
+            "id": "math-a-q01",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>If f(x)=x^2-5x+6, then f(3)=?</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>0</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>6</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>-2</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Polynomials"
+            }
+        },
+        {
+            "id": "math-a-q02",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The roots of x^2-7x+12=0 are:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>3 and 4</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>2 and 6</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>1 and 12</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>-3 and -4</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Quadratics"
+            }
+        },
+        {
+            "id": "math-a-q03",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>If A.P. has a1=5, d=3, then the 10th term is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>32</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>35</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>5+9=14</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>27</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Progressions"
+            }
+        },
+        {
+            "id": "math-a-q04",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>For complex number z=3+4i, |z| equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>5</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>7</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>1</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>25</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Complex Numbers"
+            }
+        },
+        {
+            "id": "math-a-q05",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>\u2211_{k=1}^{n} k equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>n(n+1)/2</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>n^2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>(n-1)n/2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>(n+1)/2</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Series"
+            }
+        },
+        {
+            "id": "math-a-q06",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>sin^2\u03b8 + cos^2\u03b8 equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>0</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>1</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>depends on \u03b8</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Trigonometry"
+            }
+        },
+        {
+            "id": "math-a-q07",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Slope of line joining (1,2) and (5,6) is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>1</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>0.5</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>4</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Coordinate Geometry"
+            }
+        },
+        {
+            "id": "math-a-q08",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Derivative of x^3 with respect to x is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>3x^2</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>x^2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>3x</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>x^3</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Differentiation"
+            }
+        },
+        {
+            "id": "math-a-q09",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Integral \u222b 0 to 1 of x dx equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>1</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>1/2</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>0</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Integration"
+            }
+        },
+        {
+            "id": "math-a-q10",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The binomial expansion coefficient of x^2 in (1+x)^4 is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>6</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>4</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>12</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>24</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Binomial Theorem"
+            }
+        },
+        {
+            "id": "math-a-q11",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>If \u03b8 is acute and tan\u03b8=1, then \u03b8 equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>30&deg;</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>45&deg;</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>60&deg;</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>90&deg;</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Trigonometry"
+            }
+        },
+        {
+            "id": "math-a-q12",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Equation of a circle with center (0,0) and radius 5 is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>x^2+y^2=25</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>x^2+y^2=5</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>(x-5)^2+y^2=0</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>x^2+y=25</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Circle Geometry"
+            }
+        },
+        {
+            "id": "math-a-q13",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>If A is a 2x2 identity matrix, then det(A) equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>0</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>1</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>2</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>-1</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Determinants"
+            }
+        },
+        {
+            "id": "math-a-q14",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>If P(A)=0.4, P(B)=0.5 and A, B independent, then P(A\u2229B)=</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>0.45</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>0.20</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>0.90</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>0.10</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Probability"
+            }
+        },
+        {
+            "id": "math-a-q15",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>If y=ln x, then dy/dx at x=e equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>e</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>1/e</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>1</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>0</p>"
+                }
+            ],
+            "answer_key": [
+                "C"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Differentiation"
+            }
+        },
+        {
+            "id": "math-a-q16",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Area of triangle with vertices (0,0), (4,0), (0,3) is:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>6</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>7</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>12</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>5</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Coordinate Geometry"
+            }
+        },
+        {
+            "id": "math-a-q17",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Vector dot product a\u22c5b equals |a||b|cos\u03b8. If |a|=2, |b|=3, \u03b8=60&deg;, a\u22c5b=</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>3</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>6</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>5</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>2</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Vectors"
+            }
+        },
+        {
+            "id": "math-a-q18",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>The limit lim_{x\u21920} (sin x)/x equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>0</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>1</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>\u221e</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>does not exist</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Limits"
+            }
+        },
+        {
+            "id": "math-a-q19",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>Let lines L<sub>1</sub>: 2x + 3y = 12 and L<sub>2</sub>: x - y = 1 intersect at P. The coordinates of P are:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>(3, 2)</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>(4, 3)</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>(2, 1)</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>(-1, -2)</p>"
+                }
+            ],
+            "answer_key": [
+                "A"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Linear Equations"
+            }
+        },
+        {
+            "id": "math-a-q20",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "A",
+            "type": "mcq_single",
+            "prompt_html": "<p>If f(x) = x<sup>3</sup> - 3x and g(x) = f'(x), then g(2) equals:</p>",
+            "choices": [
+                {
+                    "id": "A",
+                    "label_html": "<p>9</p>"
+                },
+                {
+                    "id": "B",
+                    "label_html": "<p>6</p>"
+                },
+                {
+                    "id": "C",
+                    "label_html": "<p>5</p>"
+                },
+                {
+                    "id": "D",
+                    "label_html": "<p>3</p>"
+                }
+            ],
+            "answer_key": [
+                "B"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Differentiation"
+            }
+        },
+        {
+            "id": "math-b-q01",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Solve 2x<sup>2</sup> - 5x - 3 = 0 and enter the <em>positive</em> root (to two decimals if needed).</p>",
+            "answer_key": [
+                "3"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Quadratics"
+            }
+        },
+        {
+            "id": "math-b-q02",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>The distance between A(−2, 3) and B(4, −1) is:</p>",
+            "answer_key": [
+                "7.21"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Coordinate Geometry"
+            }
+        },
+        {
+            "id": "math-b-q03",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Evaluate ∫<sub>0</sub><sup>2</sup> (3x<sup>2</sup> - 2x) dx.</p>",
+            "answer_key": [
+                "4"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Definite Integrals"
+            }
+        },
+        {
+            "id": "math-b-q04",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>If sin θ = 3/5 and θ is acute, compute tan θ (enter as a decimal to two places if required).</p>",
+            "answer_key": [
+                "0.75"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Trigonometry"
+            }
+        },
+        {
+            "id": "math-b-q05",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>The sum of the first 20 terms of an A.P. with a<sub>1</sub>=4 and d=3 is:</p>",
+            "answer_key": [
+                "670"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Progressions"
+            }
+        },
+        {
+            "id": "math-b-q06",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Let A = \[\[1, 2], [3, 4]\]. Compute det(A).</p>",
+            "answer_key": [
+                "-2"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Determinants"
+            }
+        },
+        {
+            "id": "math-b-q07",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>A circle has equation x<sup>2</sup> + y<sup>2</sup> - 6x + 8y = 0. Enter its radius.</p>",
+            "answer_key": [
+                "5"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Circle Geometry"
+            }
+        },
+        {
+            "id": "math-b-q08",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>If lim<sub>x→0</sub> (1 - cos ax) / x<sup>2</sup> = k, find k in terms of a.</p>",
+            "answer_key": [
+                "a^2/2"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Limits"
+            }
+        },
+        {
+            "id": "math-b-q09",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>Evaluate the binomial coefficient C(10, 3).</p>",
+            "answer_key": [
+                "120"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Binomial Theorem"
+            }
+        },
+        {
+            "id": "math-b-q10",
+            "section_id": "math",
+            "module_id": "math-m1",
+            "part": "B",
+            "type": "numeric",
+            "prompt_html": "<p>The area of the triangle formed by points (0,0), (6,0) and (2,4) is:</p><svg xmlns='http://www.w3.org/2000/svg' width='320' height='220' viewBox='0 0 320 220'><line x1='20' y1='200' x2='300' y2='200' stroke='black'/><line x1='20' y1='200' x2='20' y2='20' stroke='black'/><circle cx='20' cy='200' r='3' fill='black'/><text x='5' y='210' font-size='12'>(0,0)</text><circle cx='140' cy='200' r='3' fill='black'/><text x='130' y='215' font-size='12'>(6,0)</text><circle cx='60' cy='120' r='3' fill='black'/><text x='40' y='115' font-size='12'>(2,4)</text><polygon points='20,200 140,200 60,120' fill='none' stroke='black'/><text x='180' y='215' font-size='12'>x</text><text x='5' y='25' font-size='12'>y</text></svg>",
+            "answer_key": [
+                "12"
+            ],
+            "points": 4,
+            "tags": {
+                "domain": "Mathematics",
+                "skill": "Coordinate Geometry"
+            }
+        }
+    ]
+}

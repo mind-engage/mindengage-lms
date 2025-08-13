@@ -82,6 +82,12 @@ export type Attempt = {
   responses?: Record<string, any>;
 };
 
+type User = {
+  id: string;
+  username: string;
+  role: string;
+};
+
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
@@ -236,20 +242,23 @@ function StatusCard({ label, value, icon }: { label: string; value: string; icon
 /* -------------------- Users Panel -------------------- */
 function UsersPanel({ jwt }: { jwt: string; }) {
   const [role, setRole] = useState<string>("");
-  const [users, setUsers] = useState<Array<{ id: string; username: string; role: string }>>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [busy, setBusy] = useState(false);
   const snack = useSnack();
 
   async function fetchUsers() {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
-      const url = new URL(`${API_BASE}/users`);
-      if (role) url.searchParams.set("role", role);
-      const res = await fetch(url.toString(), { headers: { Authorization: `Bearer ${jwt}` } });
-      if (!res.ok) throw new Error(await res.text());
-      const data = await res.json();
+      const qs = role ? `?${new URLSearchParams({ role }).toString()}` : "";
+      const data = await api<User[]>(`/users${qs}`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
       setUsers(data);
-    } catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
+    } catch (e: any) {
+      snack.setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
   }
   useEffect(() => { fetchUsers(); /* initial */ // eslint-disable-next-line
   }, []);
@@ -329,13 +338,16 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
   const fetchExams = useCallback(async (query: string) => {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
-      const url = new URL(`${API_BASE}/exams`);
-      if (query.trim()) url.searchParams.set("q", query.trim());
-      const res = await fetch(url.toString(), { headers: { Authorization: `Bearer ${jwt}` } });
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${await res.text()}`);
-      const data: ExamSummary[] = await res.json();
+      const qs = query.trim() ? `?${new URLSearchParams({ q: query.trim() }).toString()}` : "";
+      const data = await api<ExamSummary[]>(`/exams${qs}`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
       setList(data);
-    } catch (err: any) { snack.setErr(err.message); } finally { setBusy(false); }
+    } catch (err: any) {
+      snack.setErr(err.message);
+    } finally {
+      setBusy(false);
+    }
   }, [jwt]);
 
   useEffect(() => { fetchExams(""); }, [fetchExams]);

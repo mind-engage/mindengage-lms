@@ -1,0 +1,1408 @@
+{
+    "id": "jee-main-p1-001",
+    "title": "JEE (Main) Paper 1 – Full Length",
+    "profile": "jee.v1",
+    "policy": {
+      "sections": [
+        {
+          "id": "phy",
+          "title": "Physics",
+          "modules": [
+            { "id": "phy-m1", "time_limit_sec": 10800 }
+          ]
+        },
+        {
+          "id": "chem",
+          "title": "Chemistry",
+          "modules": [
+            { "id": "chem-m1", "time_limit_sec": 10800 }
+          ]
+        },
+        {
+          "id": "math",
+          "title": "Mathematics",
+          "modules": [
+            { "id": "math-m1", "time_limit_sec": 10800 }
+          ]
+        }
+      ],
+      "navigation": {
+        "allow_back": true,
+        "module_locked": false,
+        "subject_tabs": true
+      },
+      "scoring": {
+        "phy": {
+          "A": { "correct": 4, "wrong": -1, "unattempted": 0 },
+          "B": { "correct": 4, "wrong": 0,  "unattempted": 0, "attempt_limit": 5, "offered": 10 }
+        },
+        "chem": {
+          "A": { "correct": 4, "wrong": -1, "unattempted": 0 },
+          "B": { "correct": 4, "wrong": 0,  "unattempted": 0, "attempt_limit": 5, "offered": 10 }
+        },
+        "math": {
+          "A": { "correct": 4, "wrong": -1, "unattempted": 0 },
+          "B": { "correct": 4, "wrong": 0,  "unattempted": 0, "attempt_limit": 5, "offered": 10 }
+        }
+      },
+      "item_constraints": {
+        "phy":  { "mcq_single": { "choices": 4 }, "numeric": { "tolerance": 0, "allow_fraction": true } },
+        "chem": { "mcq_single": { "choices": 4 }, "numeric": { "tolerance": 0, "allow_fraction": true } },
+        "math": { "mcq_single": { "choices": 4 }, "numeric": { "tolerance": 0, "allow_fraction": true } }
+      },
+      "proctor": { "screenshot": false, "camera": false },
+      "meta": { "version": "gen-1" }
+    },
+    "questions": [
+      {
+        "id": "phy-a-q01",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>A projectile is fired with an initial velocity u at an angle θ with the horizontal. The time taken for the projectile to reach its maximum height is given by:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>(u sinθ) / g</p>" },
+          { "id": "B", "label_html": "<p>(2u sinθ) / g</p>" },
+          { "id": "C", "label_html": "<p>(u cosθ) / g</p>" },
+          { "id": "D", "label_html": "<p>(u<sup>2</sup> sin<sup>2</sup>θ) / (2g)</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Projectile Motion" }
+      },
+      {
+        "id": "phy-a-q02",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>A block of mass 5 kg is placed on a rough horizontal surface with a coefficient of static friction of 0.4. What is the minimum horizontal force required to just move the block? (Take g = 10 m/s<sup>2</sup>)</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>10 N</p>" },
+          { "id": "B", "label_html": "<p>20 N</p>" },
+          { "id": "C", "label_html": "<p>50 N</p>" },
+          { "id": "D", "label_html": "<p>2 N</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Newton's Laws of Motion" }
+      },
+      {
+        "id": "phy-a-q03",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The potential energy of a spring when stretched by a distance x is 10 J. What is the potential energy if it is stretched by a distance 2x?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>10 J</p>" },
+          { "id": "B", "label_html": "<p>20 J</p>" },
+          { "id": "C", "label_html": "<p>40 J</p>" },
+          { "id": "D", "label_html": "<p>5 J</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Work, Energy and Power" }
+      },
+      {
+        "id": "phy-a-q04",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The moment of inertia of a solid sphere about an axis passing through its center is (2/5)MR<sup>2</sup>. What is its moment of inertia about a tangent?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>(2/5)MR<sup>2</sup></p>" },
+          { "id": "B", "label_html": "<p>(3/5)MR<sup>2</sup></p>" },
+          { "id": "C", "label_html": "<p>MR<sup>2</sup></p>" },
+          { "id": "D", "label_html": "<p>(7/5)MR<sup>2</sup></p>" }
+        ],
+        "answer_key": ["D"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Rotational Motion" }
+      },
+      {
+        "id": "phy-a-q05",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The escape velocity from the Earth's surface is v<sub>e</sub>. What is the escape velocity from a planet having twice the radius and the same mean density as the Earth?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>2v<sub>e</sub></p>" },
+          { "id": "B", "label_html": "<p>4v<sub>e</sub></p>" },
+          { "id": "C", "label_html": "<p>v<sub>e</sub>/2</p>" },
+          { "id": "D", "label_html": "<p>√2 v<sub>e</sub></p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Gravitation" }
+      },
+      {
+        "id": "phy-a-q06",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>A Carnot engine has an efficiency of 50% when its sink is at 27°C. What is the temperature of the source?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>227°C</p>" },
+          { "id": "B", "label_html": "<p>327°C</p>" },
+          { "id": "C", "label_html": "<p>600°C</p>" },
+          { "id": "D", "label_html": "<p>54°C</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Thermodynamics" }
+      },
+      {
+        "id": "phy-a-q07",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>In Young's double-slit experiment, the fringe width is β. If the distance between the slits and the screen is doubled, the new fringe width will be:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>β</p>" },
+          { "id": "B", "label_html": "<p>2β</p>" },
+          { "id": "C", "label_html": "<p>β/2</p>" },
+          { "id": "D", "label_html": "<p>4β</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Wave Optics" }
+      },
+      {
+        "id": "phy-a-q08",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The energy of a photon of wavelength λ is given by E = hc/λ. If the wavelength is halved, the new energy will be:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>E/2</p>" },
+          { "id": "B", "label_html": "<p>E</p>" },
+          { "id": "C", "label_html": "<p>2E</p>" },
+          { "id": "D", "label_html": "<p>4E</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Dual Nature of Radiation" }
+      },
+      {
+        "id": "phy-a-q09",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following logic gates is a universal gate?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>AND</p>" },
+          { "id": "B", "label_html": "<p>OR</p>" },
+          { "id": "C", "label_html": "<p>NOT</p>" },
+          { "id": "D", "label_html": "<p>NAND</p>" }
+        ],
+        "answer_key": ["D"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Semiconductor Electronics" }
+      },
+      {
+        "id": "phy-a-q10",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>An electric dipole is placed in a uniform electric field. The net electric force on the dipole is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Always zero</p>" },
+          { "id": "B", "label_html": "<p>Never zero</p>" },
+          { "id": "C", "label_html": "<p>Depends on the orientation of the dipole</p>" },
+          { "id": "D", "label_html": "<p>Depends on the magnitude of the dipole moment</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Electrostatics" }
+      },
+      {
+        "id": "phy-a-q11",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The dimensional formula for gravitational constant G is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>[M L<sup>3</sup> T<sup>-2</sup>]</p>" },
+          { "id": "B", "label_html": "<p>[M<sup>-1</sup> L<sup>3</sup> T<sup>-2</sup>]</p>" },
+          { "id": "C", "label_html": "<p>[M<sup>-1</sup> L<sup>-3</sup> T<sup>2</sup>]</p>" },
+          { "id": "D", "label_html": "<p>[M L<sup>-3</sup> T<sup>2</sup>]</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Units and Measurements" }
+      },
+      {
+        "id": "phy-a-q12",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>A sound wave travels from air to water. Which of the following properties remains unchanged?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Velocity</p>" },
+          { "id": "B", "label_html": "<p>Wavelength</p>" },
+          { "id": "C", "label_html": "<p>Frequency</p>" },
+          { "id": "D", "label_html": "<p>Amplitude</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Waves" }
+      },
+      {
+        "id": "phy-a-q13",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The resistivity of a conductor generally ________ with an increase in temperature.</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>decreases</p>" },
+          { "id": "B", "label_html": "<p>increases</p>" },
+          { "id": "C", "label_html": "<p>remains the same</p>" },
+          { "id": "D", "label_html": "<p>first increases then decreases</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Current Electricity" }
+      },
+      {
+        "id": "phy-a-q14",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>A charge q moves in a region where both electric field E and magnetic field B exist. The Lorentz force on the charge is given by:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>qE</p>" },
+          { "id": "B", "label_html": "<p>q(v × B)</p>" },
+          { "id": "C", "label_html": "<p>qE + q(v × B)</p>" },
+          { "id": "D", "label_html": "<p>qB + q(v × E)</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Magnetic Effects of Current" }
+      },
+      {
+        "id": "phy-a-q15",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>In an AC circuit containing only an inductor, the phase difference between voltage and current is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>0</p>" },
+          { "id": "B", "label_html": "<p>π/2, with voltage leading</p>" },
+          { "id": "C", "label_html": "<p>π/2, with current leading</p>" },
+          { "id": "D", "label_html": "<p>π</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Alternating Current" }
+      },
+      {
+        "id": "phy-a-q16",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following electromagnetic waves has the highest frequency?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Radio waves</p>" },
+          { "id": "B", "label_html": "<p>Microwaves</p>" },
+          { "id": "C", "label_html": "<p>X-rays</p>" },
+          { "id": "D", "label_html": "<p>Gamma rays</p>" }
+        ],
+        "answer_key": ["D"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Electromagnetic Waves" }
+      },
+      {
+        "id": "phy-a-q17",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>A convex lens of focal length 20 cm is placed in contact with a concave lens of focal length 25 cm. The power of the combination is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>+1 D</p>" },
+          { "id": "B", "label_html": "<p>-1 D</p>" },
+          { "id": "C", "label_html": "<p>+9 D</p>" },
+          { "id": "D", "label_html": "<p>-9 D</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Ray Optics" }
+      },
+      {
+        "id": "phy-a-q18",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The energy of an electron in the n<sup>th</sup> orbit of a hydrogen atom is proportional to:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>n<sup>2</sup></p>" },
+          { "id": "B", "label_html": "<p>1/n<sup>2</sup></p>" },
+          { "id": "C", "label_html": "<p>n</p>" },
+          { "id": "D", "label_html": "<p>1/n</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Atoms" }
+      },
+      {
+        "id": "phy-a-q19",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The binding energy per nucleon is maximum for:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Uranium</p>" },
+          { "id": "B", "label_html": "<p>Helium</p>" },
+          { "id": "C", "label_html": "<p>Iron</p>" },
+          { "id": "D", "label_html": "<p>Hydrogen</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Nuclei" }
+      },
+      {
+        "id": "phy-a-q20",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The ratio of the speed of light in a vacuum to the speed of light in a medium is called:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Refractive index</p>" },
+          { "id": "B", "label_html": "<p>Dielectric constant</p>" },
+          { "id": "C", "label_html": "<p>Permittivity</p>" },
+          { "id": "D", "label_html": "<p>Permeability</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Optics" }
+      },
+      {
+        "id": "phy-b-q01",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>A car travels the first half of a distance with a speed of 40 km/h and the second half with a speed of 60 km/h. The average speed of the car in km/h is:</p>",
+        "answer_key": ["48"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Kinematics" }
+      },
+      {
+        "id": "phy-b-q02",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>In the circuit shown, the value of the current I (in Amperes) is:</p><svg xmlns='http://www.w3.org/2000/svg' width='300' height='150' viewBox='0 0 300 150'><path d='M20 75 L 80 75' stroke='black' stroke-width='2'/><path d='M80 50 L 80 100' stroke='black' stroke-width='2'/><path d='M75 50 L 85 50' stroke='black' stroke-width='2'/><text x='50' y='70'>10V</text><path d='M80 75 L 120 75' stroke='black' stroke-width='2'/><rect x='120' y='65' width='60' height='20' stroke='black' fill='none' stroke-width='2' /><text x='140' y='80'>2Ω</text><path d='M180 75 L 220 75' stroke='black' stroke-width='2'/><rect x='220' y='65' width='60' height='20' stroke='black' fill='none' stroke-width='2' /><text x='240' y='80'>3Ω</text><path d='M280 75 L 280 120 L 20 120 L 20 75' stroke='black' stroke-width='2' fill='none'/></svg>",
+        "answer_key": ["2"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "DC Circuits" }
+      },
+      {
+        "id": "phy-b-q03",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>A body of mass 2 kg is initially at rest. A constant force of 10 N is applied to it for 5 seconds. The final kinetic energy of the body in Joules is:</p>",
+        "answer_key": ["625"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Work, Energy and Power" }
+      },
+      {
+        "id": "phy-b-q04",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The half-life of a radioactive substance is 10 days. The time taken for 7/8 of the original number of atoms to disintegrate is ____ days.</p>",
+        "answer_key": ["30"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Radioactivity" }
+      },
+      {
+        "id": "phy-b-q05",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>A simple pendulum has a time period of 2 seconds on the surface of the Earth. What will be its time period (in seconds) on the surface of the moon, where acceleration due to gravity is 1/6th that of Earth?</p>",
+        "answer_key": ["4.9"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Oscillations" }
+      },
+      {
+        "id": "phy-b-q06",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>An object is placed at a distance of 10 cm from a convex mirror of focal length 15 cm. The magnification produced is:</p>",
+        "answer_key": ["0.6"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Mirrors" }
+      },
+      {
+        "id": "phy-b-q07",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>A wire of length 1 m carrying a current of 2 A is placed in a uniform magnetic field of 0.5 T, perpendicular to the field. The force on the wire in Newtons is:</p>",
+        "answer_key": ["1"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Magnetic Force" }
+      },
+      {
+        "id": "phy-b-q08",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The work function of a metal is 2.1 eV. Light of wavelength 400 nm is incident on it. The maximum kinetic energy of the emitted photoelectrons (in eV) is: (Take hc = 1240 eV-nm)</p>",
+        "answer_key": ["1.0"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Photoelectric Effect" }
+      },
+      {
+        "id": "phy-b-q09",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>An ideal gas at 27°C is compressed adiabatically to 8/27 of its original volume. If γ = 5/3, then the rise in temperature is K × 10<sup>2</sup>. The value of K is:</p>",
+        "answer_key": ["3.75"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Thermodynamics" }
+      },
+      {
+        "id": "phy-b-q10",
+        "section_id": "phy",
+        "module_id": "phy-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>Two point charges +4q and +q are placed 30 cm apart. At what distance (in cm) from the +4q charge on the line joining them is the electric field zero?</p>",
+        "answer_key": ["20"],
+        "points": 4,
+        "tags": { "domain": "Physics", "skill": "Electrostatics" }
+      },
+      {
+        "id": "chem-a-q01",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The number of atoms in 4.25 g of NH<sub>3</sub> is approximately: (N<sub>A</sub> = 6.022 × 10<sup>23</sup> mol<sup>-1</sup>)</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>1 × 10<sup>23</sup></p>" },
+          { "id": "B", "label_html": "<p>2 × 10<sup>23</sup></p>" },
+          { "id": "C", "label_html": "<p>4 × 10<sup>23</sup></p>" },
+          { "id": "D", "label_html": "<p>6 × 10<sup>23</sup></p>" }
+        ],
+        "answer_key": ["D"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Mole Concept" }
+      },
+      {
+        "id": "chem-a-q02",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The set of quantum numbers n=3, l=2, m=+2 represents an electron in which orbital?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>3s</p>" },
+          { "id": "B", "label_html": "<p>3p</p>" },
+          { "id": "C", "label_html": "<p>3d</p>" },
+          { "id": "D", "label_html": "<p>4d</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Atomic Structure" }
+      },
+      {
+        "id": "chem-a-q03",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following molecules has a trigonal planar geometry?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>NH<sub>3</sub></p>" },
+          { "id": "B", "label_html": "<p>H<sub>2</sub>O</p>" },
+          { "id": "C", "label_html": "<p>BF<sub>3</sub></p>" },
+          { "id": "D", "label_html": "<p>PCl<sub>5</sub></p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Chemical Bonding" }
+      },
+      {
+        "id": "chem-a-q04",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>For the reaction 2SO<sub>2</sub>(g) + O<sub>2</sub>(g) ⇌ 2SO<sub>3</sub>(g), what is the relationship between K<sub>p</sub> and K<sub>c</sub>?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>K<sub>p</sub> = K<sub>c</sub>(RT)</p>" },
+          { "id": "B", "label_html": "<p>K<sub>p</sub> = K<sub>c</sub>(RT)<sup>-1</sup></p>" },
+          { "id": "C", "label_html": "<p>K<sub>p</sub> = K<sub>c</sub>(RT)<sup>2</sup></p>" },
+          { "id": "D", "label_html": "<p>K<sub>p</sub> = K<sub>c</sub></p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Chemical Equilibrium" }
+      },
+      {
+        "id": "chem-a-q05",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following is an example of a Lewis acid?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>NH<sub>3</sub></p>" },
+          { "id": "B", "label_html": "<p>H<sub>2</sub>O</p>" },
+          { "id": "C", "label_html": "<p>AlCl<sub>3</sub></p>" },
+          { "id": "D", "label_html": "<p>Cl<sup>-</sup></p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Acids and Bases" }
+      },
+      {
+        "id": "chem-a-q06",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The oxidation state of Chromium in K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub> is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>+3</p>" },
+          { "id": "B", "label_html": "<p>+4</p>" },
+          { "id": "C", "label_html": "<p>+6</p>" },
+          { "id": "D", "label_html": "<p>+7</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Redox Reactions" }
+      },
+      {
+        "id": "chem-a-q07",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following alkali metals has the highest hydration enthalpy?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Li</p>" },
+          { "id": "B", "label_html": "<p>Na</p>" },
+          { "id": "C", "label_html": "<p>K</p>" },
+          { "id": "D", "label_html": "<p>Cs</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "s-Block Elements" }
+      },
+      {
+        "id": "chem-a-q08",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The IUPAC name of the compound CH<sub>3</sub>-CH(OH)-CH<sub>2</sub>-CHO is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>3-Hydroxybutanal</p>" },
+          { "id": "B", "label_html": "<p>1-Formylpropan-2-ol</p>" },
+          { "id": "C", "label_html": "<p>Butan-2-ol-4-al</p>" },
+          { "id": "D", "label_html": "<p>2-Hydroxybutanal</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "IUPAC Nomenclature" }
+      },
+      {
+        "id": "chem-a-q09",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following reagents is used to distinguish between an aldehyde and a ketone?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Grignard reagent</p>" },
+          { "id": "B", "label_html": "<p>Tollens' reagent</p>" },
+          { "id": "C", "label_html": "<p>Lucas reagent</p>" },
+          { "id": "D", "label_html": "<p>Sodium bisulfite</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Aldehydes and Ketones" }
+      },
+      {
+        "id": "chem-a-q10",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The monomer of natural rubber is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Isoprene</p>" },
+          { "id": "B", "label_html": "<p>Neoprene</p>" },
+          { "id": "C", "label_html": "<p>Styrene</p>" },
+          { "id": "D", "label_html": "<p>Butadiene</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Polymers" }
+      },
+      {
+        "id": "chem-a-q11",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following is not a greenhouse gas?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>CO<sub>2</sub></p>" },
+          { "id": "B", "label_html": "<p>CH<sub>4</sub></p>" },
+          { "id": "C", "label_html": "<p>O<sub>2</sub></p>" },
+          { "id": "D", "label_html": "<p>N<sub>2</sub>O</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Environmental Chemistry" }
+      },
+      {
+        "id": "chem-a-q12",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The reaction of propene with HBr in the presence of peroxide follows:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Markovnikov's rule</p>" },
+          { "id": "B", "label_html": "<p>Anti-Markovnikov's rule</p>" },
+          { "id": "C", "label_html": "<p>Saytzeff's rule</p>" },
+          { "id": "D", "label_html": "<p>Hofmann's rule</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Hydrocarbons" }
+      },
+      {
+        "id": "chem-a-q13",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The primary structure of a protein represents:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>The sequence of amino acids</p>" },
+          { "id": "B", "label_html": "<p>The folding of the polypeptide chain</p>" },
+          { "id": "C", "label_html": "<p>The arrangement of multiple subunits</p>" },
+          { "id": "D", "label_html": "<p>The alpha-helix and beta-sheet structures</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Biomolecules" }
+      },
+      {
+        "id": "chem-a-q14",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following elements shows a diagonal relationship with Beryllium (Be)?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Magnesium (Mg)</p>" },
+          { "id": "B", "label_html": "<p>Aluminum (Al)</p>" },
+          { "id": "C", "label_html": "<p>Silicon (Si)</p>" },
+          { "id": "D", "label_html": "<p>Lithium (Li)</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Periodic Classification" }
+      },
+      {
+        "id": "chem-a-q15",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The hybridisation of the central atom in SF<sub>6</sub> is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>sp<sup>3</sup>d</p>" },
+          { "id": "B", "label_html": "<p>sp<sup>3</sup>d<sup>2</sup></p>" },
+          { "id": "C", "label_html": "<p>dsp<sup>2</sup></p>" },
+          { "id": "D", "label_html": "<p>sp<sup>3</sup></p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Chemical Bonding" }
+      },
+      {
+        "id": "chem-a-q16",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following is an example of a thermosetting polymer?</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>PVC</p>" },
+          { "id": "B", "label_html": "<p>Bakelite</p>" },
+          { "id": "C", "label_html": "<p>Polythene</p>" },
+          { "id": "D", "label_html": "<p>Nylon-6,6</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Polymers" }
+      },
+      {
+        "id": "chem-a-q17",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The colligative property of a solution depends on:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Nature of solute particles</p>" },
+          { "id": "B", "label_html": "<p>Number of solute particles</p>" },
+          { "id": "C", "label_html": "<p>Nature of solvent</p>" },
+          { "id": "D", "label_html": "<p>Physical properties of solute</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Solutions" }
+      },
+      {
+        "id": "chem-a-q18",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Lanthanoid contraction is due to the poor shielding effect of:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>s-electrons</p>" },
+          { "id": "B", "label_html": "<p>p-electrons</p>" },
+          { "id": "C", "label_html": "<p>d-electrons</p>" },
+          { "id": "D", "label_html": "<p>f-electrons</p>" }
+        ],
+        "answer_key": ["D"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "d and f-Block Elements" }
+      },
+      {
+        "id": "chem-a-q19",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Carbylamine reaction is given by:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>Primary amines</p>" },
+          { "id": "B", "label_html": "<p>Secondary amines</p>" },
+          { "id": "C", "label_html": "<p>Tertiary amines</p>" },
+          { "id": "D", "label_html": "<p>All amines</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Amines" }
+      },
+      {
+        "id": "chem-a-q20",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The chemical formula for plaster of Paris is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>CaSO<sub>4</sub>·2H<sub>2</sub>O</p>" },
+          { "id": "B", "label_html": "<p>CaSO<sub>4</sub>·(1/2)H<sub>2</sub>O</p>" },
+          { "id": "C", "label_html": "<p>CaSO<sub>4</sub></p>" },
+          { "id": "D", "label_html": "<p>2CaSO<sub>4</sub>·H<sub>2</sub>O</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "s-Block Elements" }
+      },
+      {
+        "id": "chem-b-q01",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The pH of a 0.01 M solution of HCl is:</p>",
+        "answer_key": ["2"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Ionic Equilibrium" }
+      },
+      {
+        "id": "chem-b-q02",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>For a first-order reaction, the time required for 99.9% completion is x times the half-life (t<sub>1/2</sub>) of the reaction. The value of x is approximately: (log 2 = 0.301)</p>",
+        "answer_key": ["10"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Chemical Kinetics" }
+      },
+      {
+        "id": "chem-b-q03",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The standard electrode potential for the cell Zn | Zn<sup>2+</sup>(1M) || Cu<sup>2+</sup>(1M) | Cu is 1.10 V. The maximum work that can be obtained from this cell (in kJ/mol) is -x. Find the value of x. (1 F = 96500 C/mol). Enter the value rounded to the nearest integer.</p>",
+        "answer_key": ["212"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Electrochemistry" }
+      },
+      {
+        "id": "chem-b-q04",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The number of sigma (σ) and pi (π) bonds in a molecule of benzene are 12 and x respectively. The value of x is:</p>",
+        "answer_key": ["3"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Chemical Bonding" }
+      },
+      {
+        "id": "chem-b-q05",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>An element with atomic mass 100 has a bcc structure and a cell edge of 400 pm. The density of the element in g/cm<sup>3</sup> is approximately:</p>",
+        "answer_key": ["5.2"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Solid State" }
+      },
+      {
+        "id": "chem-b-q06",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The freezing point of a solution containing 1.8 g of a non-volatile solute in 100 g of benzene is lowered by 0.90 K. The molar mass of the solute (in g/mol) is: (K<sub>f</sub> for benzene = 5.0 K kg/mol)</p>",
+        "answer_key": ["100"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Solutions" }
+      },
+      {
+        "id": "chem-b-q07",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The number of geometrical isomers for the complex [Co(NH<sub>3</sub>)<sub>3</sub>(NO<sub>2</sub>)<sub>3</sub>] is:</p>",
+        "answer_key": ["2"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Coordination Compounds" }
+      },
+      {
+        "id": "chem-b-q08",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>How many of the following are electrophiles? H<sub>2</sub>O, BF<sub>3</sub>, NH<sub>3</sub>, NO<sub>2</sub><sup>+</sup>, SO<sub>3</sub>, CN<sup>-</sup></p>",
+        "answer_key": ["3"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "General Organic Chemistry" }
+      },
+      {
+        "id": "chem-b-q09",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The enthalpy of combustion of methane (CH<sub>4</sub>) is -890 kJ/mol. The heat liberated (in kJ) when 4 g of methane is burnt in excess air is:</p>",
+        "answer_key": ["222.5"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "Thermodynamics" }
+      },
+      {
+        "id": "chem-b-q10",
+        "section_id": "chem",
+        "module_id": "chem-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The magnetic moment of a divalent ion in aqueous solution with atomic number 25 is ____ B.M. (Bohr Magnetons). Enter the value rounded to two decimal places.</p>",
+        "answer_key": ["5.92"],
+        "points": 4,
+        "tags": { "domain": "Chemistry", "skill": "d-Block Elements" }
+      },
+      {
+        "id": "math-a-q01",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>Let R be a relation on the set of natural numbers N defined by R = {(x, y) : x, y ∈ N, 2x + y = 10}. The domain of R is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>{1, 2, 3, 4}</p>" },
+          { "id": "B", "label_html": "<p>{2, 4, 6, 8}</p>" },
+          { "id": "C", "label_html": "<p>{1, 2, 3, 4, 5}</p>" },
+          { "id": "D", "label_html": "<p>{1, 3, 5, 7}</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Relations and Functions" }
+      },
+      {
+        "id": "math-a-q02",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>If z = (1 + i) / (1 - i), then z<sup>4</sup> equals:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>1</p>" },
+          { "id": "B", "label_html": "<p>-1</p>" },
+          { "id": "C", "label_html": "<p>i</p>" },
+          { "id": "D", "label_html": "<p>-i</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Complex Numbers" }
+      },
+      {
+        "id": "math-a-q03",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>If the roots of the equation x<sup>2</sup> - 5x + 16 = 0 are α and β, and the roots of the equation x<sup>2</sup> + px + q = 0 are α<sup>2</sup> + β<sup>2</sup> and αβ, then the value of p is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>1</p>" },
+          { "id": "B", "label_html": "<p>-1</p>" },
+          { "id": "C", "label_html": "<p>9</p>" },
+          { "id": "D", "label_html": "<p>-9</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Quadratic Equations" }
+      },
+      {
+        "id": "math-a-q04",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The number of 4-digit numbers that can be formed using the digits 1, 2, 3, 4, 5 without repetition is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>120</p>" },
+          { "id": "B", "label_html": "<p>24</p>" },
+          { "id": "C", "label_html": "<p>60</p>" },
+          { "id": "D", "label_html": "<p>125</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Permutations and Combinations" }
+      },
+      {
+        "id": "math-a-q05",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The term independent of x in the expansion of (x<sup>2</sup> - 1/x)<sup>9</sup> is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>84</p>" },
+          { "id": "B", "label_html": "<p>-84</p>" },
+          { "id": "C", "label_html": "<p>126</p>" },
+          { "id": "D", "label_html": "<p>-126</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Binomial Theorem" }
+      },
+      {
+        "id": "math-a-q06",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The sum of the first 20 terms of the arithmetic progression 3, 7, 11, ... is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>820</p>" },
+          { "id": "B", "label_html": "<p>800</p>" },
+          { "id": "C", "label_html": "<p>790</p>" },
+          { "id": "D", "label_html": "<p>840</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Sequences and Series" }
+      },
+      {
+        "id": "math-a-q07",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The distance between the parallel lines 3x - 4y + 7 = 0 and 3x - 4y + 5 = 0 is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>2</p>" },
+          { "id": "B", "label_html": "<p>12/5</p>" },
+          { "id": "C", "label_html": "<p>2/5</p>" },
+          { "id": "D", "label_html": "<p>12</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Straight Lines" }
+      },
+      {
+        "id": "math-a-q08",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The eccentricity of the ellipse 4x<sup>2</sup> + 9y<sup>2</sup> = 36 is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>√5/3</p>" },
+          { "id": "B", "label_html": "<p>√3/5</p>" },
+          { "id": "C", "label_html": "<p>2/3</p>" },
+          { "id": "D", "label_html": "<p>3/5</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Conic Sections" }
+      },
+      {
+        "id": "math-a-q09",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The shortest distance between the lines x/2 = y/3 = z/4 and (x-1)/3 = (y-2)/4 = (z-3)/5 is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>0</p>" },
+          { "id": "B", "label_html": "<p>1/√6</p>" },
+          { "id": "C", "label_html": "<p>1/3</p>" },
+          { "id": "D", "label_html": "<p>1/√3</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "3D Geometry" }
+      },
+      {
+        "id": "math-a-q10",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>If |<b>a</b>| = 3, |<b>b</b>| = 4 and the angle between <b>a</b> and <b>b</b> is 60°, then |<b>a</b> - <b>b</b>| is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>√13</p>" },
+          { "id": "B", "label_html": "<p>√37</p>" },
+          { "id": "C", "label_html": "<p>7</p>" },
+          { "id": "D", "label_html": "<p>1</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Vector Algebra" }
+      },
+      {
+        "id": "math-a-q11",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>A die is thrown once. The probability of getting a prime number is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>1/3</p>" },
+          { "id": "B", "label_html": "<p>1/2</p>" },
+          { "id": "C", "label_html": "<p>2/3</p>" },
+          { "id": "D", "label_html": "<p>1/6</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Probability" }
+      },
+      {
+        "id": "math-a-q12",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The value of sin(45° + θ) - cos(45° - θ) is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>2 sinθ</p>" },
+          { "id": "B", "label_html": "<p>2 cosθ</p>" },
+          { "id": "C", "label_html": "<p>0</p>" },
+          { "id": "D", "label_html": "<p>1</p>" }
+        ],
+        "answer_key": ["C"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Trigonometry" }
+      },
+      {
+        "id": "math-a-q13",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The value of the integral ∫<sub>0</sub><sup>π/2</sup> (sin x) / (sin x + cos x) dx is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>π/4</p>" },
+          { "id": "B", "label_html": "<p>π/2</p>" },
+          { "id": "C", "label_html": "<p>0</p>" },
+          { "id": "D", "label_html": "<p>π</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Definite Integrals" }
+      },
+      {
+        "id": "math-a-q14",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The order and degree of the differential equation (d<sup>2</sup>y/dx<sup>2</sup>)<sup>3</sup> + (dy/dx)<sup>4</sup> + y<sup>5</sup> = 0 are respectively:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>2, 4</p>" },
+          { "id": "B", "label_html": "<p>2, 3</p>" },
+          { "id": "C", "label_html": "<p>3, 4</p>" },
+          { "id": "D", "label_html": "<p>3, 2</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Differential Equations" }
+      },
+      {
+        "id": "math-a-q15",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>If A is a square matrix such that A<sup>2</sup> = I, then (I - A)<sup>3</sup> + (I + A)<sup>3</sup> - 7A is equal to:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>A</p>" },
+          { "id": "B", "label_html": "<p>I - A</p>" },
+          { "id": "C", "label_html": "<p>I + A</p>" },
+          { "id": "D", "label_html": "<p>3A</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Matrices" }
+      },
+      {
+        "id": "math-a-q16",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The mean of 5 observations is 4 and their variance is 5.2. If three of the observations are 1, 2, and 6, the other two observations are:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>4 and 7</p>" },
+          { "id": "B", "label_html": "<p>3 and 8</p>" },
+          { "id": "C", "label_html": "<p>5 and 6</p>" },
+          { "id": "D", "label_html": "<p>2 and 9</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Statistics" }
+      },
+      {
+        "id": "math-a-q17",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The statement ~(p ↔ ~q) is equivalent to:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>p ↔ q</p>" },
+          { "id": "B", "label_html": "<p>~p ↔ q</p>" },
+          { "id": "C", "label_html": "<p>(p ∧ q) ∨ (~p ∧ ~q)</p>" },
+          { "id": "D", "label_html": "<p>~(p → q)</p>" }
+        ],
+        "answer_key": ["A"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Mathematical Reasoning" }
+      },
+      {
+        "id": "math-a-q18",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The slope of the tangent to the curve y = x<sup>3</sup> - x at x = 2 is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>10</p>" },
+          { "id": "B", "label_html": "<p>11</p>" },
+          { "id": "C", "label_html": "<p>12</p>" },
+          { "id": "D", "label_html": "<p>6</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Application of Derivatives" }
+      },
+      {
+        "id": "math-a-q19",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The value of tan<sup>-1</sup>(1) + cos<sup>-1</sup>(-1/2) + sin<sup>-1</sup>(-1/2) is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>π/4</p>" },
+          { "id": "B", "label_html": "<p>3π/4</p>" },
+          { "id": "C", "label_html": "<p>5π/6</p>" },
+          { "id": "D", "label_html": "<p>π/2</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Inverse Trigonometry" }
+      },
+      {
+        "id": "math-a-q20",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "A",
+        "type": "mcq_single",
+        "prompt_html": "<p>The limit of lim<sub>x→0</sub> (e<sup>x</sup> - 1 - x) / x<sup>2</sup> is:</p>",
+        "choices": [
+          { "id": "A", "label_html": "<p>1</p>" },
+          { "id": "B", "label_html": "<p>1/2</p>" },
+          { "id": "C", "label_html": "<p>0</p>" },
+          { "id": "D", "label_html": "<p>-1/2</p>" }
+        ],
+        "answer_key": ["B"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Limits" }
+      },
+      {
+        "id": "math-b-q01",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>If the system of linear equations x - 4y + 7z = g, 3y - 5z = h, -2x + 5y - 9z = k has infinitely many solutions, then k - 2g is equal to:</p>",
+        "answer_key": ["-1"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Determinants" }
+      },
+      {
+        "id": "math-b-q02",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The sum of all 4-digit numbers that can be formed using the digits 1, 3, 5, 7, 9 without repetition is:</p>",
+        "answer_key": ["666600"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Permutations and Combinations" }
+      },
+      {
+        "id": "math-b-q03",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The value of 9<sup>1/3</sup> ⋅ 9<sup>1/9</sup> ⋅ 9<sup>1/27</sup> ⋅ ... up to infinity is:</p>",
+        "answer_key": ["3"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Sequences and Series" }
+      },
+      {
+        "id": "math-b-q04",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The area (in sq. units) of the region bounded by the curves y = x<sup>2</sup> and y = 4x - x<sup>2</sup> is:</p>",
+        "answer_key": ["2.67"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Area under Curves" }
+      },
+      {
+        "id": "math-b-q05",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>The length of the latus rectum of the parabola x<sup>2</sup> - 4x - 8y + 12 = 0 is:</p>",
+        "answer_key": ["8"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Conic Sections" }
+      },
+      {
+        "id": "math-b-q06",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>If <b>a</b> = i + j + k, <b>b</b> = i - j + k and <b>c</b> = i + 2j - k, then the value of the scalar triple product [<b>a</b> <b>b</b> <b>c</b>] is:</p>",
+        "answer_key": ["-4"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Vector Algebra" }
+      },
+      {
+        "id": "math-b-q07",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>Five fair coins are tossed. The probability of getting exactly 3 heads is k/32. The value of k is:</p>",
+        "answer_key": ["10"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Probability" }
+      },
+      {
+        "id": "math-b-q08",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>If f(x) = 2x<sup>3</sup> - 9x<sup>2</sup> + 12x + 5, the maximum value of the function in the interval [0, 3] is:</p>",
+        "answer_key": ["14"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Application of Derivatives" }
+      },
+      {
+        "id": "math-b-q09",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>Let A = [[2, -1], [3, 4]] and B = [[5, 2], [7, 4]]. The matrix X such that 2A + 3X = 5B is [[a, b], [c, d]]. The value of a+b+c+d is:</p>",
+        "answer_key": ["12"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Matrices" }
+      },
+      {
+        "id": "math-b-q10",
+        "section_id": "math",
+        "module_id": "math-m1",
+        "part": "B",
+        "type": "numeric",
+        "prompt_html": "<p>If the general solution of the differential equation y' - y = 1 is y = Ce<sup>x</sup> + k, the value of k is:</p>",
+        "answer_key": ["-1"],
+        "points": 4,
+        "tags": { "domain": "Mathematics", "skill": "Differential Equations" }
+      }
+    ]
+  }

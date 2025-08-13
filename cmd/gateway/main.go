@@ -87,27 +87,27 @@ func main() {
 		}))
 	}
 
-	// --- Health ---
-	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
-	r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
-
-	// --- JWKS ---
-	if cfg.EnableJWKS {
-		r.Get("/.well-known/jwks.json", jwks.Handler(jwks.JWKS{Keys: []jwks.JWK{}}))
-	}
-
-	// --- LTI ---
-	if cfg.EnableLTI && cfg.Mode == config.ModeOnline {
-		r.Route("/lti", func(lr chi.Router) {
-			lr.Get("/login", lti.OIDCLoginHandler("https://platform.example.com/oidc/auth"))
-			lr.Post("/launch", lti.LaunchHandler())
-		})
-	}
-
 	// ======================
 	// API under /api prefix
 	// ======================
 	r.Route("/api", func(apiR chi.Router) {
+		// --- Health ---
+		apiR.Get("/healthz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
+		apiR.Get("/readyz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
+
+		// --- JWKS ---
+		if cfg.EnableJWKS {
+			apiR.Get("/.well-known/jwks.json", jwks.Handler(jwks.JWKS{Keys: []jwks.JWK{}}))
+		}
+
+		// --- LTI ---
+		if cfg.EnableLTI && cfg.Mode == config.ModeOnline {
+			apiR.Route("/lti", func(lr chi.Router) {
+				lr.Get("/login", lti.OIDCLoginHandler("https://platform.example.com/oidc/auth"))
+				lr.Post("/launch", lti.LaunchHandler())
+			})
+		}
+
 		if cfg.EnableLocalAuth {
 			apiR.Post("/auth/login", auth.LoginHandler(authSvc, cfg))
 		}

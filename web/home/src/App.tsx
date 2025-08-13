@@ -19,6 +19,20 @@ import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSetting
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
+
+async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, { cache: "no-store", ...opts });
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error(`${res.status} ${res.statusText}${t ? `: ${t}` : ""}`);
+  }
+  // Handle 204 or empty 200 safely
+  const text = await res.text();
+  return (text ? JSON.parse(text) : undefined) as T;
+}
+
+
 const theme = createTheme({
   palette: { mode: "light", primary: { main: "#3f51b5" } },
   shape: { borderRadius: 12 },
@@ -32,8 +46,8 @@ export default function HomeApp() {
   const [status, setStatus] = useState<"online" | "offline" | "checking">("checking");
 
   useEffect(() => {
-    fetch("/healthz")
-      .then((r) => (r.ok ? setStatus("online") : setStatus("offline")))
+    api<void>("/healthz")
+      .then(() => setStatus("online"))
       .catch(() => setStatus("offline"));
   }, []);
 

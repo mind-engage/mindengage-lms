@@ -342,11 +342,11 @@ function SelectScreen({
   const fetchExams = useCallback(async (query: string) => {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
-      const url = new URL(`${API_BASE}/exams`);
-      if (query.trim()) url.searchParams.set("q", query.trim());
-      const res = await fetch(url.toString(), { headers: { Authorization: `Bearer ${jwt}` } });
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${await res.text()}`);
-      const data: ExamSummary[] = await res.json();
+      const qs = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : "";
+      const data = await api<ExamSummary[]>(
+        `/exams${qs}`,
+        { headers: { Authorization: `Bearer ${jwt}` } }
+      );
       setList(data);
     } catch (err: any) {
       snack.setErr(err.message);
@@ -354,6 +354,7 @@ function SelectScreen({
       setBusy(false);
     }
   }, [jwt]);
+  
 
   useEffect(() => {
     fetchExams("");
