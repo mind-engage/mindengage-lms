@@ -31,6 +31,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Grid from "@mui/material/Grid";
 import LogoutIcon from "@mui/icons-material/Logout";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -190,8 +191,8 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
 
   return (
     <Shell authed={false} title="Sign in">
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-        <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%`, lg: '50%' } }}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 7, lg: 6}}>
           <Paper elevation={1} sx={{ p: 3 }}>
             <Typography variant="h5" fontWeight={600}>Teacher/Admin Sign in</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Use test creds (username=password). Choose your role.</Typography>
@@ -215,8 +216,8 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
               </Stack>
             </Box>
           </Paper>
-        </Box>
-        <Box sx={{ width: { xs: '100%', md: `${(5 / 12) * 100}%`, lg: '50%' } }}>
+        </Grid>
+        <Grid size={{xs:12,  md:5, lg:6}}>
           <Paper elevation={0} sx={{ p: 3, height: "100%" }}>
             <Typography variant="subtitle1" fontWeight={600}>What you can do</Typography>
             <Box component="ul" sx={{ mt: 1.5, pl: 3 }}>
@@ -226,8 +227,8 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
               <li>Manage users (bulk CSV/JSON)</li>
             </Box>
           </Paper>
-        </Box>
-      </Stack>
+        </Grid>
+      </Grid>
     </Shell>
   );
 }
@@ -349,48 +350,54 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-          <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{xs:12}}>
             <TextField label="Search exams" placeholder="title contains…" value={q} onChange={(e) => setQ(e.target.value)} fullWidth />
-          </Box>
-          <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busy}>{busy ? "Searching…" : "Search"}</Button>
-          <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busy}>Reset</Button>
-          <Divider flexItem orientation="vertical" sx={{ display: { xs: 'none', sm: 'block' } }} />
-
-          {/* Existing: open JSON editor */}
-          <Button startIcon={<AddIcon />} variant="contained" disableElevation onClick={() => setOpenCreate(true)}>
-            New Exam (JSON)
-          </Button>
-
-          {/* NEW: Upload a local JSON exam file */}
-          <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">
-            Import JSON
-            <input
-              type="file"
-              accept=".json,application/json"
-              hidden
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) importExamJSON(f);
-                e.currentTarget.value = "";
-              }}
-            />
-          </Button>
-
-          {/* Existing: Import QTI zip */}
-          <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">
-            Import QTI
-            <input
-              type="file"
-              hidden
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) importQTI(f);
-                e.currentTarget.value = "";
-              }}
-            />
-          </Button>
-        </Stack>
+          </Grid>
+          <Grid>
+            <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busy}>{busy ? "Searching…" : "Search"}</Button>
+          </Grid>
+          <Grid>
+            <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busy}>Reset</Button>
+          </Grid>
+          <Grid sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Divider flexItem orientation="vertical" />
+          </Grid>
+          <Grid>
+            <Button startIcon={<AddIcon />} variant="contained" disableElevation onClick={() => setOpenCreate(true)}>
+              New Exam (JSON)
+            </Button>
+          </Grid>
+          <Grid>
+            <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">
+              Import JSON
+              <input
+                type="file"
+                accept=".json,application/json"
+                hidden
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) importExamJSON(f);
+                  e.currentTarget.value = "";
+                }}
+              />
+            </Button>
+          </Grid>
+          <Grid>
+            <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">
+              Import QTI
+              <input
+                type="file"
+                hidden
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) importQTI(f);
+                  e.currentTarget.value = "";
+                }}
+              />
+            </Button>
+          </Grid>
+        </Grid>
       </Paper>
 
       <Paper elevation={1} sx={{ p: 2.5 }}>
@@ -443,21 +450,6 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setViewExam(null)}>Close</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Create exam dialog */}
-      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} maxWidth="md" fullWidth>
-        <DialogTitle>New Exam (raw JSON)</DialogTitle>
-        <DialogContent dividers>
-          <DialogContentText sx={{ mb: 1 }}>
-            Paste an exam JSON matching your backend schema. Policy will be validated server-side by profile adapter.
-          </DialogContentText>
-          <TextField value={createJson} onChange={(e) => setCreateJson(e.target.value)} fullWidth multiline minRows={14} spellCheck={false} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenCreate(false)}>Cancel</Button>
-          <Button variant="contained" disableElevation onClick={createExamFromJSON}>Save</Button>
         </DialogActions>
       </Dialog>
 
@@ -519,36 +511,48 @@ function AttemptsPanel({ jwt }: { jwt: string; }) {
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-          <TextField label="Exam ID (course)" value={filters.exam_id} onChange={(e) => setFilters((f) => ({ ...f, exam_id: e.target.value }))} fullWidth />
-          <TextField label="Student ID" value={filters.user_id} onChange={(e) => setFilters((f) => ({ ...f, user_id: e.target.value }))} fullWidth />
-          <FormControl sx={{ minWidth: 160 }}>
-            <InputLabel id="status-filter">Status</InputLabel>
-            <Select labelId="status-filter" label="Status" value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: String(e.target.value) }))}>
-              <MenuItem value="">(any)</MenuItem>
-              <MenuItem value="in_progress">in_progress</MenuItem>
-              <MenuItem value="submitted">submitted</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl sx={{ minWidth: 200 }}>
-            <InputLabel id="sort-by">Sort</InputLabel>
-            <Select labelId="sort-by" label="Sort" value={filters.sort} onChange={(e) => setFilters((f) => ({ ...f, sort: String(e.target.value) }))}>
-              <MenuItem value="started_at desc">started_at desc</MenuItem>
-              <MenuItem value="started_at asc">started_at asc</MenuItem>
-              <MenuItem value="submitted_at desc">submitted_at desc</MenuItem>
-              <MenuItem value="submitted_at asc">submitted_at asc</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel id="page-size">Page size</InputLabel>
-            <Select labelId="page-size" label="Page size" value={filters.pageSize} onChange={(e) => setFilters((f) => ({ ...f, pageSize: Number(e.target.value) }))}>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </Select>
-          </FormControl>
-          <Button variant="contained" disableElevation onClick={() => { setPage(0); load(); }} disabled={busy}>{busy ? "Loading…" : "Refresh"}</Button>
-        </Stack>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{xs:12, sm:6, md: "auto"}}>
+            <TextField label="Exam ID (course)" value={filters.exam_id} onChange={(e) => setFilters((f) => ({ ...f, exam_id: e.target.value }))} fullWidth />
+          </Grid>
+          <Grid size={{xs:12, sm:6, md:"auto"}}>
+            <TextField label="Student ID" value={filters.user_id} onChange={(e) => setFilters((f) => ({ ...f, user_id: e.target.value }))} fullWidth />
+          </Grid>
+          <Grid size={{xs:12, sm:6, md:"auto"}}>
+            <FormControl sx={{ minWidth: 160 }}>
+              <InputLabel id="status-filter">Status</InputLabel>
+              <Select labelId="status-filter" label="Status" value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: String(e.target.value) }))}>
+                <MenuItem value="">(any)</MenuItem>
+                <MenuItem value="in_progress">in_progress</MenuItem>
+                <MenuItem value="submitted">submitted</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{xs:12, sm:6, md:"auto"}}>
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel id="sort-by">Sort</InputLabel>
+              <Select labelId="sort-by" label="Sort" value={filters.sort} onChange={(e) => setFilters((f) => ({ ...f, sort: String(e.target.value) }))}>
+                <MenuItem value="started_at desc">started_at desc</MenuItem>
+                <MenuItem value="started_at asc">started_at asc</MenuItem>
+                <MenuItem value="submitted_at desc">submitted_at desc</MenuItem>
+                <MenuItem value="submitted_at asc">submitted_at asc</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{xs:12,  sm:6, md:"auto"}}>
+            <FormControl sx={{ minWidth: 120 }}>
+              <InputLabel id="page-size">Page size</InputLabel>
+              <Select labelId="page-size" label="Page size" value={filters.pageSize} onChange={(e) => setFilters((f) => ({ ...f, pageSize: Number(e.target.value) }))}>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{md:"auto"}}>
+            <Button variant="contained" disableElevation onClick={() => { setPage(0); load(); }} disabled={busy}>{busy ? "Loading…" : "Refresh"}</Button>
+          </Grid>
+        </Grid>
       </Paper>
 
       <Paper elevation={1} sx={{ p: 2.5 }}>
@@ -655,25 +659,35 @@ function UsersPanel({ jwt }: { jwt: string; }) {
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-          <FormControl sx={{ minWidth: 180 }}>
-            <InputLabel id="role-filter">Filter by role</InputLabel>
-            <Select labelId="role-filter" label="Filter by role" value={role} onChange={(e) => setRole(e.target.value)}>
-              <MenuItem value="">(all)</MenuItem>
-              <MenuItem value="student">student</MenuItem>
-              <MenuItem value="teacher">teacher</MenuItem>
-              <MenuItem value="admin">admin</MenuItem>
-            </Select>
-          </FormControl>
-          <Button variant="outlined" onClick={fetchUsers} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</Button>
-          <Divider flexItem orientation="vertical" sx={{ display: { xs: 'none', sm: 'block' } }} />
-          <Button component="label" startIcon={<UploadFileIcon />} variant="contained" disableElevation>
-            Bulk Upload CSV/JSON
-            <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) bulkUpload(f); e.currentTarget.value = ""; }} />
-          </Button>
-          <Box sx={{ flexGrow: 1 }} />
-          <Button onClick={() => setChangePwOpen(true)} startIcon={<ManageAccountsIcon />} variant="text">Change my password</Button>
-        </Stack>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{xs:12, sm:"auto"}}>
+            <FormControl sx={{ minWidth: 180 }}>
+              <InputLabel id="role-filter">Filter by role</InputLabel>
+              <Select labelId="role-filter" label="Filter by role" value={role} onChange={(e) => setRole(e.target.value)}>
+                <MenuItem value="">(all)</MenuItem>
+                <MenuItem value="student">student</MenuItem>
+                <MenuItem value="teacher">teacher</MenuItem>
+                <MenuItem value="admin">admin</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{xs:12, sm:"auto"}}>
+            <Button variant="outlined" onClick={fetchUsers} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</Button>
+          </Grid>
+          <Grid sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Divider flexItem orientation="vertical" />
+          </Grid>
+          <Grid size={{xs:12, sm:"auto"}}>
+            <Button component="label" startIcon={<UploadFileIcon />} variant="contained" disableElevation>
+              Bulk Upload CSV/JSON
+              <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) bulkUpload(f); e.currentTarget.value = ""; }} />
+            </Button>
+          </Grid>
+          <Grid sx={{ flexGrow: 1 }} />
+          <Grid size={{xs:12, sm:"auto"}}>
+            <Button onClick={() => setChangePwOpen(true)} startIcon={<ManageAccountsIcon />} variant="text">Change my password</Button>
+          </Grid>
+        </Grid>
       </Paper>
 
       <Paper elevation={1} sx={{ p: 2.5 }}>
@@ -914,147 +928,151 @@ function CoursesPanel({ jwt }: { jwt: string }) {
         </Stack>
       </Paper>
 
-      <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
+      <Grid container spacing={3}>
         {/* Left: enrollment & teachers */}
-        <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
-          <Typography variant="h6" fontWeight={600}>Teachers</Typography>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <TextField
-              label="User IDs (comma-separated)"
-              value={teacherIds}
-              onChange={(e) => setTeacherIds(e.target.value)}
-              fullWidth
-            />
-            <FormControl sx={{ minWidth: 140 }}>
-              <InputLabel id="teacher-role">Role</InputLabel>
-              <Select labelId="teacher-role" label="Role" value={teacherRole} onChange={(e) => setTeacherRole(e.target.value as any)}>
-                <MenuItem value="co">co</MenuItem>
-                <MenuItem value="owner">owner</MenuItem>
-              </Select>
-            </FormControl>
-            <Button variant="contained" disableElevation onClick={addTeachers} disabled={!selectedCourseId || !teacherIds.trim()}>
-              Add / Update
-            </Button>
-          </Stack>
+        <Grid size={{xs:12, md:6}}>
+          <Paper elevation={1} sx={{ p: 2.5, height: "100%" }}>
+            <Typography variant="h6" fontWeight={600}>Teachers</Typography>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+              <TextField
+                label="User IDs (comma-separated)"
+                value={teacherIds}
+                onChange={(e) => setTeacherIds(e.target.value)}
+                fullWidth
+              />
+              <FormControl sx={{ minWidth: 140 }}>
+                <InputLabel id="teacher-role">Role</InputLabel>
+                <Select labelId="teacher-role" label="Role" value={teacherRole} onChange={(e) => setTeacherRole(e.target.value as any)}>
+                  <MenuItem value="co">co</MenuItem>
+                  <MenuItem value="owner">owner</MenuItem>
+                </Select>
+              </FormControl>
+              <Button variant="contained" disableElevation onClick={addTeachers} disabled={!selectedCourseId || !teacherIds.trim()}>
+                Add / Update
+              </Button>
+            </Stack>
 
-          <Divider sx={{ my: 2 }} />
+            <Divider sx={{ my: 2 }} />
 
-          <Typography variant="h6" fontWeight={600}>Students</Typography>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <TextField
-              label="User IDs (comma-separated)"
-              value={studentIds}
-              onChange={(e) => setStudentIds(e.target.value)}
-              fullWidth
-            />
-            <FormControl sx={{ minWidth: 140 }}>
-              <InputLabel id="student-status">Status</InputLabel>
-              <Select labelId="student-status" label="Status" value={studentStatus} onChange={(e) => setStudentStatus(e.target.value as any)}>
-                <MenuItem value="active">active</MenuItem>
-                <MenuItem value="invited">invited</MenuItem>
-                <MenuItem value="dropped">dropped</MenuItem>
-              </Select>
-            </FormControl>
-            <Button variant="contained" disableElevation onClick={enrollStudents} disabled={!selectedCourseId || !studentIds.trim()}>
-              Enroll / Update
-            </Button>
-          </Stack>
-        </Paper>
+            <Typography variant="h6" fontWeight={600}>Students</Typography>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+              <TextField
+                label="User IDs (comma-separated)"
+                value={studentIds}
+                onChange={(e) => setStudentIds(e.target.value)}
+                fullWidth
+              />
+              <FormControl sx={{ minWidth: 140 }}>
+                <InputLabel id="student-status">Status</InputLabel>
+                <Select labelId="student-status" label="Status" value={studentStatus} onChange={(e) => setStudentStatus(e.target.value as any)}>
+                  <MenuItem value="active">active</MenuItem>
+                  <MenuItem value="invited">invited</MenuItem>
+                  <MenuItem value="dropped">dropped</MenuItem>
+                </Select>
+              </FormControl>
+              <Button variant="contained" disableElevation onClick={enrollStudents} disabled={!selectedCourseId || !studentIds.trim()}>
+                Enroll / Update
+              </Button>
+            </Stack>
+          </Paper>
+        </Grid>
 
         {/* Right: offerings */}
-        <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
-          <Typography variant="h6" fontWeight={600}>Offerings</Typography>
+        <Grid size={{xs:12, md:6}}>
+          <Paper elevation={1} sx={{ p: 2.5, height: "100%" }}>
+            <Typography variant="h6" fontWeight={600}>Offerings</Typography>
 
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <FormControl sx={{ minWidth: 220 }}>
-              <InputLabel id="exam-select">Exam</InputLabel>
-              <Select labelId="exam-select" label="Exam" value={selExamId} onChange={(e) => setSelExamId(String(e.target.value))}>
-                {examList.map(ex => (
-                  <MenuItem key={ex.id} value={ex.id}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{ex.id}</Box>
-                      <Box component="span">• {ex.title}</Box>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+              <FormControl sx={{ minWidth: 220 }}>
+                <InputLabel id="exam-select">Exam</InputLabel>
+                <Select labelId="exam-select" label="Exam" value={selExamId} onChange={(e) => setSelExamId(String(e.target.value))}>
+                  {examList.map(ex => (
+                    <MenuItem key={ex.id} value={ex.id}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{ex.id}</Box>
+                        <Box component="span">• {ex.title}</Box>
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                label="Start (local)"
+                type="datetime-local"
+                value={startAt}
+                onChange={(e) => setStartAt(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                label="End (local)"
+                type="datetime-local"
+                value={endAt}
+                onChange={(e) => setEndAt(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Stack>
+
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+              <TextField
+                label="Time limit (sec)"
+                type="number"
+                value={timeLimitSec}
+                onChange={(e) => setTimeLimitSec(e.target.value)}
+                sx={{ minWidth: 160 }}
+              />
+              <TextField
+                label="Max attempts"
+                type="number"
+                value={maxAttempts}
+                onChange={(e) => setMaxAttempts(e.target.value)}
+                sx={{ minWidth: 160 }}
+              />
+              <FormControl sx={{ minWidth: 160 }}>
+                <InputLabel id="vis-select">Visibility</InputLabel>
+                <Select labelId="vis-select" label="Visibility" value={visibility} onChange={(e) => setVisibility(e.target.value as any)}>
+                  <MenuItem value="course">course</MenuItem>
+                  <MenuItem value="public">public</MenuItem>
+                  <MenuItem value="link">link</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                label="Access token (for link)"
+                value={accessToken}
+                onChange={(e) => setAccessToken(e.target.value)}
+                sx={{ minWidth: 220 }}
+              />
+              <Button variant="contained" disableElevation onClick={createOffering} disabled={!selectedCourseId || !selExamId}>
+                Create Offering
+              </Button>
+            </Stack>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Stack spacing={1.25} sx={{ maxHeight: 280, overflowY: "auto" }}>
+              {offerings.length === 0 && !offerBusy && <Typography variant="body2" color="text.secondary">No offerings yet.</Typography>}
+              {offerings.map(o => (
+                <Paper key={o.id} variant="outlined" sx={{ p: 1.25 }}>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ sm: "center" }}>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography fontWeight={600}>
+                        Offering <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.id}</Box>
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.exam_id}</Box>
+                        {o.start_at && <> • Starts: {fmtRFC(o.start_at)}</>}
+                        {o.end_at && <> • Ends: {fmtRFC(o.end_at)}</>}
+                        {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0)/60)} min</>}
+                        <> • Attempts: {o.max_attempts}</>
+                        <> • Visibility: {o.visibility}</>
+                      </Typography>
                     </Box>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label="Start (local)"
-              type="datetime-local"
-              value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="End (local)"
-              type="datetime-local"
-              value={endAt}
-              onChange={(e) => setEndAt(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Stack>
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <TextField
-              label="Time limit (sec)"
-              type="number"
-              value={timeLimitSec}
-              onChange={(e) => setTimeLimitSec(e.target.value)}
-              sx={{ minWidth: 160 }}
-            />
-            <TextField
-              label="Max attempts"
-              type="number"
-              value={maxAttempts}
-              onChange={(e) => setMaxAttempts(e.target.value)}
-              sx={{ minWidth: 160 }}
-            />
-            <FormControl sx={{ minWidth: 160 }}>
-              <InputLabel id="vis-select">Visibility</InputLabel>
-              <Select labelId="vis-select" label="Visibility" value={visibility} onChange={(e) => setVisibility(e.target.value as any)}>
-                <MenuItem value="course">course</MenuItem>
-                <MenuItem value="public">public</MenuItem>
-                <MenuItem value="link">link</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              label="Access token (for link)"
-              value={accessToken}
-              onChange={(e) => setAccessToken(e.target.value)}
-              sx={{ minWidth: 220 }}
-            />
-            <Button variant="contained" disableElevation onClick={createOffering} disabled={!selectedCourseId || !selExamId}>
-              Create Offering
-            </Button>
-          </Stack>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Stack spacing={1.25} sx={{ maxHeight: 280, overflowY: "auto" }}>
-            {offerings.length === 0 && !offerBusy && <Typography variant="body2" color="text.secondary">No offerings yet.</Typography>}
-            {offerings.map(o => (
-              <Paper key={o.id} variant="outlined" sx={{ p: 1.25 }}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ sm: "center" }}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography fontWeight={600}>
-                      Offering <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.id}</Box>
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.exam_id}</Box>
-                      {o.start_at && <> • Starts: {fmtRFC(o.start_at)}</>}
-                      {o.end_at && <> • Ends: {fmtRFC(o.end_at)}</>}
-                      {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0)/60)} min</>}
-                      <> • Attempts: {o.max_attempts}</>
-                      <> • Visibility: {o.visibility}</>
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-            ))}
-          </Stack>
-        </Paper>
-      </Stack>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
 
       {snack.node}
     </Stack>
