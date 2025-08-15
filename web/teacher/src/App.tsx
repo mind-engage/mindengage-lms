@@ -1149,6 +1149,14 @@ export default function TeacherApp() {
   const theme = useMemo(() => createTheme({
     palette: { mode: "light", primary: { main: "#3f51b5" } },
     shape: { borderRadius: 12 },
+
+    typography: {
+      button: {
+        fontSize: "0.85rem",      // <- controls default button text size
+        textTransform: "none",     // optional: keep case as typed
+      },
+    },
+
     components: {
       MuiPaper: { styleOverrides: { root: { borderRadius: 16 } } },
       MuiButton: { defaultProps: { disableRipple: true } },

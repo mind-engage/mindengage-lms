@@ -13,7 +13,6 @@ import {
   FormControl,
   InputLabel,
   Stack,
-  LinearProgress,
   Chip,
   IconButton,
   Snackbar,
@@ -33,8 +32,11 @@ import {
   TableCell,
   TableBody,
   Switch,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Grid from "@mui/material/Grid";
 import LogoutIcon from "@mui/icons-material/Logout";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -44,6 +46,12 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import SecurityIcon from "@mui/icons-material/Security";
 import StorageIcon from "@mui/icons-material/Storage";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import FlagIcon from "@mui/icons-material/Flag";
+import PolicyIcon from "@mui/icons-material/Policy";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import SettingsEthernetIcon from "@mui/icons-material/SettingsEthernet";
+import FactCheckIcon from "@mui/icons-material/FactCheck";
+import GavelIcon from "@mui/icons-material/Gavel";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
 
@@ -71,6 +79,7 @@ export type ExamSummary = {
   time_limit_sec?: number;
   created_at?: number;
   profile?: string;
+  status?: "pending" | "approved" | "archived";
 };
 
 export type Attempt = {
@@ -88,17 +97,8 @@ type User = {
   role: string;
 };
 
-/** NEW: Course & Offering (for Courses panel) */
-type Course = { id: string; name: string };
-type Offering = {
-  id: string;
-  exam_id: string;
-  start_at?: string | null;
-  end_at?: string | null;
-  time_limit_sec?: number;
-  max_attempts: number;
-  visibility: "course" | "public" | "link";
-};
+/** NEW: Tenants & Flags */
+type Tenant = { id: string; name: string; domain?: string; flags?: Record<string, boolean> };
 
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
@@ -152,21 +152,17 @@ function Shell({ children, authed, onSignOut, title, right }: { children: React.
 }
 
 /* -------------------- Login -------------------- */
-/** UPDATED: Google Sign-On button added (keeps local login intact) */
 function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string) => void; }) {
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("admin");
   function submit(e: React.FormEvent) { e.preventDefault(); onLogin(username, password); }
 
-  function googleSignIn() {
-    // Server will handle redirect to Google and callback back to the Admin app.
-    window.location.href = `${API_BASE}/auth/google/login`;
-  }
+  function googleSignIn() { window.location.href = `${API_BASE}/auth/google/login`; }
 
   return (
     <Shell authed={false} title="Sign in">
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-        <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%`, lg: '50%' } }}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 7, lg: 6 }}>
           <Paper elevation={1} sx={{ p: 3 }}>
             <Typography variant="h5" fontWeight={600}>Admin Sign in</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Use test creds (username=password). Role is enforced server-side by JWT.</Typography>
@@ -176,50 +172,46 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
                 <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
                 <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
                 <Divider>or</Divider>
-                {/* NEW: Google SSO */}
-                <Button variant="outlined" size="large" onClick={googleSignIn} disabled={busy}>
-                  Sign in with Google
-                </Button>
+                <Button variant="outlined" size="large" onClick={googleSignIn} disabled={busy}>Sign in with Google</Button>
               </Stack>
             </Box>
           </Paper>
-        </Box>
-        <Box sx={{ width: { xs: '100%', md: `${(5 / 12) * 100}%`, lg: '50%' } }}>
+        </Grid>
+        <Grid size={{ xs: 12, md: 5, lg: 6 }}>
           <Paper elevation={0} sx={{ p: 3, height: "100%" }}>
             <Typography variant="subtitle1" fontWeight={600}>Admin responsibilities</Typography>
             <Box component="ul" sx={{ mt: 1.5, pl: 3 }}>
-              <li>User & role management</li>
-              <li>Exam lifecycle (lock/archive/export)</li>
-              <li>System health & integrations (LTI/JWKS)</li>
-              <li>Audit & compliance</li>
+              <li>Identity & Role management</li>
+              <li>Content governance & policy templates</li>
+              <li>System health, integrations & security</li>
+              <li>Compliance & audit</li>
             </Box>
           </Paper>
-        </Box>
-      </Stack>
+        </Grid>
+      </Grid>
     </Shell>
   );
 }
 
-/* -------------------- System Panel -------------------- */
-function SystemPanel({ jwt }: { jwt: string; }) {
+/* -------------------- Overview & Health (kept) -------------------- */
+function OverviewPanel({ jwt }: { jwt: string; }) {
   const [health, setHealth] = useState<"unknown" | "ok" | "down">("unknown");
   const [ready, setReady] = useState<"unknown" | "ok" | "down">("unknown");
   const [cors, setCors] = useState<string>("(probe)");
   const snack = useSnack();
 
-  async function ping(path: string): Promise<"ok" | "down"> {
+  async function probe(path: string): Promise<"ok" | "down"> {
     try { const res = await fetch(`${API_BASE}${path}`); return res.ok ? "ok" : "down"; } catch { return "down"; }
   }
   useEffect(() => {
     (async () => {
-      setHealth(await ping("/healthz"));
-      setReady(await ping("/readyz"));
+      setHealth(await probe("/healthz"));
+      setReady(await probe("/readyz"));
       try {
-        const res = await fetch(`${API_BASE}/exams`, { headers: { Authorization: `Bearer ${jwt}` } });
+        const res = await fetch(`${API_BASE}/exams` , { headers: { Authorization: `Bearer ${jwt}` } });
         setCors(res.ok ? "ok" : `blocked (${res.status})`);
       } catch { setCors("blocked"); }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwt]);
 
   return (
@@ -263,29 +255,38 @@ function StatusCard({ label, value, icon }: { label: string; value: string; icon
   );
 }
 
-/* -------------------- Users Panel -------------------- */
-function UsersPanel({ jwt }: { jwt: string; }) {
+/* -------------------- Identity & Roles -------------------- */
+function IdentityRolesPanel({ jwt }: { jwt: string; }) {
   const [role, setRole] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
   const [busy, setBusy] = useState(false);
+  const [providers, setProviders] = useState<any[]>([]);
+  const [apiKeys, setApiKeys] = useState<any[]>([]);
+  const [newProviderJson, setNewProviderJson] = useState<string>("{\n  \"type\": \"oidc\",\n  \"client_id\": \"...\",\n  \"issuer\": \"https://...\"\n}");
+  const [newApiKeyNote, setNewApiKeyNote] = useState<string>("");
   const snack = useSnack();
 
   async function fetchUsers() {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
       const qs = role ? `?${new URLSearchParams({ role }).toString()}` : "";
-      const data = await api<User[]>(`/users${qs}`, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
+      const data = await api<User[]>(`/users${qs}`, { headers: { Authorization: `Bearer ${jwt}` } });
       setUsers(data);
-    } catch (e: any) {
-      snack.setErr(e.message);
-    } finally {
-      setBusy(false);
-    }
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
   }
-  useEffect(() => { fetchUsers(); /* initial */ // eslint-disable-next-line
+  useEffect(() => { fetchUsers(); // eslint-disable-next-line
   }, []);
+
+  async function updateUserRole(uid: string, r: string) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/users/${encodeURIComponent(uid)}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ role: r })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg('Role updated');
+      fetchUsers();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
 
   async function bulkUpload(file: File) {
     try {
@@ -299,47 +300,143 @@ function UsersPanel({ jwt }: { jwt: string; }) {
     } catch (e: any) { snack.setErr(e.message); }
   }
 
+  async function loadProviders() {
+    try { setProviders(await api<any[]>(`/admin/identity/providers`, { headers: { Authorization: `Bearer ${jwt}` } })); } catch { /* optional */ }
+  }
+  async function addProvider() {
+    try {
+      const payload = JSON.parse(newProviderJson);
+      const res = await fetch(`${API_BASE}/admin/identity/providers`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg('Provider added');
+      setNewProviderJson("{}");
+      loadProviders();
+    } catch (e: any) { snack.setErr(e.message?.startsWith('Unexpected token') ? 'Invalid JSON' : e.message); }
+  }
+
+  async function loadApiKeys() {
+    try { setApiKeys(await api<any[]>(`/admin/api-keys`, { headers: { Authorization: `Bearer ${jwt}` } })); } catch { /* optional */ }
+  }
+  async function createApiKey() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/api-keys`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ note: newApiKeyNote }) });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      snack.setMsg(`Key created: ${data.prefix || '(see server)'}`);
+      setNewApiKeyNote("");
+      loadApiKeys();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+  async function revokeApiKey(id: string) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/api-keys/${encodeURIComponent(id)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${jwt}` } });
+      if (!res.ok && res.status !== 204) throw new Error(await res.text());
+      snack.setMsg('Key revoked');
+      loadApiKeys();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  useEffect(() => { loadProviders(); loadApiKeys(); }, []);
+
   return (
     <Stack spacing={3}>
+      {/* Users & roles */}
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-          <FormControl sx={{ minWidth: 180 }}>
-            <InputLabel id="role-filter">Filter by role</InputLabel>
-            <Select labelId="role-filter" label="Filter by role" value={role} onChange={(e) => setRole(e.target.value)}>
-              <MenuItem value="">(all)</MenuItem>
-              <MenuItem value="student">student</MenuItem>
-              <MenuItem value="teacher">teacher</MenuItem>
-              <MenuItem value="admin">admin</MenuItem>
-            </Select>
-          </FormControl>
-          <Button variant="outlined" onClick={fetchUsers} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</Button>
-          <Divider flexItem orientation="vertical" sx={{ display: { xs: 'none', sm: 'block' } }} />
-          <Button component="label" startIcon={<UploadFileIcon />} variant="contained" disableElevation>
-            Bulk Upload CSV/JSON
-            <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) bulkUpload(f); e.currentTarget.value = ""; }} />
-          </Button>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{ xs: 12, sm: "auto" }}>
+            <FormControl sx={{ minWidth: 180 }}>
+              <InputLabel id="role-filter">Filter by role</InputLabel>
+              <Select labelId="role-filter" label="Filter by role" value={role} onChange={(e) => setRole(e.target.value)}>
+                <MenuItem value="">(all)</MenuItem>
+                <MenuItem value="student">student</MenuItem>
+                <MenuItem value="teacher">teacher</MenuItem>
+                <MenuItem value="admin">admin</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: "auto" }}>
+            <Button variant="outlined" onClick={fetchUsers} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</Button>
+          </Grid>
+          <Grid sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Divider flexItem orientation="vertical" />
+          </Grid>
+          <Grid size={{ xs: 12, sm: "auto" }}>
+            <Button component="label" startIcon={<UploadFileIcon />} variant="contained" disableElevation>
+              Bulk Upload CSV/JSON
+              <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) bulkUpload(f); e.currentTarget.value = ""; }} />
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Stack spacing={1.25} sx={{ maxHeight: 420, overflowY: 'auto' }}>
+          {users.length === 0 && !busy && (<Typography variant="body2" color="text.secondary">No users found.</Typography>)}
+          {users.map((u) => (
+            <Paper key={u.id} variant="outlined" sx={{ p: 1.25 }}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography fontWeight={600}>{u.username}</Typography>
+                  <Typography variant="caption" color="text.secondary">ID: <Box component="span" sx={{ fontFamily: 'monospace' }}>{u.id}</Box> • Role: {u.role}</Typography>
+                </Box>
+                <FormControl sx={{ minWidth: 140 }}>
+                  <InputLabel id={`role-${u.id}`}>Set role</InputLabel>
+                  <Select labelId={`role-${u.id}`} label="Set role" value={u.role} onChange={(e) => updateUserRole(u.id, String(e.target.value))}>
+                    <MenuItem value="student">student</MenuItem>
+                    <MenuItem value="teacher">teacher</MenuItem>
+                    <MenuItem value="admin">admin</MenuItem>
+                  </Select>
+                </FormControl>
+              </Stack>
+            </Paper>
+          ))}
         </Stack>
       </Paper>
 
-      <Paper elevation={1} sx={{ p: 0 }}>
-        <Table size="small">
+      {/* SSO Providers */}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>SSO Providers</Typography>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }} sx={{ mt: 1.5 }}>
+          <TextField label="Provider JSON" value={newProviderJson} onChange={(e) => setNewProviderJson(e.target.value)} multiline minRows={3} fullWidth />
+          <Button variant="contained" disableElevation onClick={addProvider}>Add</Button>
+          <Button variant="outlined" onClick={loadProviders}>Refresh</Button>
+        </Stack>
+        <Stack spacing={1} sx={{ mt: 1.5 }}>
+          {providers.map((p, i) => (
+            <Paper key={i} variant="outlined" sx={{ p: 1.25 }}>
+              <Typography variant="caption" color="text.secondary">{JSON.stringify(p)}</Typography>
+            </Paper>
+          ))}
+          {providers.length === 0 && (<Typography variant="body2" color="text.secondary">No providers configured.</Typography>)}
+        </Stack>
+      </Paper>
+
+      {/* API Keys */}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>API Keys</Typography>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }} sx={{ mt: 1.5 }}>
+          <TextField label="Note (purpose)" value={newApiKeyNote} onChange={(e) => setNewApiKeyNote(e.target.value)} sx={{ minWidth: 280 }} />
+          <Button variant="contained" disableElevation onClick={createApiKey} disabled={!newApiKeyNote.trim()}>Create</Button>
+          <Button variant="outlined" onClick={loadApiKeys}>Refresh</Button>
+        </Stack>
+        <Table size="small" sx={{ mt: 1 }}>
           <TableHead>
             <TableRow>
-              <TableCell>Username</TableCell>
               <TableCell>ID</TableCell>
-              <TableCell>Role</TableCell>
+              <TableCell>Prefix</TableCell>
+              <TableCell>Note</TableCell>
+              <TableCell>Created</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((u) => (
-              <TableRow key={u.id} hover>
-                <TableCell>{u.username}</TableCell>
-                <TableCell sx={{ fontFamily: 'monospace' }}>{u.id}</TableCell>
-                <TableCell>{u.role}</TableCell>
-                <TableCell align="right">
-                  <Tooltip title="Force reset (not implemented in API yet)"><span><Button size="small" disabled>Force reset</Button></span></Tooltip>
-                </TableCell>
+            {apiKeys.map((k: any) => (
+              <TableRow key={k.id} hover>
+                <TableCell sx={{ fontFamily: 'monospace' }}>{k.id}</TableCell>
+                <TableCell sx={{ fontFamily: 'monospace' }}>{k.prefix}</TableCell>
+                <TableCell>{k.note}</TableCell>
+                <TableCell>{k.created_at ? ms2date(k.created_at) : ''}</TableCell>
+                <TableCell align="right"><Button color="error" onClick={() => revokeApiKey(k.id)}>Revoke</Button></TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -351,36 +448,33 @@ function UsersPanel({ jwt }: { jwt: string; }) {
   );
 }
 
-/* -------------------- Exams Panel -------------------- */
-function ExamsPanel({ jwt }: { jwt: string; }) {
+/* -------------------- Content Governance -------------------- */
+function ContentGovernancePanel({ jwt }: { jwt: string; }) {
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<string>("pending");
   const [list, setList] = useState<ExamSummary[]>([]);
   const [viewExam, setViewExam] = useState<Exam | null>(null);
+  const [templateJson, setTemplateJson] = useState<string>(`{\n  "id": "policy.default",\n  "time_limit_sec": 3600,\n  "max_attempts": 1,\n  "navigation": { "allow_back": false }\n}`);
   const snack = useSnack();
 
-  const fetchExams = useCallback(async (query: string) => {
+  const fetchExams = useCallback(async () => {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
-      const qs = query.trim() ? `?${new URLSearchParams({ q: query.trim() }).toString()}` : "";
-      const data = await api<ExamSummary[]>(`/exams${qs}`, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
+      const params = new URLSearchParams();
+      if (q.trim()) params.set('q', q.trim());
+      if (status) params.set('status', status);
+      const data = await api<ExamSummary[]>(`/exams?${params.toString()}`, { headers: { Authorization: `Bearer ${jwt}` } });
       setList(data);
-    } catch (err: any) {
-      snack.setErr(err.message);
-    } finally {
-      setBusy(false);
-    }
-  }, [jwt]);
+    } catch (err: any) { snack.setErr(err.message); } finally { setBusy(false); }
+  }, [jwt, q, status]);
 
-  useEffect(() => { fetchExams(""); }, [fetchExams]);
+  useEffect(() => { fetchExams(); }, [fetchExams]);
 
   async function openExam(id: string) {
     try { const data = await api<Exam>(`/exams/${encodeURIComponent(id)}`, { headers: { Authorization: `Bearer ${jwt}` } }); setViewExam(data); }
     catch (e: any) { snack.setErr(e.message); }
   }
-
   async function exportQTI(id: string) {
     try {
       const url = `${API_BASE}/exams/${encodeURIComponent(id)}/export?format=qti`;
@@ -394,35 +488,60 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
       URL.revokeObjectURL(a.href);
     } catch (e: any) { snack.setErr(e.message); }
   }
-
-  async function importQTI(file: File) {
+  async function approve(id: string) {
     try {
-      const form = new FormData();
-      form.append("file", file);
-      const res = await fetch(`${API_BASE}/qti/import`, { method: "POST", headers: { Authorization: `Bearer ${jwt}` }, body: form });
+      const res = await fetch(`${API_BASE}/admin/exams/${encodeURIComponent(id)}/approve`, { method: 'POST', headers: { Authorization: `Bearer ${jwt}` } });
       if (!res.ok) throw new Error(await res.text());
-      const data = await res.json();
-      snack.setMsg(`Imported exam ${data.exam_id}`);
-      fetchExams(q);
+      snack.setMsg('Approved');
+      fetchExams();
     } catch (e: any) { snack.setErr(e.message); }
+  }
+  async function archive(id: string) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/exams/${encodeURIComponent(id)}/archive`, { method: 'POST', headers: { Authorization: `Bearer ${jwt}` } });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg('Archived');
+      fetchExams();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  async function saveTemplate() {
+    try {
+      const payload = JSON.parse(templateJson);
+      const res = await fetch(`${API_BASE}/admin/policy-templates`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg('Template saved');
+    } catch (e: any) { snack.setErr(e.message?.startsWith('Unexpected token') ? 'Invalid JSON' : e.message); }
   }
 
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-          <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{ xs: 12, sm: 6, md: 'auto' }}>
             <TextField label="Search exams" placeholder="title contains…" value={q} onChange={(e) => setQ(e.target.value)} fullWidth />
-          </Box>
-          <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busy}>{busy ? "Searching…" : "Search"}</Button>
-          <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busy}>Reset</Button>
-          <Divider flexItem orientation="vertical" sx={{ display: { xs: 'none', sm: 'block' } }} />
-          <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">Import QTI<input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) importQTI(f); e.currentTarget.value = ""; }} /></Button>
-        </Stack>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 'auto' }}>
+            <FormControl sx={{ minWidth: 180 }}>
+              <InputLabel id="status-filter">Status</InputLabel>
+              <Select labelId="status-filter" label="Status" value={status} onChange={(e) => setStatus(String(e.target.value))}>
+                <MenuItem value="pending">pending</MenuItem>
+                <MenuItem value="approved">approved</MenuItem>
+                <MenuItem value="archived">archived</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid>
+            <Button variant="outlined" onClick={fetchExams} disabled={busy}>{busy ? 'Searching…' : 'Search'}</Button>
+          </Grid>
+          <Grid>
+            <Button variant="text" onClick={() => { setQ(""); setStatus("pending"); fetchExams(); }} disabled={busy}>Reset</Button>
+          </Grid>
+        </Grid>
       </Paper>
 
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack spacing={1.25} sx={{ maxHeight: 480, overflowY: 'auto' }}>
+        <Stack spacing={1.25} sx={{ maxHeight: 420, overflowY: 'auto' }}>
           {list.length === 0 && !busy && (<Typography variant="body2" color="text.secondary">No exams found.</Typography>)}
           {list.map((e) => (
             <Paper key={e.id} variant="outlined" sx={{ p: 1.5 }}>
@@ -434,15 +553,27 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
                     {typeof e.time_limit_sec === 'number' && <> • ⏱ {Math.round((e.time_limit_sec || 0)/60)} min</>}
                     {e.profile && <> • {e.profile}</>}
                     {e.created_at && <> • {ms2date(e.created_at)}</>}
+                    {e.status && <> • Status: {e.status}</>}
                   </Typography>
                 </Box>
                 <Button variant="text" onClick={() => openExam(e.id)}>Preview</Button>
                 <Button variant="outlined" startIcon={<FileDownloadIcon />} onClick={() => exportQTI(e.id)}>Export QTI</Button>
-                <Tooltip title="Lock/Archive requires backend endpoints"><span><Button disabled>Lock</Button></span></Tooltip>
-                <Tooltip title="Delete requires backend endpoint"><span><Button color="error" disabled>Delete</Button></span></Tooltip>
+                <Button variant="outlined" startIcon={<PolicyIcon />} onClick={() => approve(e.id)} disabled={e.status === 'approved'}>Approve</Button>
+                <Button color="warning" variant="outlined" startIcon={<FlagIcon />} onClick={() => archive(e.id)} disabled={e.status === 'archived'}>Archive</Button>
               </Stack>
             </Paper>
           ))}
+        </Stack>
+      </Paper>
+
+      {/* Policy templates (authoring governance) */}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>Policy Templates</Typography>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} alignItems={{ md: 'flex-start' }} sx={{ mt: 1.5 }}>
+          <TextField label="Template JSON" value={templateJson} onChange={(e) => setTemplateJson(e.target.value)} multiline minRows={6} fullWidth />
+          <Stack spacing={1.5}>
+            <Button variant="contained" disableElevation onClick={saveTemplate}>Save Template</Button>
+          </Stack>
         </Stack>
       </Paper>
 
@@ -468,12 +599,12 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
   );
 }
 
-/* -------------------- Attempts Panel -------------------- */
-function AttemptsPanel({ jwt }: { jwt: string; }) {
+/* -------------------- Attempts Oversight -------------------- */
+function AttemptsOversightPanel({ jwt }: { jwt: string; }) {
   const [attemptId, setAttemptId] = useState("");
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [busy, setBusy] = useState(false);
-  const [confirm, setConfirm] = useState(false);
+  const [reason, setReason] = useState("");
   const snack = useSnack();
 
   async function loadAttempt(id: string) {
@@ -482,15 +613,32 @@ function AttemptsPanel({ jwt }: { jwt: string; }) {
     catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
   }
 
+  async function adminAct(kind: 'force-submit'|'invalidate'|'unlock') {
+    if (!attempt?.id || !reason.trim()) { snack.setErr('Reason is required'); return; }
+    try {
+      const res = await fetch(`${API_BASE}/admin/attempts/${encodeURIComponent(attempt.id)}/${kind}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ reason }) });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg(`Action ${kind} queued`);
+      setReason("");
+      loadAttempt(attempt.id);
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-          <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{ xs: 12, sm: 6, md: 'auto' }}>
             <TextField label="Attempt ID" value={attemptId} onChange={(e) => setAttemptId(e.target.value)} fullWidth />
-          </Box>
-          <Button variant="contained" disableElevation onClick={() => loadAttempt(attemptId)} disabled={!attemptId.trim() || busy}>{busy ? "Loading…" : "Open"}</Button>
-        </Stack>
+          </Grid>
+          <Grid>
+            <Button variant="contained" disableElevation onClick={() => loadAttempt(attemptId)} disabled={!attemptId.trim() || busy}>{busy ? "Loading…" : "Open"}</Button>
+          </Grid>
+          <Grid sx={{ flexGrow: 1 }} />
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField label="Reason (required for admin overrides)" value={reason} onChange={(e) => setReason(e.target.value)} fullWidth />
+          </Grid>
+        </Grid>
       </Paper>
 
       {attempt && (
@@ -499,11 +647,11 @@ function AttemptsPanel({ jwt }: { jwt: string; }) {
             <Typography variant="h6" fontWeight={600}>Attempt {attempt.id}</Typography>
             <Typography variant="body2" color="text.secondary">Exam: <Box component="span" sx={{ fontFamily: 'monospace' }}>{attempt.exam_id}</Box> • User: {attempt.user_id} • Status: {attempt.status} {typeof attempt.score === 'number' && (<Chip size="small" color="success" label={`Score: ${attempt.score}`} sx={{ ml: 1 }} />)}</Typography>
             <Divider sx={{ my: 1 }} />
-            <Typography variant="subtitle2">Admin tools</Typography>
-            <Stack direction="row" spacing={1.5}>
-              <Tooltip title="Force submit requires backend endpoint"><span><Button variant="outlined" disabled>Force submit</Button></span></Tooltip>
-              <Tooltip title="Reset attempt requires backend endpoint"><span><Button variant="outlined" disabled>Reset</Button></span></Tooltip>
-              <Tooltip title="Invalidate requires backend endpoint"><span><Button variant="outlined" color="error" disabled>Invalidate</Button></span></Tooltip>
+            <Typography variant="subtitle2">Admin overrides</Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+              <Button variant="outlined" onClick={() => adminAct('force-submit')} disabled={!reason.trim()}>Force submit</Button>
+              <Button variant="outlined" color="warning" onClick={() => adminAct('unlock')} disabled={!reason.trim()}>Unlock</Button>
+              <Button variant="outlined" color="error" onClick={() => adminAct('invalidate')} disabled={!reason.trim()}>Invalidate</Button>
             </Stack>
             <Divider sx={{ my: 1 }} />
             <Typography variant="subtitle2">Responses (raw)</Typography>
@@ -514,37 +662,178 @@ function AttemptsPanel({ jwt }: { jwt: string; }) {
         </Paper>
       )}
 
-      <Dialog open={confirm} onClose={() => setConfirm(false)}>
-        <DialogTitle>Confirm action</DialogTitle>
-        <DialogContent><DialogContentText>This is a placeholder until admin attempt endpoints exist.</DialogContentText></DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirm(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
+      {snack.node}
+    </Stack>
+  );
+}
+
+/* -------------------- Tenants & Feature Flags -------------------- */
+function TenantsFlagsPanel({ jwt }: { jwt: string }) {
+  const snack = useSnack();
+  const [busy, setBusy] = useState(false);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [newTenantName, setNewTenantName] = useState("");
+  const [newTenantDomain, setNewTenantDomain] = useState("");
+
+  async function load() {
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    try { setTenants(await api<Tenant[]>(`/admin/tenants`, { headers: { Authorization: `Bearer ${jwt}` } })); }
+    catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
+  }
+  useEffect(() => { load(); }, []);
+
+  async function createTenant() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/tenants`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ name: newTenantName.trim(), domain: newTenantDomain.trim() || undefined }) });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg('Tenant created');
+      setNewTenantName(""); setNewTenantDomain("");
+      load();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  async function saveFlags(t: Tenant) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/tenants/${encodeURIComponent(t.id)}/flags`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify(t.flags || {}) });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg('Flags updated');
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  function toggleFlag(idx: number, key: string) {
+    setTenants(prev => prev.map((t, i) => i !== idx ? t : ({ ...t, flags: { ...(t.flags || {}), [key]: !(t.flags?.[key]) } })));
+  }
+
+  const knownFlags = [
+    { key: 'lti_enabled', label: 'LTI enabled' },
+    { key: 'qti_import', label: 'QTI import' },
+    { key: 'public_offerings', label: 'Public offerings' },
+    { key: 'link_visibility', label: 'Link visibility' },
+  ];
+
+  return (
+    <Stack spacing={3}>
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{ xs: 12, md: 4 }}><TextField label="New tenant name" value={newTenantName} onChange={(e) => setNewTenantName(e.target.value)} fullWidth /></Grid>
+          <Grid size={{ xs: 12, md: 4 }}><TextField label="Custom domain (optional)" value={newTenantDomain} onChange={(e) => setNewTenantDomain(e.target.value)} fullWidth /></Grid>
+          <Grid><Button variant="contained" disableElevation onClick={createTenant} disabled={!newTenantName.trim()}>Create</Button></Grid>
+          <Grid><Button variant="outlined" onClick={load} disabled={busy}>{busy ? '…' : 'Refresh'}</Button></Grid>
+        </Grid>
+      </Paper>
+
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Stack spacing={1.25} sx={{ maxHeight: 480, overflowY: 'auto' }}>
+          {tenants.length === 0 && !busy && (<Typography variant="body2" color="text.secondary">No tenants found.</Typography>)}
+          {tenants.map((t, idx) => (
+            <Paper key={t.id} variant="outlined" sx={{ p: 1.25 }}>
+              <Stack spacing={1}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography fontWeight={600}>{t.name}</Typography>
+                    <Typography variant="caption" color="text.secondary">ID: <Box component="span" sx={{ fontFamily: 'monospace' }}>{t.id}</Box> {t.domain && <>• Domain: {t.domain}</>}</Typography>
+                  </Box>
+                  <Button variant="outlined" onClick={() => saveFlags(t)}>Save flags</Button>
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                  {knownFlags.map(f => (
+                    <FormControlLabel key={f.key} control={<Switch checked={!!t.flags?.[f.key]} onChange={() => toggleFlag(idx, f.key)} />} label={f.label} />
+                  ))}
+                </Stack>
+              </Stack>
+            </Paper>
+          ))}
+        </Stack>
+      </Paper>
 
       {snack.node}
     </Stack>
   );
 }
 
-/* -------------------- Integrations Panel -------------------- */
+/* -------------------- Compliance & Audit -------------------- */
+function ComplianceAuditPanel({ jwt }: { jwt: string; }) {
+  const snack = useSnack();
+  const [userId, setUserId] = useState("");
+  const [auditQuery, setAuditQuery] = useState("");
+  const [auditRows, setAuditRows] = useState<any[]>([]);
+
+  async function piiAct(kind: 'export'|'delete') {
+    if (!userId.trim()) { snack.setErr('User ID required'); return; }
+    try {
+      const res = await fetch(`${API_BASE}/admin/pii/${kind}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ user_id: userId.trim() }) });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      snack.setMsg(`${kind} job submitted: ${data.job_id || '(see server)'}`);
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  async function searchAudit() {
+    try {
+      const params = new URLSearchParams();
+      if (auditQuery.trim()) params.set('q', auditQuery.trim());
+      const rows = await api<any[]>(`/admin/audit?${params.toString()}`, { headers: { Authorization: `Bearer ${jwt}` } });
+      setAuditRows(rows);
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  return (
+    <Stack spacing={3}>
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>PII Tools</Typography>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }} sx={{ mt: 1.5 }}>
+          <TextField label="User ID" value={userId} onChange={(e) => setUserId(e.target.value)} sx={{ minWidth: 260 }} />
+          <Button variant="outlined" onClick={() => piiAct('export')}>Export</Button>
+          <Button variant="outlined" color="error" onClick={() => piiAct('delete')}>Delete</Button>
+        </Stack>
+      </Paper>
+
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>Audit Log</Typography>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }} sx={{ mt: 1.5 }}>
+          <TextField label="Query (actor:*, action:*, target:*)" value={auditQuery} onChange={(e) => setAuditQuery(e.target.value)} fullWidth />
+          <Button variant="outlined" onClick={searchAudit}>Search</Button>
+        </Stack>
+        <Table size="small" sx={{ mt: 1 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>At</TableCell>
+              <TableCell>Actor</TableCell>
+              <TableCell>Action</TableCell>
+              <TableCell>Target</TableCell>
+              <TableCell>Reason</TableCell>
+              <TableCell>IP</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {auditRows.map((r, i) => (
+              <TableRow key={i}>
+                <TableCell>{r.at ? new Date(r.at).toLocaleString() : ''}</TableCell>
+                <TableCell>{r.actor}</TableCell>
+                <TableCell>{r.action}</TableCell>
+                <TableCell>{r.target}</TableCell>
+                <TableCell>{r.reason}</TableCell>
+                <TableCell>{r.ip}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
+
+      {snack.node}
+    </Stack>
+  );
+}
+
+/* -------------------- Integrations (kept scaffold) -------------------- */
 function IntegrationsPanel({ jwt }: { jwt: string; }) {
   const [jwks, setJwks] = useState<null | { keys: any[] }>(null);
   const [ltiEnabled, setLtiEnabled] = useState<boolean | null>(null);
-  const snack = useSnack();
 
   useEffect(() => {
     (async () => {
-      // Probe JWKS (online mode only)
-      try {
-        const res = await fetch(`${API_BASE}/.well-known/jwks.json`);
-        if (res.ok) setJwks(await res.json()); else setJwks(null);
-      } catch { setJwks(null); }
-      // Probe LTI login (exists only if enabled)
-      try {
-        const res = await fetch(`${API_BASE}/lti/login`);
-        setLtiEnabled(res.redirected || res.status === 302 || res.status === 200);
-      } catch { setLtiEnabled(false); }
+      try { const res = await fetch(`${API_BASE}/.well-known/jwks.json`); setJwks(res.ok ? await res.json() : null); } catch { setJwks(null); }
+      try { const res = await fetch(`${API_BASE}/lti/login`); setLtiEnabled(res.redirected || res.status === 302 || res.status === 200); } catch { setLtiEnabled(false); }
     })();
   }, [jwt]);
 
@@ -563,347 +852,78 @@ function IntegrationsPanel({ jwt }: { jwt: string; }) {
         </Stack>
       </Paper>
       <Paper elevation={0} sx={{ p: 2.5 }}>
-        <Typography variant="caption" color="text.secondary">Note: Admin actions like key rotation, platform registry, and policy templates will require new backend endpoints. This panel is a safe UI scaffold.</Typography>
+        <Typography variant="caption" color="text.secondary">Note: Admin actions like key rotation, platform registry, and policy templates may require backend endpoints. This panel is a safe UI scaffold.</Typography>
       </Paper>
     </Stack>
   );
 }
 
-/* -------------------- Courses Panel (NEW; uses new API) -------------------- */
-function CoursesPanel({ jwt }: { jwt: string }) {
+/* -------------------- Settings (CORS, IP allowlist, Branding) -------------------- */
+function SettingsPanel({ jwt }: { jwt: string }) {
   const snack = useSnack();
-  const [busy, setBusy] = useState(false);
+  const [origins, setOrigins] = useState<string>("");
+  const [ips, setIps] = useState<string>("");
+  const [brandName, setBrandName] = useState<string>("");
+  const [primaryColor, setPrimaryColor] = useState<string>("#3f51b5");
 
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
-
-  const [offerings, setOfferings] = useState<Offering[]>([]);
-  const [offerBusy, setOfferBusy] = useState(false);
-
-  const [newCourseName, setNewCourseName] = useState("");
-
-  const [teacherIds, setTeacherIds] = useState("");
-  const [teacherRole, setTeacherRole] = useState<"co" | "owner">("co");
-  const [studentIds, setStudentIds] = useState("");
-  const [studentStatus, setStudentStatus] = useState<"active" | "invited" | "dropped">("active");
-
-  const [examList, setExamList] = useState<ExamSummary[]>([]);
-  const [selExamId, setSelExamId] = useState<string>("");
-  const [startAt, setStartAt] = useState<string>("");
-  const [endAt, setEndAt] = useState<string>("");
-  const [timeLimitSec, setTimeLimitSec] = useState<string>("");
-  const [maxAttempts, setMaxAttempts] = useState<string>("1");
-  const [visibility, setVisibility] = useState<"course" | "public" | "link">("course");
-  const [accessToken, setAccessToken] = useState<string>("");
-
-  function fmtRFC(s?: string | null) {
-    if (!s) return "";
-    const d = new Date(s);
-    if (isNaN(d.getTime())) return String(s);
-    return d.toLocaleString();
-  }
-  function toUnixSeconds(local?: string) {
-    if (!local) return undefined;
-    const ms = new Date(local).getTime();
-    if (isNaN(ms)) return undefined;
-    return Math.floor(ms / 1000);
-  }
-
-  const loadCourses = useCallback(async () => {
-    setBusy(true); snack.setErr(null); snack.setMsg(null);
+  async function load() {
     try {
-      const data = await api<Course[]>("/courses", { headers: { Authorization: `Bearer ${jwt}` } });
-      setCourses(data);
-      if (data.length > 0 && !selectedCourseId) setSelectedCourseId(data[0].id);
-    } catch (e: any) {
-      snack.setErr(e.message);
-    } finally {
-      setBusy(false);
-    }
-  }, [jwt, selectedCourseId]);
-
-  const loadOfferings = useCallback(async (courseId: string) => {
-    if (!courseId) { setOfferings([]); return; }
-    setOfferBusy(true); snack.setErr(null); snack.setMsg(null);
-    try {
-      const data = await api<Offering[]>(`/courses/${encodeURIComponent(courseId)}/offerings`, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
-      setOfferings(data);
-    } catch (e: any) {
-      snack.setErr(e.message);
-    } finally {
-      setOfferBusy(false);
-    }
-  }, [jwt]);
-
-  const loadExams = useCallback(async () => {
-    try {
-      const list = await api<ExamSummary[]>("/exams", { headers: { Authorization: `Bearer ${jwt}` } });
-      setExamList(list);
-      if (list.length > 0 && !selExamId) setSelExamId(list[0].id);
+      const o = await api<{ origins: string[] }>(`/admin/cors`, { headers: { Authorization: `Bearer ${jwt}` } }).catch(() => ({ origins: [] } as any));
+      const i = await api<{ ips: string[] }>(`/admin/ip-allowlist`, { headers: { Authorization: `Bearer ${jwt}` } }).catch(() => ({ ips: [] } as any));
+      setOrigins((o?.origins || []).join("\n"));
+      setIps((i?.ips || []).join("\n"));
     } catch { /* non-fatal */ }
-  }, [jwt, selExamId]);
+  }
+  useEffect(() => { load(); }, []);
 
-  useEffect(() => { loadCourses(); loadExams(); }, [loadCourses, loadExams]);
-  useEffect(() => { if (selectedCourseId) loadOfferings(selectedCourseId); }, [selectedCourseId, loadOfferings]);
-
-  async function createCourse() {
-    if (!newCourseName.trim()) return;
+  async function saveCors() {
     try {
-      const res = await fetch(`${API_BASE}/courses/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
-        body: JSON.stringify({ name: newCourseName.trim() }),
-      });
+      const res = await fetch(`${API_BASE}/admin/cors`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ origins: origins.split(/\n+/).map(s => s.trim()).filter(Boolean) }) });
       if (!res.ok) throw new Error(await res.text());
-      await res.json();
-      setNewCourseName("");
-      snack.setMsg("Course created");
-      loadCourses();
+      snack.setMsg('CORS updated');
     } catch (e: any) { snack.setErr(e.message); }
   }
-
-  async function addTeachers() {
-    if (!selectedCourseId) return;
-    const ids = teacherIds.split(",").map(s => s.trim()).filter(Boolean);
-    if (ids.length === 0) return;
+  async function saveIps() {
     try {
-      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}/teachers`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
-        body: JSON.stringify({ user_ids: ids, role: teacherRole }),
-      });
+      const res = await fetch(`${API_BASE}/admin/ip-allowlist`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ ips: ips.split(/\n+/).map(s => s.trim()).filter(Boolean) }) });
       if (!res.ok) throw new Error(await res.text());
-      setTeacherIds("");
-      snack.setMsg("Co-teachers updated");
+      snack.setMsg('IP allowlist updated');
     } catch (e: any) { snack.setErr(e.message); }
   }
-
-  async function enrollStudents() {
-    if (!selectedCourseId) return;
-    const ids = studentIds.split(",").map(s => s.trim()).filter(Boolean);
-    if (ids.length === 0) return;
+  async function saveBranding() {
     try {
-      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}/students`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
-        body: JSON.stringify({ user_ids: ids, status: studentStatus }),
-      });
+      const res = await fetch(`${API_BASE}/admin/branding`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ name: brandName || undefined, primary_color: primaryColor }) });
       if (!res.ok) throw new Error(await res.text());
-      setStudentIds("");
-      snack.setMsg("Students updated");
-    } catch (e: any) { snack.setErr(e.message); }
-  }
-
-  async function createOffering() {
-    if (!selectedCourseId) return;
-    if (!selExamId.trim()) { snack.setErr("Select an exam"); return; }
-    try {
-      const payload: any = {
-        exam_id: selExamId.trim(),
-        max_attempts: Number(maxAttempts || "1"),
-        visibility,
-      };
-      const s = toUnixSeconds(startAt || undefined);
-      const e = toUnixSeconds(endAt || undefined);
-      if (typeof s === "number") payload.start_at = s;
-      if (typeof e === "number") payload.end_at = e;
-      if (timeLimitSec.trim()) payload.time_limit_sec = Number(timeLimitSec.trim());
-      if (visibility === "link" && accessToken.trim()) payload.access_token = accessToken.trim();
-
-      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}/offerings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      await res.json();
-      snack.setMsg("Offering created");
-      setStartAt(""); setEndAt(""); setTimeLimitSec(""); setMaxAttempts("1"); setVisibility("course"); setAccessToken("");
-      loadOfferings(selectedCourseId);
+      snack.setMsg('Branding saved');
     } catch (e: any) { snack.setErr(e.message); }
   }
 
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ md: "flex-end" }}>
-          <FormControl sx={{ minWidth: 260 }}>
-            <InputLabel id="course-select">My Courses</InputLabel>
-            <Select
-              labelId="course-select"
-              label="My Courses"
-              value={selectedCourseId}
-              onChange={(e) => setSelectedCourseId(String(e.target.value))}
-            >
-              {courses.map((c) => (
-                <MenuItem key={c.id} value={c.id}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{c.id}</Box>
-                    <Box component="span">• {c.name}</Box>
-                  </Box>
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button variant="outlined" onClick={loadCourses} disabled={busy}>{busy ? "…" : "Refresh"}</Button>
-          <Box sx={{ flexGrow: 1 }} />
-          <TextField
-            label="New course name"
-            value={newCourseName}
-            onChange={(e) => setNewCourseName(e.target.value)}
-            sx={{ minWidth: 240 }}
-          />
-          <Button variant="contained" disableElevation onClick={createCourse} disabled={!newCourseName.trim()}>
-            Create Course
-          </Button>
+        <Typography variant="h6" fontWeight={600}>CORS Origins</Typography>
+        <Stack spacing={1.5} sx={{ mt: 1.5 }}>
+          <TextField label="Allowed origins (one per line)" value={origins} onChange={(e) => setOrigins(e.target.value)} multiline minRows={4} fullWidth />
+          <Button variant="contained" disableElevation onClick={saveCors}>Save</Button>
         </Stack>
       </Paper>
 
-      <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
-        {/* Left: enrollment & teachers */}
-        <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
-          <Typography variant="h6" fontWeight={600}>Teachers</Typography>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <TextField
-              label="User IDs (comma-separated)"
-              value={teacherIds}
-              onChange={(e) => setTeacherIds(e.target.value)}
-              fullWidth
-            />
-            <FormControl sx={{ minWidth: 140 }}>
-              <InputLabel id="teacher-role">Role</InputLabel>
-              <Select labelId="teacher-role" label="Role" value={teacherRole} onChange={(e) => setTeacherRole(e.target.value as any)}>
-                <MenuItem value="co">co</MenuItem>
-                <MenuItem value="owner">owner</MenuItem>
-              </Select>
-            </FormControl>
-            <Button variant="contained" disableElevation onClick={addTeachers} disabled={!selectedCourseId || !teacherIds.trim()}>
-              Add / Update
-            </Button>
-          </Stack>
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>IP Allowlist</Typography>
+        <Stack spacing={1.5} sx={{ mt: 1.5 }}>
+          <TextField label="Allowed CIDRs/IPs (one per line)" value={ips} onChange={(e) => setIps(e.target.value)} multiline minRows={4} fullWidth />
+          <Button variant="contained" disableElevation onClick={saveIps}>Save</Button>
+        </Stack>
+      </Paper>
 
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="h6" fontWeight={600}>Students</Typography>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <TextField
-              label="User IDs (comma-separated)"
-              value={studentIds}
-              onChange={(e) => setStudentIds(e.target.value)}
-              fullWidth
-            />
-            <FormControl sx={{ minWidth: 140 }}>
-              <InputLabel id="student-status">Status</InputLabel>
-              <Select labelId="student-status" label="Status" value={studentStatus} onChange={(e) => setStudentStatus(e.target.value as any)}>
-                <MenuItem value="active">active</MenuItem>
-                <MenuItem value="invited">invited</MenuItem>
-                <MenuItem value="dropped">dropped</MenuItem>
-              </Select>
-            </FormControl>
-            <Button variant="contained" disableElevation onClick={enrollStudents} disabled={!selectedCourseId || !studentIds.trim()}>
-              Enroll / Update
-            </Button>
-          </Stack>
-        </Paper>
-
-        {/* Right: offerings */}
-        <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
-          <Typography variant="h6" fontWeight={600}>Offerings</Typography>
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <FormControl sx={{ minWidth: 220 }}>
-              <InputLabel id="exam-select">Exam</InputLabel>
-              <Select labelId="exam-select" label="Exam" value={selExamId} onChange={(e) => setSelExamId(String(e.target.value))}>
-                {examList.map(ex => (
-                  <MenuItem key={ex.id} value={ex.id}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{ex.id}</Box>
-                      <Box component="span">• {ex.title}</Box>
-                    </Box>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label="Start (local)"
-              type="datetime-local"
-              value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="End (local)"
-              type="datetime-local"
-              value={endAt}
-              onChange={(e) => setEndAt(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Stack>
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-            <TextField
-              label="Time limit (sec)"
-              type="number"
-              value={timeLimitSec}
-              onChange={(e) => setTimeLimitSec(e.target.value)}
-              sx={{ minWidth: 160 }}
-            />
-            <TextField
-              label="Max attempts"
-              type="number"
-              value={maxAttempts}
-              onChange={(e) => setMaxAttempts(e.target.value)}
-              sx={{ minWidth: 160 }}
-            />
-            <FormControl sx={{ minWidth: 160 }}>
-              <InputLabel id="vis-select">Visibility</InputLabel>
-              <Select labelId="vis-select" label="Visibility" value={visibility} onChange={(e) => setVisibility(e.target.value as any)}>
-                <MenuItem value="course">course</MenuItem>
-                <MenuItem value="public">public</MenuItem>
-                <MenuItem value="link">link</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              label="Access token (for link)"
-              value={accessToken}
-              onChange={(e) => setAccessToken(e.target.value)}
-              sx={{ minWidth: 220 }}
-            />
-            <Button variant="contained" disableElevation onClick={createOffering} disabled={!selectedCourseId || !selExamId}>
-              Create Offering
-            </Button>
-          </Stack>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Stack spacing={1.25} sx={{ maxHeight: 280, overflowY: "auto" }}>
-            {offerings.length === 0 && !offerBusy && <Typography variant="body2" color="text.secondary">No offerings yet.</Typography>}
-            {offerings.map(o => (
-              <Paper key={o.id} variant="outlined" sx={{ p: 1.25 }}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ sm: "center" }}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography fontWeight={600}>
-                      Offering <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.id}</Box>
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.exam_id}</Box>
-                      {o.start_at && <> • Starts: {fmtRFC(o.start_at)}</>}
-                      {o.end_at && <> • Ends: {fmtRFC(o.end_at)}</>}
-                      {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0)/60)} min</>}
-                      <> • Attempts: {o.max_attempts}</>
-                      <> • Visibility: {o.visibility}</>
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-            ))}
-          </Stack>
-        </Paper>
-      </Stack>
-
-      {snack.node}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>Branding</Typography>
+        <Grid container spacing={1.5} alignItems="flex-end" sx={{ mt: 1.5 }}>
+          <Grid size={{ xs: 12, md: 6 }}><TextField label="Display name" value={brandName} onChange={(e) => setBrandName(e.target.value)} fullWidth /></Grid>
+          <Grid size={{ xs: 12, md: 3 }}><TextField label="Primary color" type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} fullWidth /></Grid>
+          <Grid><Button variant="contained" disableElevation onClick={saveBranding}>Save</Button></Grid>
+        </Grid>
+      </Paper>
     </Stack>
   );
 }
@@ -914,17 +934,13 @@ export default function AdminApp() {
   const [screen, setScreen] = useState<Screen>("login");
   const [jwt, setJwt] = useState("");
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState(0); // 0=System,1=Users,2=Courses,3=Exams,4=Attempts,5=Integrations
+  const [tab, setTab] = useState(0);
   const snack = useSnack();
 
   async function login(username: string, password: string) {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
-      const data = await api<{ access_token: string }>("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, role: "admin" }),
-      });
+      const data = await api<{ access_token: string }>("/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password, role: "admin" }) });
       setJwt(data.access_token);
       try { localStorage.setItem("admin_jwt", data.access_token); } catch {}
       setScreen("home");
@@ -932,33 +948,22 @@ export default function AdminApp() {
     } catch (err: any) { snack.setErr(err.message); } finally { setBusy(false); }
   }
 
-  /** NEW: pick up JWT from Google callback (query or hash) or localStorage */
   useEffect(() => {
     let token = "";
     const url = new URL(window.location.href);
-
     token = url.searchParams.get("access_token") || url.searchParams.get("jwt") || "";
-
     if (!token && window.location.hash) {
       const hashParams = new URLSearchParams(window.location.hash.slice(1));
       token = hashParams.get("access_token") || hashParams.get("jwt") || "";
     }
-
-    if (!token) {
-      try { token = localStorage.getItem("admin_jwt") || ""; } catch {}
-    }
-
+    if (!token) { try { token = localStorage.getItem("admin_jwt") || ""; } catch {} }
     if (token) {
       setJwt(token);
       try { localStorage.setItem("admin_jwt", token); } catch {}
       setScreen("home");
-
-      url.searchParams.delete("access_token");
-      url.searchParams.delete("jwt");
+      url.searchParams.delete("access_token"); url.searchParams.delete("jwt");
       window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""));
-      if (window.location.hash) {
-        window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""));
-      }
+      if (window.location.hash) { window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : "")); }
     }
   }, []);
 
@@ -983,20 +988,24 @@ export default function AdminApp() {
     <ThemeProvider theme={theme}>
       <Shell authed={true} onSignOut={signOut} title="Admin Console" right={
         <Tabs value={tab} onChange={(_, v) => setTab(v)} textColor="primary" indicatorColor="primary" sx={{ mr: 1 }}>
-          <Tab icon={<SecurityIcon />} iconPosition="start" label="System" />
-          <Tab icon={<ManageAccountsIcon />} iconPosition="start" label="Users" />
-          <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Courses" />
-          <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Exams" />
-          <Tab icon={<AssessmentIcon />} iconPosition="start" label="Attempts" />
+          <Tab icon={<SecurityIcon />} iconPosition="start" label="Overview" />
+          <Tab icon={<FlagIcon />} iconPosition="start" label="Tenants & Flags" />
+          <Tab icon={<VerifiedUserIcon />} iconPosition="start" label="Identity & Roles" />
+          <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Content" />
+          <Tab icon={<FactCheckIcon />} iconPosition="start" label="Attempts" />
+          <Tab icon={<GavelIcon />} iconPosition="start" label="Compliance" />
           <Tab icon={<IntegrationInstructionsIcon />} iconPosition="start" label="Integrations" />
+          <Tab icon={<SettingsEthernetIcon />} iconPosition="start" label="Settings" />
         </Tabs>
       }>
-        {tab === 0 && <SystemPanel jwt={jwt} />}
-        {tab === 1 && <UsersPanel jwt={jwt} />}
-        {tab === 2 && <CoursesPanel jwt={jwt} />}
-        {tab === 3 && <ExamsPanel jwt={jwt} />}
-        {tab === 4 && <AttemptsPanel jwt={jwt} />}
-        {tab === 5 && <IntegrationsPanel jwt={jwt} />}
+        {tab === 0 && <OverviewPanel jwt={jwt} />}
+        {tab === 1 && <TenantsFlagsPanel jwt={jwt} />}
+        {tab === 2 && <IdentityRolesPanel jwt={jwt} />}
+        {tab === 3 && <ContentGovernancePanel jwt={jwt} />}
+        {tab === 4 && <AttemptsOversightPanel jwt={jwt} />}
+        {tab === 5 && <ComplianceAuditPanel jwt={jwt} />}
+        {tab === 6 && <IntegrationsPanel jwt={jwt} />}
+        {tab === 7 && <SettingsPanel jwt={jwt} />}
         {snack.node}
       </Shell>
     </ThemeProvider>
