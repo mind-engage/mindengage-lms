@@ -1,0 +1,8 @@
+[
+    {"id":"teacher","username":"teacher","role":"teacher","password":"teacher"},
+    {"id":"student","username":"student","role":"student","password":"student"},
+    {"id":"admin","username":"admin","role":"admin","password":"admin"},
+  
+    {"id":"alice","username":"alice","role":"student","password":"alicepass"},
+    {"id":"bob","username":"bob","role":"student","password":"bobpass"}
+  ]

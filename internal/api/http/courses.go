@@ -15,6 +15,11 @@ import (
 
 // Handlers only — routes remain in main.go
 
+type Course struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 func CreateCourseHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.HandlerFunc {
 	return func(w nethttp.ResponseWriter, r *nethttp.Request) {
 		sub, role := subjectFromBearer(authSvc, r)
@@ -68,12 +73,12 @@ func ListMyCoursesHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.Hand
 			return
 		}
 		defer rows.Close()
-		type row struct{ ID, Name string }
-		out := []row{}
+		//type row struct{ ID, Name string }
+		out := []Course{}
 		for rows.Next() {
 			var id, name string
 			_ = rows.Scan(&id, &name)
-			out = append(out, row{ID: id, Name: name})
+			out = append(out, Course{ID: id, Name: name})
 		}
 		_ = json.NewEncoder(w).Encode(out)
 	}
@@ -233,39 +238,57 @@ func ListOfferingsHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.Hand
 			nethttp.Error(w, "forbidden", nethttp.StatusForbidden)
 			return
 		}
+
 		rows, err := dbh.Query(`
-      SELECT id, exam_id, start_at, end_at, time_limit_sec, max_attempts, visibility
-      FROM exam_offerings
-      WHERE course_id=$1
-      ORDER BY start_at NULLS FIRST, id
-    `, courseID)
+			SELECT id, exam_id, start_at, end_at, time_limit_sec, max_attempts, visibility
+			FROM exam_offerings
+			WHERE course_id=$1
+			ORDER BY start_at NULLS FIRST, id
+		`, courseID)
 		if err != nil {
 			nethttp.Error(w, "db error", nethttp.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
+
 		type off struct {
 			ID           string     `json:"id"`
 			ExamID       string     `json:"exam_id"`
-			StartAt      *time.Time `json:"start_at,omitempty"`
+			StartAt      *time.Time `json:"start_at,omitempty"` // RFC3339 in JSON
 			EndAt        *time.Time `json:"end_at,omitempty"`
 			TimeLimitSec *int       `json:"time_limit_sec,omitempty"`
 			MaxAttempts  int        `json:"max_attempts"`
 			Visibility   string     `json:"visibility"`
 		}
-		var out []off
+
+		out := make([]off, 0, 8) // ensures [] not null
+
 		for rows.Next() {
 			var o off
+			var start, end sql.NullInt64
 			var tls sql.NullInt64
-			if err := rows.Scan(&o.ID, &o.ExamID, &o.StartAt, &o.EndAt, &tls, &o.MaxAttempts, &o.Visibility); err == nil {
-				if tls.Valid {
-					val := int(tls.Int64)
-					o.TimeLimitSec = &val
-				}
-				out = append(out, o)
+
+			if err := rows.Scan(&o.ID, &o.ExamID, &start, &end, &tls, &o.MaxAttempts, &o.Visibility); err != nil {
+				// optionally log the scan error
+				continue
 			}
+			if start.Valid {
+				t := time.Unix(start.Int64, 0).UTC()
+				o.StartAt = &t
+			}
+			if end.Valid {
+				t := time.Unix(end.Int64, 0).UTC()
+				o.EndAt = &t
+			}
+			if tls.Valid {
+				v := int(tls.Int64)
+				o.TimeLimitSec = &v
+			}
+			out = append(out, o)
 		}
-		_ = json.NewEncoder(w).Encode(out)
+
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(out) // [] when empty
 	}
 }
 
