@@ -6,3 +6,5 @@ scaffold_mindengage.sh
 mindengage.db
 /data
 /.vscode
+
+/cmd/gateway/static
