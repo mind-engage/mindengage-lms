@@ -273,14 +273,18 @@ function useSnack() {
 }
 
 /* -------------------- Screen 1: Login -------------------- */
-function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string, r: "student" | "teacher" | "admin") => void; }) {
+function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string) => void; }) {
   const [username, setUsername] = useState("student");
   const [password, setPassword] = useState("student");
-  const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    onLogin(username, password, role);
+    onLogin(username, password);
+  }
+
+  function loginWithGoogle() {
+    const redirectBack = window.location.href;
+    window.location.href = `${API_BASE}/auth/google/login?redirect=${encodeURIComponent(redirectBack)}`;
   }
 
   return (
@@ -289,20 +293,13 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
         <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%`, lg: '50%' } }}>
           <Paper elevation={1} sx={{ p: 3 }}>
             <Typography variant="h5" fontWeight={600}>Sign in</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Use your test credentials to continue.</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Use your test credentials or Google to continue.</Typography>
             <Box component="form" onSubmit={submit} sx={{ mt: 2 }}>
               <Stack spacing={2}>
                 <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth />
                 <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
-                <FormControl fullWidth>
-                  <InputLabel id="role-lbl">Role</InputLabel>
-                  <Select labelId="role-lbl" label="Role" value={role} onChange={(e) => setRole(e.target.value as any)}>
-                    <MenuItem value="student">student</MenuItem>
-                    <MenuItem value="teacher">teacher</MenuItem>
-                    <MenuItem value="admin">admin</MenuItem>
-                  </Select>
-                </FormControl>
                 <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
+                <Button type="button" variant="outlined" size="large" onClick={loginWithGoogle} disabled={busy}>Sign in with Google</Button>
               </Stack>
             </Box>
           </Paper>
@@ -737,13 +734,33 @@ export default function StudentApp() {
   const [loadedExam, setLoadedExam] = useState<Exam | null>(null);
   const snack = useSnack();
 
-  async function login(username: string, password: string, role: "student" | "teacher" | "admin") {
+  // Capture JWT from URL (for Google callback redirects): ?access_token=... or #access_token=...
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      let t = url.searchParams.get("access_token") || url.searchParams.get("t");
+      if (!t && url.hash && url.hash.startsWith("#")) {
+        const h = new URLSearchParams(url.hash.slice(1));
+        t = h.get("access_token") || h.get("t");
+      }
+      if (t) {
+        setJwt(t);
+        setScreen("select");
+        url.searchParams.delete("access_token");
+        url.searchParams.delete("t");
+        const clean = url.origin + url.pathname + (url.search ? url.search : "");
+        window.history.replaceState({}, document.title, clean);
+      }
+    } catch {}
+  }, []);
+
+  async function login(username: string, password: string) {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
       const data = await api<{ access_token: string }>("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, role }),
+        body: JSON.stringify({ username, password, role: "student" }),
       });
       setJwt(data.access_token);
       snack.setMsg("Logged in.");

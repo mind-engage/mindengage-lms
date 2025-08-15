@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strings"
 )
 
 type Mode string
@@ -28,6 +29,21 @@ type Config struct {
 
 	AdminUser     string
 	AdminPassHash string // bcrypt
+
+	CORSOriginsOnline  []string
+	CORSOriginsOffline []string
+
+	// LTI 1.3 / OIDC (Tool-side)
+	LTIPlatformAuthURL string
+	LTIToolClientID    string
+	LTIToolRedirectURI string
+
+	EnableGoogleAuth bool
+
+	GoogleClientID     string
+	GoogleClientSecret string
+	GoogleRedirectURI  string // e.g., PUBLIC_URL + "/api/auth/google/callback"
+	GoogleAllowedHD    string // optional: re
 }
 
 func FromEnv() Config {
@@ -39,19 +55,36 @@ func FromEnv() Config {
 	if addr == "" {
 		addr = ":8080"
 	}
+	pub := os.Getenv("PUBLIC_URL")
+	defRedirect := ""
+	if pub != "" {
+		defRedirect = strings.TrimSuffix(pub, "/") + "/api/lti/launch"
+	}
 	return Config{
-		Mode:            mode,
-		HTTPAddr:        addr,
-		PublicURL:       os.Getenv("PUBLIC_URL"),
-		DBDriver:        envOr("DB_DRIVER", "sqlite"),
-		DBDSN:           os.Getenv("DB_DSN"),
-		BlobDriver:      envOr("BLOB_DRIVER", "fs"),
-		BlobBasePath:    envOr("BLOB_BASE_PATH", "./data"),
-		EnableLocalAuth: envBool("ENABLE_LOCAL_AUTH", true),
-		EnableLTI:       envBool("ENABLE_LTI", mode == ModeOnline),
-		EnableJWKS:      envBool("ENABLE_JWKS", mode == ModeOnline),
-		AdminUser:       envOr("ADMIN_USER", "admin"),
-		AdminPassHash:   envOr("ADMIN_PASS_HASH", "$2y$12$pyZAiWaTfVtM7UElIRStvOC3gNbnp70nmQU4eYopLGBfCJr1DOvji"),
+		Mode:               mode,
+		HTTPAddr:           addr,
+		PublicURL:          pub,
+		DBDriver:           envOr("DB_DRIVER", "sqlite"),
+		DBDSN:              os.Getenv("DB_DSN"),
+		BlobDriver:         envOr("BLOB_DRIVER", "fs"),
+		BlobBasePath:       envOr("BLOB_BASE_PATH", "./data"),
+		EnableLocalAuth:    envBool("ENABLE_LOCAL_AUTH", true),
+		EnableLTI:          envBool("ENABLE_LTI", mode == ModeOnline),
+		EnableJWKS:         envBool("ENABLE_JWKS", mode == ModeOnline),
+		AdminUser:          envOr("ADMIN_USER", "admin"),
+		AdminPassHash:      envOr("ADMIN_PASS_HASH", "$2y$12$pyZAiWaTfVtM7UElIRStvOC3gNbnp70nmQU4eYopLGBfCJr1DOvji"),
+		CORSOriginsOnline:  csvOr("CORS_ORIGINS_ONLINE", "https://lms.mindengage.ai"),
+		CORSOriginsOffline: csvOr("CORS_ORIGINS_OFFLINE", "http://localhost:3000,http://localhost:3010,http://localhost:3020"),
+
+		LTIPlatformAuthURL: envOr("LTI_PLATFORM_AUTH_URL", "https://platform.mindengage.ai/oidc/auth"),
+		LTIToolClientID:    envOr("LTI_TOOL_CLIENT_ID", "TOOL_CLIENT_ID"),
+		LTIToolRedirectURI: envOr("LTI_TOOL_REDIRECT_URI", defRedirect),
+
+		EnableGoogleAuth:   envBool("ENABLE_GOOGLE_AUTH", false),
+		GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		GoogleRedirectURI:  envOr("GOOGLE_REDIRECT_URI", strings.TrimSuffix(pub, "/")+"/api/auth/google/callback"),
+		GoogleAllowedHD:    os.Getenv("GOOGLE_ALLOWED_HD"),
 	}
 }
 func envOr(k, def string) string {
@@ -70,4 +103,15 @@ func envBool(k string, def bool) bool {
 	default:
 		return def
 	}
+}
+func csvOr(k, def string) []string {
+	v := envOr(k, def)
+	parts := strings.Split(v, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if s := strings.TrimSpace(p); s != "" {
+			out = append(out, s)
+		}
+	}
+	return out
 }

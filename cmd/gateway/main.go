@@ -12,8 +12,9 @@ import (
 	"time"
 
 	api "github.com/mind-engage/mindengage-lms/internal/api/http"
+	auth "github.com/mind-engage/mindengage-lms/internal/auth"
 	"github.com/mind-engage/mindengage-lms/internal/auth/jwks"
-	auth "github.com/mind-engage/mindengage-lms/internal/auth/middleware"
+	authmw "github.com/mind-engage/mindengage-lms/internal/auth/middleware"
 	"github.com/mind-engage/mindengage-lms/internal/config"
 	"github.com/mind-engage/mindengage-lms/internal/db"
 	"github.com/mind-engage/mindengage-lms/internal/exam"
@@ -58,7 +59,7 @@ func main() {
 
 	// --- Auth ---
 	secret := getenvOr("AUTH_HMAC_SECRET", "supersecret-dev-key")
-	authSvc := auth.NewAuthService(secret)
+	authSvc := authmw.NewAuthService(secret)
 
 	// --- Router ---
 	r := chi.NewRouter()
@@ -69,7 +70,7 @@ func main() {
 	// --- CORS ---
 	if cfg.Mode == config.ModeOnline {
 		r.Use(cors.Handler(cors.Options{
-			AllowedOrigins:   []string{"https://your-frontend.example.com", "https://lms.mindengage.ai"},
+			AllowedOrigins:   cfg.CORSOriginsOnline,
 			AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 			AllowedHeaders:   []string{"Authorization", "Content-Type"},
 			ExposedHeaders:   []string{"Content-Length"},
@@ -78,7 +79,7 @@ func main() {
 		}))
 	} else {
 		r.Use(cors.Handler(cors.Options{
-			AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3010", "http://localhost:3020"},
+			AllowedOrigins:   cfg.CORSOriginsOffline,
 			AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 			AllowedHeaders:   []string{"Authorization", "Content-Type"},
 			ExposedHeaders:   []string{"Content-Length"},
@@ -103,13 +104,20 @@ func main() {
 		// --- LTI ---
 		if cfg.EnableLTI && cfg.Mode == config.ModeOnline {
 			apiR.Route("/lti", func(lr chi.Router) {
-				lr.Get("/login", lti.OIDCLoginHandler("https://platform.example.com/oidc/auth"))
-				lr.Post("/launch", lti.LaunchHandler())
+				lr.Get("/login", lti.OIDCLoginHandler(cfg.LTIPlatformAuthURL))
+				lr.Post("/launch", lti.LaunchHandler(authSvc, dbh, cfg))
+			})
+		}
+
+		if cfg.EnableGoogleAuth && cfg.Mode == config.ModeOnline {
+			apiR.Route("/auth/google", func(gr chi.Router) {
+				gr.Get("/login", auth.GoogleLoginHandler(cfg))
+				gr.Get("/callback", auth.GoogleCallbackHandler(authSvc, dbh, cfg))
 			})
 		}
 
 		if cfg.EnableLocalAuth {
-			apiR.Post("/auth/login", auth.LoginHandler(authSvc, cfg, dbh))
+			apiR.Post("/auth/login", authmw.LoginHandler(authSvc, cfg, dbh))
 		}
 
 		bs, err := storage.NewFSStore(cfg.BlobBasePath)
@@ -118,16 +126,16 @@ func main() {
 		}
 		allowClaimFallback := cfg.Mode == config.ModeOffline || cfg.EnableLocalAuth
 		apiR.Group(func(pr chi.Router) {
-			pr.Use(auth.JWTMiddleware(authSvc))
-			pr.Use(auth.AttachRoleFromDB(dbh, allowClaimFallback))
+			pr.Use(authmw.JWTMiddleware(authSvc))
+			pr.Use(authmw.AttachRoleFromDB(dbh, allowClaimFallback))
 			pr.Route("/assets", func(ar chi.Router) {
 				api.MountAssets(ar, bs)
 			})
 		})
 
 		apiR.Group(func(pr chi.Router) {
-			pr.Use(auth.JWTMiddleware(authSvc))
-			pr.Use(auth.AttachRoleFromDB(dbh, allowClaimFallback))
+			pr.Use(authmw.JWTMiddleware(authSvc))
+			pr.Use(authmw.AttachRoleFromDB(dbh, allowClaimFallback))
 
 			// Exams
 			pr.With(rbac.Require("exam:create")).

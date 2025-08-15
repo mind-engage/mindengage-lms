@@ -1,6 +1,8 @@
+.env
 flatten.sh
 flatten.txt
 scaffold_mindengage.sh
 
 mindengage.db
 /data
+/.vscode
