@@ -80,6 +80,22 @@ export type Attempt = {
   submitted_at?: number;
 };
 
+/** NEW: Course & Offering shapes (match /courses API) */
+export type Course = {
+  id: string;
+  name: string;
+};
+
+export type Offering = {
+  id: string;
+  exam_id: string;
+  start_at?: string | null; // RFC3339 string from server
+  end_at?: string | null;   // RFC3339 string from server
+  time_limit_sec?: number;
+  max_attempts: number;
+  visibility: "course" | "public" | "link";
+};
+
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
@@ -154,6 +170,7 @@ function Shell({ children, authed, onSignOut, title, right }: { children: React.
 }
 
 /* -------------------- Login -------------------- */
+/** UPDATED: adds Google Sign-On button; keeps existing local login intact */
 function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string, r: "teacher" | "admin") => void; }) {
   const [username, setUsername] = useState("teacher");
   const [password, setPassword] = useState("teacher");
@@ -162,6 +179,13 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
   function submit(e: React.FormEvent) {
     e.preventDefault();
     onLogin(username, password, role);
+  }
+
+  /** NEW: Start Google OAuth flow (server will redirect to Google and back) */
+  function googleSignIn() {
+    // If your backend supports a "redirect" param, append it; otherwise plain login URL works.
+    // Using a plain redirect keeps compatibility with the handlers you showed.
+    window.location.href = `${API_BASE}/auth/google/login`;
   }
 
   return (
@@ -183,6 +207,11 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
                   </Select>
                 </FormControl>
                 <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
+                <Divider>or</Divider>
+                {/* NEW: Google SSO */}
+                <Button variant="outlined" size="large" onClick={googleSignIn} disabled={busy}>
+                  Sign in with Google
+                </Button>
               </Stack>
             </Box>
           </Paper>
@@ -685,14 +714,361 @@ function UsersPanel({ jwt }: { jwt: string; }) {
   );
 }
 
+/* -------------------- Courses Panel (NEW) -------------------- */
+function CoursesPanel({ jwt }: { jwt: string }) {
+  const snack = useSnack();
+  const [busy, setBusy] = useState(false);
+
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+
+  const [offerings, setOfferings] = useState<Offering[]>([]);
+  const [offerBusy, setOfferBusy] = useState(false);
+
+  // create course
+  const [newCourseName, setNewCourseName] = useState("");
+
+  // add teachers / enroll students
+  const [teacherIds, setTeacherIds] = useState("");
+  const [teacherRole, setTeacherRole] = useState<"co" | "owner">("co");
+  const [studentIds, setStudentIds] = useState("");
+  const [studentStatus, setStudentStatus] = useState<"active" | "invited" | "dropped">("active");
+
+  // create offering
+  const [examList, setExamList] = useState<ExamSummary[]>([]);
+  const [selExamId, setSelExamId] = useState<string>("");
+  const [startAt, setStartAt] = useState<string>(""); // datetime-local
+  const [endAt, setEndAt] = useState<string>("");
+  const [timeLimitSec, setTimeLimitSec] = useState<string>("");
+  const [maxAttempts, setMaxAttempts] = useState<string>("1");
+  const [visibility, setVisibility] = useState<"course" | "public" | "link">("course");
+  const [accessToken, setAccessToken] = useState<string>("");
+
+  function fmtRFC(s?: string | null) {
+    if (!s) return "";
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return String(s);
+    return d.toLocaleString();
+  }
+
+  function toUnixSeconds(local: string | undefined) {
+    if (!local) return undefined;
+    const ms = new Date(local).getTime();
+    if (isNaN(ms)) return undefined;
+    return Math.floor(ms / 1000);
+  }
+
+  const loadCourses = useCallback(async () => {
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<Course[]>("/courses", { headers: { Authorization: `Bearer ${jwt}` } });
+      setCourses(data);
+      if (data.length > 0 && !selectedCourseId) setSelectedCourseId(data[0].id);
+    } catch (e: any) {
+      snack.setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }, [jwt, selectedCourseId]);
+
+  const loadOfferings = useCallback(async (courseId: string) => {
+    if (!courseId) { setOfferings([]); return; }
+    setOfferBusy(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<Offering[]>(`/courses/${encodeURIComponent(courseId)}/offerings`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setOfferings(data);
+    } catch (e: any) {
+      snack.setErr(e.message);
+    } finally {
+      setOfferBusy(false);
+    }
+  }, [jwt]);
+
+  const loadExams = useCallback(async () => {
+    try {
+      const list = await api<ExamSummary[]>("/exams", { headers: { Authorization: `Bearer ${jwt}` } });
+      setExamList(list);
+      if (list.length > 0 && !selExamId) setSelExamId(list[0].id);
+    } catch (e: any) {
+      // non-fatal
+    }
+  }, [jwt, selExamId]);
+
+  useEffect(() => { loadCourses(); loadExams(); }, [loadCourses, loadExams]);
+  useEffect(() => { if (selectedCourseId) loadOfferings(selectedCourseId); }, [selectedCourseId, loadOfferings]);
+
+  async function createCourse() {
+    if (!newCourseName.trim()) return;
+    try {
+      const res = await fetch(`${API_BASE}/courses/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify({ name: newCourseName.trim() }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      await res.json();
+      setNewCourseName("");
+      snack.setMsg("Course created");
+      loadCourses();
+    } catch (e: any) {
+      snack.setErr(e.message);
+    }
+  }
+
+  async function addTeachers() {
+    if (!selectedCourseId) return;
+    const ids = teacherIds.split(",").map(s => s.trim()).filter(Boolean);
+    if (ids.length === 0) return;
+    try {
+      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}/teachers`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify({ user_ids: ids, role: teacherRole }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setTeacherIds("");
+      snack.setMsg("Co-teachers updated");
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  async function enrollStudents() {
+    if (!selectedCourseId) return;
+    const ids = studentIds.split(",").map(s => s.trim()).filter(Boolean);
+    if (ids.length === 0) return;
+    try {
+      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}/students`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify({ user_ids: ids, status: studentStatus }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setStudentIds("");
+      snack.setMsg("Students updated");
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  async function createOffering() {
+    if (!selectedCourseId) return;
+    if (!selExamId.trim()) { snack.setErr("Select an exam"); return; }
+    try {
+      const payload: any = {
+        exam_id: selExamId.trim(),
+        max_attempts: Number(maxAttempts || "1"),
+        visibility,
+      };
+      const start = toUnixSeconds(startAt || undefined);
+      const end = toUnixSeconds(endAt || undefined);
+      if (typeof start === "number") payload.start_at = start;
+      if (typeof end === "number") payload.end_at = end;
+      if (timeLimitSec.trim()) payload.time_limit_sec = Number(timeLimitSec.trim());
+      if (visibility === "link" && accessToken.trim()) payload.access_token = accessToken.trim();
+
+      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}/offerings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      await res.json();
+      snack.setMsg("Offering created");
+      setStartAt(""); setEndAt(""); setTimeLimitSec(""); setMaxAttempts("1"); setVisibility("course"); setAccessToken("");
+      loadOfferings(selectedCourseId);
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  return (
+    <Stack spacing={3}>
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ md: "flex-end" }}>
+          <FormControl sx={{ minWidth: 260 }}>
+            <InputLabel id="course-select">My Courses</InputLabel>
+            <Select
+              labelId="course-select"
+              label="My Courses"
+              value={selectedCourseId}
+              onChange={(e) => setSelectedCourseId(String(e.target.value))}
+            >
+              {courses.map((c) => (
+                <MenuItem key={c.id} value={c.id}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{c.id}</Box>
+                    <Box component="span">• {c.name}</Box>
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Button variant="outlined" onClick={loadCourses} disabled={busy}>{busy ? "…" : "Refresh"}</Button>
+          <Box sx={{ flexGrow: 1 }} />
+          <TextField
+            label="New course name"
+            value={newCourseName}
+            onChange={(e) => setNewCourseName(e.target.value)}
+            sx={{ minWidth: 240 }}
+          />
+          <Button variant="contained" disableElevation onClick={createCourse} disabled={!newCourseName.trim()}>
+            Create Course
+          </Button>
+        </Stack>
+      </Paper>
+
+      <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
+        {/* Left: enrollment & teachers */}
+        <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
+          <Typography variant="h6" fontWeight={600}>Teachers</Typography>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+            <TextField
+              label="User IDs (comma-separated)"
+              value={teacherIds}
+              onChange={(e) => setTeacherIds(e.target.value)}
+              fullWidth
+            />
+            <FormControl sx={{ minWidth: 140 }}>
+              <InputLabel id="teacher-role">Role</InputLabel>
+              <Select labelId="teacher-role" label="Role" value={teacherRole} onChange={(e) => setTeacherRole(e.target.value as any)}>
+                <MenuItem value="co">co</MenuItem>
+                <MenuItem value="owner">owner</MenuItem>
+              </Select>
+            </FormControl>
+            <Button variant="contained" disableElevation onClick={addTeachers} disabled={!selectedCourseId || !teacherIds.trim()}>
+              Add / Update
+            </Button>
+          </Stack>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Typography variant="h6" fontWeight={600}>Students</Typography>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+            <TextField
+              label="User IDs (comma-separated)"
+              value={studentIds}
+              onChange={(e) => setStudentIds(e.target.value)}
+              fullWidth
+            />
+            <FormControl sx={{ minWidth: 140 }}>
+              <InputLabel id="student-status">Status</InputLabel>
+              <Select labelId="student-status" label="Status" value={studentStatus} onChange={(e) => setStudentStatus(e.target.value as any)}>
+                <MenuItem value="active">active</MenuItem>
+                <MenuItem value="invited">invited</MenuItem>
+                <MenuItem value="dropped">dropped</MenuItem>
+              </Select>
+            </FormControl>
+            <Button variant="contained" disableElevation onClick={enrollStudents} disabled={!selectedCourseId || !studentIds.trim()}>
+              Enroll / Update
+            </Button>
+          </Stack>
+        </Paper>
+
+        {/* Right: offerings */}
+        <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
+          <Typography variant="h6" fontWeight={600}>Offerings</Typography>
+
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+            <FormControl sx={{ minWidth: 220 }}>
+              <InputLabel id="exam-select">Exam</InputLabel>
+              <Select labelId="exam-select" label="Exam" value={selExamId} onChange={(e) => setSelExamId(String(e.target.value))}>
+                {examList.map(ex => (
+                  <MenuItem key={ex.id} value={ex.id}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{ex.id}</Box>
+                      <Box component="span">• {ex.title}</Box>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              label="Start (local)"
+              type="datetime-local"
+              value={startAt}
+              onChange={(e) => setStartAt(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="End (local)"
+              type="datetime-local"
+              value={endAt}
+              onChange={(e) => setEndAt(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Stack>
+
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
+            <TextField
+              label="Time limit (sec)"
+              type="number"
+              value={timeLimitSec}
+              onChange={(e) => setTimeLimitSec(e.target.value)}
+              sx={{ minWidth: 160 }}
+            />
+            <TextField
+              label="Max attempts"
+              type="number"
+              value={maxAttempts}
+              onChange={(e) => setMaxAttempts(e.target.value)}
+              sx={{ minWidth: 160 }}
+            />
+            <FormControl sx={{ minWidth: 160 }}>
+              <InputLabel id="vis-select">Visibility</InputLabel>
+              <Select labelId="vis-select" label="Visibility" value={visibility} onChange={(e) => setVisibility(e.target.value as any)}>
+                <MenuItem value="course">course</MenuItem>
+                <MenuItem value="public">public</MenuItem>
+                <MenuItem value="link">link</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              label="Access token (for link)"
+              value={accessToken}
+              onChange={(e) => setAccessToken(e.target.value)}
+              sx={{ minWidth: 220 }}
+            />
+            <Button variant="contained" disableElevation onClick={createOffering} disabled={!selectedCourseId || !selExamId}>
+              Create Offering
+            </Button>
+          </Stack>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Stack spacing={1.25} sx={{ maxHeight: 280, overflowY: "auto" }}>
+            {offerings.length === 0 && !offerBusy && <Typography variant="body2" color="text.secondary">No offerings yet.</Typography>}
+            {offerings.map(o => (
+              <Paper key={o.id} variant="outlined" sx={{ p: 1.25 }}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ sm: "center" }}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography fontWeight={600}>
+                      Offering <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.id}</Box>
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.exam_id}</Box>
+                      {o.start_at && <> • Starts: {fmtRFC(o.start_at)}</>}
+                      {o.end_at && <> • Ends: {fmtRFC(o.end_at)}</>}
+                      {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0)/60)} min</>}
+                      <> • Attempts: {o.max_attempts}</>
+                      <> • Visibility: {o.visibility}</>
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Paper>
+            ))}
+          </Stack>
+        </Paper>
+      </Stack>
+
+      {snack.node}
+    </Stack>
+  );
+}
+
 /* -------------------- Root App -------------------- */
 export default function TeacherApp() {
   type Screen = "login" | "home";
   const [screen, setScreen] = useState<Screen>("login");
-  const [jwt, setJwt] = useState(""
-  );
+  const [jwt, setJwt] = useState("")
+  ;
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState(0); // 0=Exams, 1=Attempts, 2=Users
+  const [tab, setTab] = useState(0); // 0=Exams, 1=Courses, 2=Attempts, 3=Users
   const snack = useSnack();
 
   async function login(username: string, password: string, role: "teacher" | "admin") {
@@ -704,13 +1080,50 @@ export default function TeacherApp() {
         body: JSON.stringify({ username, password, role }),
       });
       setJwt(data.access_token);
+      try { localStorage.setItem("teacher_jwt", data.access_token); } catch {}
       setScreen("home");
       snack.setMsg("Logged in.");
     } catch (err: any) { snack.setErr(err.message); } finally { setBusy(false); }
   }
 
+  /** NEW: Accept JWT returned by Google callback via query or hash, and persist */
+  useEffect(() => {
+    // Try to read from URL (both query and hash) or from localStorage
+    let token = "";
+    const url = new URL(window.location.href);
+
+    // query params
+    token = url.searchParams.get("access_token") || url.searchParams.get("jwt") || "";
+
+    // hash (#access_token=...)
+    if (!token && window.location.hash) {
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      token = hashParams.get("access_token") || hashParams.get("jwt") || "";
+    }
+
+    // localStorage
+    if (!token) {
+      try { token = localStorage.getItem("teacher_jwt") || ""; } catch {}
+    }
+
+    if (token) {
+      setJwt(token);
+      try { localStorage.setItem("teacher_jwt", token); } catch {}
+      setScreen("home");
+
+      // clean URL (remove token-bearing params/hash)
+      url.searchParams.delete("access_token");
+      url.searchParams.delete("jwt");
+      window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""));
+      if (window.location.hash) {
+        window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""));
+      }
+    }
+  }, []);
+
   function signOut() {
     setJwt("");
+    try { localStorage.removeItem("teacher_jwt"); } catch {}
     setScreen("login");
     snack.setMsg("Signed out.");
   }
@@ -737,13 +1150,15 @@ export default function TeacherApp() {
       <Shell authed={true} onSignOut={signOut} title="Dashboard" right={
         <Tabs value={tab} onChange={(_, v) => setTab(v)} textColor="primary" indicatorColor="primary" sx={{ mr: 1 }}>
           <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Exams" />
+          <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Courses" />
           <Tab icon={<AssignmentIcon />} iconPosition="start" label="Attempts" />
           <Tab icon={<ManageAccountsIcon />} iconPosition="start" label="Users" />
         </Tabs>
       }>
         {tab === 0 && <ExamsPanel jwt={jwt} />}
-        {tab === 1 && <AttemptsPanel jwt={jwt} />}
-        {tab === 2 && <UsersPanel jwt={jwt} />}
+        {tab === 1 && <CoursesPanel jwt={jwt} />}
+        {tab === 2 && <AttemptsPanel jwt={jwt} />}
+        {tab === 3 && <UsersPanel jwt={jwt} />}
         {snack.node}
       </Shell>
     </ThemeProvider>

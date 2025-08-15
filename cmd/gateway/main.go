@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"embed"
 	"io/fs"
 	"log"
@@ -175,6 +176,29 @@ func main() {
 				Get("/users", api.ListUsersHandler(dbh))
 			pr.With(rbac.Require("user:change_password")).
 				Post("/users/change-password", api.ChangePasswordHandler(dbh))
+
+			// ===========================
+			// Courses & offerings mapping
+			// ===========================
+			pr.Route("/courses", func(cr chi.Router) {
+				// Create a course (teacher or admin)
+				cr.Post("/", api.CreateCourseHandler(dbh, authSvc))
+
+				// List my courses (teacher -> I teach; student -> I’m enrolled)
+				cr.Get("/", api.ListMyCoursesHandler(dbh, authSvc))
+
+				// Add co-teachers
+				cr.Post("/{courseID}/teachers", api.AddCoTeachersHandler(dbh, authSvc))
+
+				// Enroll students
+				cr.Post("/{courseID}/students", api.EnrollStudentsHandler(dbh, authSvc))
+
+				// Create an exam offering for a course
+				cr.Post("/{courseID}/offerings", api.CreateOfferingHandler(dbh, authSvc))
+
+				// List offerings for a course
+				cr.Get("/{courseID}/offerings", api.ListOfferingsHandler(dbh, authSvc))
+			})
 		})
 	})
 
@@ -283,4 +307,30 @@ func hasStaticExt(path string) bool {
 		strings.HasSuffix(path, ".woff") ||
 		strings.HasSuffix(path, ".woff2") ||
 		strings.HasSuffix(path, ".ttf")
+}
+
+// =============== helpers for teacher/student mapping ===============
+
+func subjectFromBearer(a *authmw.AuthService, r *http.Request) (sub, role string) {
+	h := r.Header.Get("Authorization")
+	if !strings.HasPrefix(h, "Bearer ") {
+		return "", ""
+	}
+	claims, err := a.Parse(strings.TrimPrefix(h, "Bearer "))
+	if err != nil {
+		return "", ""
+	}
+	return claims.Sub, claims.Role
+}
+
+func isCourseTeacher(db *sql.DB, userID, courseID string) bool {
+	var ok bool
+	_ = db.QueryRow(`SELECT EXISTS(SELECT 1 FROM course_teachers WHERE course_id=$1 AND teacher_id=$2)`, courseID, userID).Scan(&ok)
+	return ok
+}
+
+func isCourseStudent(db *sql.DB, userID, courseID string) bool {
+	var ok bool
+	_ = db.QueryRow(`SELECT EXISTS(SELECT 1 FROM course_students WHERE course_id=$1 AND student_id=$2 AND status='active')`, courseID, userID).Scan(&ok)
+	return ok
 }

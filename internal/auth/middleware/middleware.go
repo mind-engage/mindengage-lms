@@ -116,12 +116,19 @@ func LoginHandler(a *AuthService, cfg config.Config, db *sql.DB) http.HandlerFun
 func JWTMiddleware(a *AuthService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			h := r.Header.Get("Authorization")
-			if !strings.HasPrefix(h, "Bearer ") {
+			// Prefer Authorization: Bearer, but fall back to the HttpOnly cookie set by Google/LTI callbacks.
+			var tokenStr string
+			if h := r.Header.Get("Authorization"); strings.HasPrefix(h, "Bearer ") {
+				tokenStr = strings.TrimPrefix(h, "Bearer ")
+			} else if c, err := r.Cookie("me_access_token"); err == nil && c != nil && c.Value != "" {
+				tokenStr = c.Value
+			}
+
+			if tokenStr == "" {
 				http.Error(w, "missing bearer", http.StatusUnauthorized)
 				return
 			}
-			claims, err := a.Parse(strings.TrimPrefix(h, "Bearer "))
+			claims, err := a.Parse(tokenStr)
 			if err != nil {
 				http.Error(w, "bad token", http.StatusUnauthorized)
 				return

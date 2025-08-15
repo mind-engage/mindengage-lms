@@ -28,6 +28,10 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
+  Tabs,
+  Tab,
+  Divider,
+  Tooltip,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -67,6 +71,18 @@ export type ExamSummary = {
   profile?: string;
 };
 
+/** NEW: course & offering types */
+type Course = { id: string; name: string };
+type Offering = {
+  id: string;
+  exam_id: string;
+  start_at?: string | null; // RFC3339 from server
+  end_at?: string | null;   // RFC3339 from server
+  time_limit_sec?: number | null;
+  max_attempts: number;
+  visibility: "course" | "public" | "link";
+};
+
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
@@ -90,6 +106,36 @@ function formatTime(s?: number | null) {
 
 function normType(t?: string): Question["type"] {
   return (t || "").replace(/-/g, "_") as Question["type"];
+}
+
+/* window helpers for offerings */
+function parseIsoOrNull(s?: string | null): Date | null {
+  if (!s) return null;
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+function offeringWindowState(o: Offering) {
+  const now = new Date();
+  const start = parseIsoOrNull(o.start_at);
+  const end = parseIsoOrNull(o.end_at);
+  if (start && now < start) return { open: false, reason: `Opens ${start.toLocaleString()}` };
+  if (end && now > end)   return { open: false, reason: `Closed ${end.toLocaleString()}` };
+  return { open: true };
+}
+
+function getJWTSubject(token: string): string | null {
+  try {
+    const part = token.split(".")[1];
+    if (!part) return null;
+    const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+    const json = atob(padded);
+    const obj = JSON.parse(json);
+    // common claim names: sub, user_id, username
+    return obj.sub || obj.user_id || obj.username || null;
+  } catch {
+    return null;
+  }
 }
 
 /* -------------------- Memo bits -------------------- */
@@ -320,7 +366,6 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
 }
 
 /* -------------------- Screen 2: Select -------------------- */
-/* -------------------- Screen 2: Select -------------------- */
 function SelectScreen({
   jwt,
   onBack,
@@ -328,16 +373,49 @@ function SelectScreen({
 }: {
   jwt: string;
   onBack: () => void;
-  onLoadExam: (id: string) => void;
+  onLoadExam: (id: string, offering?: Offering) => void; // UPDATED: can pass offering
 }) {
-  const [examId, setExamId] = useState("");
-  const [q, setQ] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [list, setList] = useState<ExamSummary[]>([]);
+  const [tab, setTab] = useState(0); // 0=My Courses, 1=Search All
   const snack = useSnack();
 
+  // ----- My Courses / Offerings -----
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [selCourse, setSelCourse] = useState<string>("");
+  const [offerings, setOfferings] = useState<Offering[]>([]);
+  const [busyCourses, setBusyCourses] = useState(false);
+  const [busyOfferings, setBusyOfferings] = useState(false);
+
+  const loadCourses = useCallback(async () => {
+    setBusyCourses(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<Course[]>("/courses", { headers: { Authorization: `Bearer ${jwt}` } });
+      setCourses(data);
+      if (data.length && !selCourse) setSelCourse(data[0].id);
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusyCourses(false); }
+  }, [jwt, selCourse]);
+
+  const loadOfferings = useCallback(async (courseId: string) => {
+    if (!courseId) { setOfferings([]); return; }
+    setBusyOfferings(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<Offering[]>(`/courses/${encodeURIComponent(courseId)}/offerings`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setOfferings(data);
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusyOfferings(false); }
+  }, [jwt]);
+
+  useEffect(() => { loadCourses(); }, [loadCourses]);
+  useEffect(() => { if (selCourse) loadOfferings(selCourse); }, [selCourse, loadOfferings]);
+
+  // ----- All Exams (legacy path) -----
+  const [examId, setExamId] = useState("");
+  const [q, setQ] = useState("");
+  const [busySearch, setBusySearch] = useState(false);
+  const [list, setList] = useState<ExamSummary[]>([]);
+
   const fetchExams = useCallback(async (query: string) => {
-    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    setBusySearch(true); snack.setErr(null); snack.setMsg(null);
     try {
       const qs = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : "";
       const data = await api<ExamSummary[]>(
@@ -348,93 +426,167 @@ function SelectScreen({
     } catch (err: any) {
       snack.setErr(err.message);
     } finally {
-      setBusy(false);
+      setBusySearch(false);
     }
   }, [jwt]);
-  
 
-  useEffect(() => {
-    fetchExams("");
-  }, [fetchExams]);
+  useEffect(() => { fetchExams(""); }, [fetchExams]);
 
-  function startFromRow(id: string) {
-    setExamId(id);
+  function openByOffering(o: Offering) {
+    onLoadExam(o.exam_id, o);
+  }
+  function openByExamId(id: string) {
     onLoadExam(id);
   }
 
   return (
     <Shell authed={true} title="Select exam or assignment" onSignOut={onBack}>
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-        {/* Manual ID entry */}
-        <Box sx={{ width: { xs: '100%', md: `${(5 / 12) * 100}%` } }}>
+      <Paper elevation={1} sx={{ p: 1, mb: 2 }}>
+        <Tabs value={tab} onChange={(_, v) => setTab(v)} textColor="primary" indicatorColor="primary">
+          <Tab label="My Courses" />
+          <Tab label="Search All Exams" />
+        </Tabs>
+      </Paper>
+
+      {tab === 0 && (
+        <Stack spacing={3}>
           <Paper elevation={1} sx={{ p: 3 }}>
-            <Typography variant="h6" fontWeight={600}>Enter Exam ID</Typography>
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "flex-end" }} sx={{ mt: 2 }}>
-              <TextField label="Exam ID" value={examId} onChange={(e) => setExamId(e.target.value)} fullWidth />
-              <Button variant="contained" onClick={() => onLoadExam(examId)} disableElevation disabled={!examId.trim()}>
-                Load
-              </Button>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }}>
+              <FormControl sx={{ minWidth: 240 }}>
+                <InputLabel id="course-select">Course</InputLabel>
+                <Select
+                  labelId="course-select"
+                  label="Course"
+                  value={selCourse}
+                  onChange={(e) => setSelCourse(String(e.target.value))}
+                >
+                  {courses.map(c => (
+                    <MenuItem key={c.id} value={c.id}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{c.id}</Box>
+                        <Box component="span">• {c.name}</Box>
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button variant="outlined" onClick={loadCourses} disabled={busyCourses}>{busyCourses ? "…" : "Refresh"}</Button>
             </Stack>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
-              Or pick one from the list →
-            </Typography>
           </Paper>
-        </Box>
 
-        {/* Available exams */}
-        <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%` } }}>
           <Paper elevation={1} sx={{ p: 3 }}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-              <Box sx={{ flexGrow: 1 }}>
-                <TextField
-                  label="Search exams"
-                  placeholder="title contains…"
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  fullWidth
-                />
-              </Box>
-              <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busy}>
-                {busy ? "Searching…" : "Search"}
-              </Button>
-              <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busy}>
-                Reset
-              </Button>
-            </Stack>
-
-            <Stack spacing={1.25} sx={{ mt: 2, maxHeight: 420, overflowY: 'auto' }}>
-              {list.length === 0 && !busy && (
-                <Typography variant="body2" color="text.secondary">No exams found.</Typography>
+            <Typography variant="subtitle1" fontWeight={600}>Offerings</Typography>
+            <Divider sx={{ my: 1 }} />
+            <Stack spacing={1.25} sx={{ maxHeight: 420, overflowY: "auto" }}>
+              {offerings.length === 0 && !busyOfferings && (
+                <Typography variant="body2" color="text.secondary">No offerings for this course.</Typography>
               )}
-              {list.map((e) => (
-                <Paper key={e.id} variant="outlined" sx={{ p: 1.5 }}>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography fontWeight={600}>{e.title}</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        <Box component="span" sx={{ fontFamily: "monospace" }}>{e.id}</Box>
-                        {typeof e.time_limit_sec === "number" && (
-                          <> • ⏱ {Math.round((e.time_limit_sec || 0) / 60)} min</>
-                        )}
-                        {e.profile && <> • {e.profile}</>}
-                      </Typography>
-                    </Box>
-                    <Button variant="outlined" onClick={() => startFromRow(e.id)}>Open</Button>
-                  </Stack>
-                </Paper>
-              ))}
+              {offerings.map(o => {
+                const win = offeringWindowState(o);
+                return (
+                  <Paper key={o.id} variant="outlined" sx={{ p: 1.5 }}>
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }}>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography fontWeight={600}>
+                          <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.id}</Box>
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.exam_id}</Box>
+                          {o.start_at && <> • Starts: {new Date(o.start_at).toLocaleString()}</>}
+                          {o.end_at && <> • Ends: {new Date(o.end_at).toLocaleString()}</>}
+                          {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0) / 60)} min</>}
+                          <> • Attempts: {o.max_attempts}</>
+                          <> • Visibility: {o.visibility}</>
+                        </Typography>
+                      </Box>
+                      <Tooltip title={win.open ? "" : (win.reason || "Not available")}>
+                        <span>
+                          <Button variant="contained" disableElevation onClick={() => openByOffering(o)} disabled={!win.open}>
+                            Open
+                          </Button>
+                        </span>
+                      </Tooltip>
+                    </Stack>
+                  </Paper>
+                );
+              })}
             </Stack>
           </Paper>
-        </Box>
-      </Stack>
+        </Stack>
+      )}
+
+      {tab === 1 && (
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+          {/* Manual ID entry */}
+          <Box sx={{ width: { xs: '100%', md: `${(5 / 12) * 100}%` } }}>
+            <Paper elevation={1} sx={{ p: 3 }}>
+              <Typography variant="h6" fontWeight={600}>Enter Exam ID</Typography>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "flex-end" }} sx={{ mt: 2 }}>
+                <TextField label="Exam ID" value={examId} onChange={(e) => setExamId(e.target.value)} fullWidth />
+                <Button variant="contained" onClick={() => openByExamId(examId)} disableElevation disabled={!examId.trim()}>
+                  Load
+                </Button>
+              </Stack>
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
+                Or pick one from the list →
+              </Typography>
+            </Paper>
+          </Box>
+
+          {/* Available exams */}
+          <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%` } }}>
+            <Paper elevation={1} sx={{ p: 3 }}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <TextField
+                    label="Search exams"
+                    placeholder="title contains…"
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    fullWidth
+                  />
+                </Box>
+                <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busySearch}>
+                  {busySearch ? "Searching…" : "Search"}
+                </Button>
+                <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busySearch}>
+                  Reset
+                </Button>
+              </Stack>
+
+              <Stack spacing={1.25} sx={{ mt: 2, maxHeight: 420, overflowY: 'auto' }}>
+                {list.length === 0 && !busySearch && (
+                  <Typography variant="body2" color="text.secondary">No exams found.</Typography>
+                )}
+                {list.map((e) => (
+                  <Paper key={e.id} variant="outlined" sx={{ p: 1.5 }}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography fontWeight={600}>{e.title}</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          <Box component="span" sx={{ fontFamily: "monospace" }}>{e.id}</Box>
+                          {typeof e.time_limit_sec === "number" && (
+                            <> • ⏱ {Math.round((e.time_limit_sec || 0) / 60)} min</>
+                          )}
+                          {e.profile && <> • {e.profile}</>}
+                        </Typography>
+                      </Box>
+                      <Button variant="outlined" onClick={() => openByExamId(e.id)}>Open</Button>
+                    </Stack>
+                  </Paper>
+                ))}
+              </Stack>
+            </Paper>
+          </Box>
+        </Stack>
+      )}
       {snack.node}
     </Shell>
   );
 }
 
-
 /* -------------------- Screen 3: Exam -------------------- */
-function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: () => void; }) {
+function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; offering?: Offering; onExit: () => void; }) {
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [responses, setResponses] = useState<Record<string, any>>({});
   const [busy, setBusy] = useState(false);
@@ -454,6 +606,8 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
     });
   }, []);
 
+  const timeLimit = offering?.time_limit_sec ?? exam.time_limit_sec ?? null;
+
   const total = exam?.questions.length ?? 0;
   const answered = useMemo(() => {
     if (!exam) return 0;
@@ -469,14 +623,21 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
   async function startAttempt() {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
+      // derive user from JWT (backend currently needs explicit user_id)
+      const userId = getJWTSubject(jwt) || "student";
+  
+      const payload: any = { exam_id: exam.id, user_id: userId };
+      // harmless for current backend (ignored if not used)
+      if (offering?.id) payload.offering_id = offering.id;
+  
       const data = await api<Attempt>("/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
-        body: JSON.stringify({ exam_id: exam.id, user_id: "student" }),
+        body: JSON.stringify(payload),
       });
       setAttempt(data);
       snack.setMsg(`Attempt ${data.id} started.`);
-      if (exam.time_limit_sec) setSecondsLeft(exam.time_limit_sec);
+      if (timeLimit) setSecondsLeft(timeLimit);
     } catch (err: any) {
       snack.setErr(err.message);
     } finally { setBusy(false); }
@@ -567,7 +728,7 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
             <Paper variant="outlined" sx={{ p: 2 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="body2">
-                  Time Limit: {Math.round((exam.time_limit_sec || 0) / 60)} min
+                  Time Limit: {Math.round(((timeLimit || 0)) / 60)} min
                 </Typography>
 
                 {attempt && (
@@ -584,7 +745,7 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
                 )}
               </Stack>
 
-              {attempt && exam.time_limit_sec ? (
+              {attempt && timeLimit ? (
                 <LinearProgress
                   sx={{ mt: 1 }}
                   variant="determinate"
@@ -593,7 +754,7 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
                       100,
                       Math.max(
                         0,
-                        ((exam.time_limit_sec - (secondsLeft || 0)) / exam.time_limit_sec) * 100
+                        (((timeLimit || 0) - (secondsLeft || 0)) / (timeLimit || 1)) * 100
                       )
                     )
                   }
@@ -606,10 +767,9 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
                 variant="outlined"
                 sx={{
                   p: 2,
-                  // give the list its own scroll
-                  maxHeight: 'calc(100vh - 88px - 24px - 120px)', // viewport minus appbar & margins (tweak as needed)
+                  maxHeight: 'calc(100vh - 88px - 24px - 120px)',
                   overflowY: 'auto',
-                  overscrollBehavior: 'contain',  // prevent wheel from scrolling the page
+                  overscrollBehavior: 'contain',
                 }}
               >
                 <Typography fontWeight={600} gutterBottom>Questions</Typography>
@@ -642,8 +802,8 @@ function ExamScreen({ jwt, exam, onExit }: { jwt: string; exam: Exam; onExit: ()
             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
               <Box>
                 <Typography variant="h6" fontWeight={600}>{exam.title}</Typography>
-                {exam.time_limit_sec ? (
-                  <Typography variant="caption" color="text.secondary">Time limit: {Math.round((exam.time_limit_sec || 0) / 60)} min</Typography>
+                {timeLimit ? (
+                  <Typography variant="caption" color="text.secondary">Time limit: {Math.round((timeLimit || 0) / 60)} min</Typography>
                 ) : null}
               </Box>
               {!attempt ? (
@@ -732,6 +892,7 @@ export default function StudentApp() {
   const [jwt, setJwt] = useState("");
   const [busy, setBusy] = useState(false);
   const [loadedExam, setLoadedExam] = useState<Exam | null>(null);
+  const [loadedOffering, setLoadedOffering] = useState<Offering | undefined>(undefined); // NEW
   const snack = useSnack();
 
   // Capture JWT from URL (for Google callback redirects): ?access_token=... or #access_token=...
@@ -773,17 +934,19 @@ export default function StudentApp() {
   function signOut() {
     setJwt("");
     setLoadedExam(null);
+    setLoadedOffering(undefined);
     setScreen("login");
     snack.setMsg("Signed out.");
   }
 
-  async function loadExamById(examId: string) {
+  async function loadExamById(examId: string, offering?: Offering) {
     snack.setErr(null); snack.setMsg(null);
     try {
       const data = await api<Exam>(`/exams/${encodeURIComponent(examId)}`, {
         headers: { Authorization: `Bearer ${jwt}` },
       });
       setLoadedExam(data);
+      setLoadedOffering(offering); // NEW
       snack.setMsg("Exam loaded.");
       setScreen("exam");
     } catch (err: any) {
@@ -804,7 +967,9 @@ export default function StudentApp() {
     <ThemeProvider theme={theme}>
       {screen === "login" && <LoginScreen busy={busy} onLogin={login} />}
       {screen === "select" && jwt && <SelectScreen jwt={jwt} onBack={signOut} onLoadExam={loadExamById} />}
-      {screen === "exam" && jwt && loadedExam && <ExamScreen jwt={jwt} exam={loadedExam} onExit={() => setScreen("select")} />}
+      {screen === "exam" && jwt && loadedExam && (
+        <ExamScreen jwt={jwt} exam={loadedExam} offering={loadedOffering} onExit={() => setScreen("select")} />
+      )}
     </ThemeProvider>
   );
 }
