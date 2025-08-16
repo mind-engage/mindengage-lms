@@ -8,21 +8,21 @@
           "id": "phy",
           "title": "Physics",
           "modules": [
-            { "id": "phy-m1", "time_limit_sec": 10800 }
+            { "id": "phy-m1", "time_limit_sec": 3600 }
           ]
         },
         {
           "id": "chem",
           "title": "Chemistry",
           "modules": [
-            { "id": "chem-m1", "time_limit_sec": 10800 }
+            { "id": "chem-m1", "time_limit_sec": 3600 }
           ]
         },
         {
           "id": "math",
           "title": "Mathematics",
           "modules": [
-            { "id": "math-m1", "time_limit_sec": 10800 }
+            { "id": "math-m1", "time_limit_sec": 3600 }
           ]
         }
       ],

@@ -309,7 +309,8 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
   }
 
   async function saveExam(parsed: any, sourceLabel?: string) {
-    const payload = normalizeExamPayload(parsed);
+    //const payload = normalizeExamPayload(parsed);
+    const payload = parsed;
     const res = await fetch(`${API_BASE}/exams`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },

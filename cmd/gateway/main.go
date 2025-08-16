@@ -199,6 +199,12 @@ func main() {
 				// List offerings for a course
 				cr.Get("/{courseID}/offerings", api.ListOfferingsHandler(dbh, authSvc))
 			})
+
+			apiR.Group(func(pr chi.Router) {
+				pr.Use(authmw.JWTMiddleware(authSvc))
+				pr.Use(authmw.AttachRoleFromDB(dbh, allowClaimFallback))
+				mountAdminRoutes(pr, dbh, authSvc)
+			})
 		})
 	})
 

@@ -55,22 +55,35 @@ func (s *SQLStore) PutExam(e Exam) error {
 }
 
 func (s *SQLStore) GetExam(id string) (Exam, error) {
-	row := s.db.QueryRow(`SELECT id,title,time_limit_sec,questions_json FROM exams WHERE id=$1`, id)
+	row := s.db.QueryRow(`
+		SELECT id, title, time_limit_sec, questions_json, created_at, profile, policy_json
+		FROM exams WHERE id = $1
+	`, id)
+
 	var e Exam
-	var qjson string
-	if err := row.Scan(&e.ID, &e.Title, &e.TimeLimitSec, &qjson); err != nil {
+	var qjson, pjson string
+
+	if err := row.Scan(&e.ID, &e.Title, &e.TimeLimitSec, &qjson, &e.CreatedAt, &e.Profile, &pjson); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Exam{}, errors.New("exam not found")
 		}
 		return Exam{}, err
 	}
+
 	if err := json.Unmarshal([]byte(qjson), &e.Questions); err != nil {
 		return Exam{}, err
 	}
-	// Strip answer keys when serving to students (parity with in-memory behavior)
+
+	// Include policy for the client (e.g., module_locked), if present (non-empty)
+	if strings.TrimSpace(pjson) != "" {
+		e.PolicyRaw = json.RawMessage(pjson)
+	}
+
+	// Strip answer keys for student response
 	for i := range e.Questions {
 		e.Questions[i].AnswerKey = nil
 	}
+
 	return e, nil
 }
 
@@ -101,8 +114,9 @@ func (s *SQLStore) ListExams(ctx context.Context, opts ListOpts) ([]ExamSummary,
 	if opts.Offset < 0 {
 		opts.Offset = 0
 	}
+
 	rows, err := s.db.QueryContext(ctx, `
-		SELECT id, title, time_limit_sec, created_at
+		SELECT id, title, time_limit_sec, created_at, profile
 		FROM exams
 		WHERE ($1 = '' OR LOWER(title) LIKE LOWER('%' || $1 || '%'))
 		ORDER BY created_at DESC
@@ -116,7 +130,7 @@ func (s *SQLStore) ListExams(ctx context.Context, opts ListOpts) ([]ExamSummary,
 	out := []ExamSummary{}
 	for rows.Next() {
 		var e ExamSummary
-		if err := rows.Scan(&e.ID, &e.Title, &e.TimeLimitSec, &e.CreatedAt); err != nil {
+		if err := rows.Scan(&e.ID, &e.Title, &e.TimeLimitSec, &e.CreatedAt, &e.Profile); err != nil {
 			return nil, err
 		}
 		out = append(out, e)

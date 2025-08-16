@@ -10,7 +10,7 @@
                 "modules": [
                     {
                         "id": "phy-m1",
-                        "time_limit_sec": 10800
+                        "time_limit_sec": 3600
                     }
                 ]
             },
@@ -20,7 +20,7 @@
                 "modules": [
                     {
                         "id": "chem-m1",
-                        "time_limit_sec": 10800
+                        "time_limit_sec": 3600
                     }
                 ]
             },
@@ -30,7 +30,7 @@
                 "modules": [
                     {
                         "id": "math-m1",
-                        "time_limit_sec": 10800
+                        "time_limit_sec": 3600
                     }
                 ]
             }
