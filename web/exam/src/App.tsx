@@ -44,6 +44,7 @@ export type Exam = {
   title: string;
   time_limit_sec?: number;
   questions: Question[];
+  policy?: any;
 };
 
 export type Question = {
@@ -61,6 +62,13 @@ export type Attempt = {
   user_id: string;
   status: "in_progress" | "submitted" | string;
   score?: number;
+  responses?: Record<string, any>;
+  started_at?: number;   // NEW
+  submitted_at?: number; // NEW
+
+  module_id?: string;
+  module_index?: number;
+  remaining_seconds?: number;
 };
 
 export type ExamSummary = {
@@ -89,6 +97,9 @@ async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   if (!res.ok) {
     const t = await res.text();
     throw new Error(`${res.status} ${res.statusText}: ${t}`);
+  }
+  if (res.status === 204) {
+    return undefined as T;
   }
   return res.json();
 }
@@ -598,6 +609,8 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   const autosaveTRef = useRef<number | null>(null);
   const snack = useSnack();
 
+  const moduleLocked = !!exam?.policy?.navigation?.module_locked;
+
   // Stable updater so memoized children don't re-render unnecessarily
   const updateResponse = useCallback((qid: string, val: any) => {
     setResponses((r) => {
@@ -691,6 +704,56 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     } finally { setUploading(false); }
   }
 
+  async function nextModule() {
+    if (!attempt) return;
+  
+    // Save before advancing
+    await saveResponses(false);
+  
+    try {
+      const res = await fetch(`${API_BASE}/attempts/${attempt.id}/next-module`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+  
+      if (!res.ok) {
+        const t = await res.text();
+        // 409/400 is a common “not eligible yet” response — surface it
+        throw new Error(t || `Advance blocked (${res.status})`);
+      }
+  
+      // If server returns JSON with remaining_seconds, use it
+      try {
+        const data = await res.json();
+        if (typeof data?.remaining_seconds === "number") {
+          setSecondsLeft(data.remaining_seconds);
+        }
+      } catch {
+        // no body (204) is fine
+      }
+  
+      // UX reset for the new module
+      setCurrentQ(0);
+      snack.setMsg("Moved to next module.");
+    } catch (e: any) {
+      snack.setErr(e?.message || "Could not advance to the next module. You may need to complete current requirements first.");
+    }
+  }
+
+  const totalModules = useMemo(() => {
+    const secs = exam?.policy?.sections;
+    if (!Array.isArray(secs)) return 0;
+    return secs.reduce((n: number, s: any) => n + (Array.isArray(s?.modules) ? s.modules.length : 0), 0);
+  }, [exam?.policy]);
+
+  const canAdvanceModule = useMemo(() => {
+    if (!attempt) return false;
+    if (typeof attempt?.module_index === "number") {
+      return totalModules > 0 && attempt.module_index < totalModules - 1;
+    }
+    return totalModules > 1;
+  }, [attempt, totalModules]);
+
   // autosave (debounced, no per-keystroke stringify)
   useEffect(() => {
     if (!attempt) return;
@@ -717,7 +780,41 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     }, 1000) as unknown as number;
     return () => { if (timerRef.current) window.clearInterval(timerRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attempt?.id]);
+  }, [attempt?.id, secondsLeft !== null]);
+
+  useEffect(() => {
+    if (!jwt || !exam?.id) return;
+    (async () => {
+      try {
+        const userId = getJWTSubject(jwt) || "";
+        const params = new URLSearchParams({
+          exam_id: exam.id,
+          user_id: userId,
+          status: "in_progress",
+          limit: "1",
+          offset: "0",
+        });
+        const list = await api<Attempt[]>(`/attempts?${params}`, { headers: { Authorization: `Bearer ${jwt}` } });
+        if (list[0]) {
+          const a = await api<Attempt>(`/attempts/${encodeURIComponent(list[0].id)}`, { headers: { Authorization: `Bearer ${jwt}` } });
+          setAttempt(a);
+          setResponses(a.responses ?? {});
+          // server-synced timer
+          const tl = (offering?.time_limit_sec ?? exam.time_limit_sec) || 0;
+          if (tl && a.started_at) {
+            const elapsed = Math.floor(Date.now()/1000) - a.started_at;
+            setSecondsLeft(Math.max(0, tl - elapsed));
+          }
+        }
+      } catch {/* ignore */}
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwt, exam?.id]);
+  
+  const isEssayQ = React.useMemo(() => {
+    const q = exam?.questions?.[currentQ];
+    return q ? normType(q.type) === "essay" : false;
+  }, [exam, currentQ]);
 
   return (
     <Shell authed={true} onSignOut={onExit} attempt={attempt} progressPct={progressPct} timer={formatTime(secondsLeft)} title={exam.title}>
@@ -836,7 +933,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                 />
 
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
-                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(0, i - 1))} disabled={currentQ === 0}>← Prev</Button>
+                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(0, i - 1))} disabled={moduleLocked || currentQ === 0}>← Prev</Button>
                   <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.min((exam.questions.length - 1), i + 1))} disabled={currentQ >= exam.questions.length - 1}>Next →</Button>
                   <Box sx={{ flexGrow: 1 }} />
                   <Typography variant="caption" color="text.secondary">Answered {answered} of {total}</Typography>
@@ -851,7 +948,8 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>Autosaves as you type.</Typography>
                 <Button onClick={() => saveResponses(true)} variant="outlined">Save now</Button>
-                <Button component="label" variant="outlined" disabled={uploading}>
+                <Button onClick={nextModule} variant="outlined" disabled={!canAdvanceModule}>Next Module</Button>
+                <Button component="label" variant="outlined" disabled={!isEssayQ || uploading}>
                   {uploading ? "Uploading…" : "Upload scan"}
                   <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAsset(f); }} />
                 </Button>
