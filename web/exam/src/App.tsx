@@ -63,14 +63,17 @@ export type Attempt = {
   status: "in_progress" | "submitted" | string;
   score?: number;
   responses?: Record<string, any>;
-  started_at?: number;   // NEW
-  submitted_at?: number; // NEW
+  started_at?: number;
+  submitted_at?: number;
 
-  module_id?: string;
+  module_id?: string;            // optional: may not be sent by backend
   module_index?: number;
   remaining_seconds?: number;
-};
 
+  // NEW (from backend):
+  current_index?: number;
+  max_reached_index?: number;
+};
 export type ExamSummary = {
   id: string;
   title: string;
@@ -633,19 +636,38 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   const snack = useSnack();
 
   const moduleLocked = !!exam?.policy?.navigation?.module_locked;
-  const allowBack = !!exam?.policy?.navigation?.allow_back; // NEW
+  const allowBack = exam?.policy?.navigation?.allow_back !== false;
 
-  const [showSubmitted, setShowSubmitted] = useState(false); // NEW
-  const isLocked = attempt?.status === "submitted"; // NEW
+  const [showSubmitted, setShowSubmitted] = useState(false);
+  const isLocked = attempt?.status === "submitted";
 
-  // Stable updater so memoized children don't re-render unnecessarily
+  // ---------- helpers ----------
+  const setAttemptAndSyncUI = useCallback((a: Attempt) => {
+    setAttempt(a);
+    if (typeof a.current_index === "number") {
+      setCurrentQ(a.current_index);
+    }
+    if (typeof a.remaining_seconds === "number") {
+      setSecondsLeft(a.remaining_seconds);
+    }
+    if (a.responses) setResponses(a.responses);
+  }, []);
+
+  const parseNavErr = (raw: string) => {
+    const s = raw.toLowerCase();
+    if (s.includes("outside current module")) return "That question is in another module.";
+    if (s.includes("backward navigation blocked")) return "Back navigation is disabled for this exam.";
+    if (s.includes("editing a locked")) return "You can’t edit a previously locked question.";
+    if (s.includes("time over")) return "Time is over for this attempt.";
+    if (s.includes("already submitted")) return "This attempt has already been submitted.";
+    return raw || "Navigation blocked.";
+  };
+
+  // Stable updater for responses
   const updateResponse = useCallback((qid: string, val: any) => {
-    if (isLocked) return; // NEW
-    setResponses((r) => {
-      if (r[qid] === val) return r;
-      return { ...r, [qid]: val };
-    });
-  }, [isLocked]); // UPDATED
+    if (isLocked) return;
+    setResponses((r) => (r[qid] === val ? r : { ...r, [qid]: val }));
+  }, [isLocked]);
 
   const timeLimit = offering?.time_limit_sec ?? exam.time_limit_sec ?? null;
 
@@ -660,7 +682,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   }, [exam, responses]);
   const progressPct = total ? (answered / total) * 100 : 0;
 
-  // ---- Module awareness (NEW) ----
+  // ---- Module awareness (same as yours, kept) ----
   const moduleOrder = useMemo(() => {
     const secs = exam?.policy?.sections;
     if (!Array.isArray(secs)) return [];
@@ -686,9 +708,10 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   }, [attempt?.module_id, attempt?.module_index, moduleOrder, exam?.questions, currentQ]);
 
   const moduleIndices = useMemo(() => {
+    if (!moduleLocked) return (exam?.questions || []).map((_, i) => i);
     if (currentModuleId) return qIdxByModule.get(currentModuleId) || [];
     return (exam?.questions || []).map((_, i) => i);
-  }, [currentModuleId, qIdxByModule, exam?.questions]);
+  }, [moduleLocked, currentModuleId, qIdxByModule, exam?.questions]);
 
   const firstIdx = moduleIndices.length ? moduleIndices[0] : 0;
   const lastIdx = moduleIndices.length ? moduleIndices[moduleIndices.length - 1] : Math.max(0, (exam?.questions?.length || 1) - 1);
@@ -696,30 +719,44 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   // Keep currentQ inside the current module window
   useEffect(() => {
     if (currentQ < firstIdx || currentQ > lastIdx) setCurrentQ(firstIdx);
-  }, [currentModuleId, firstIdx, lastIdx]); // NEW
+  }, [currentModuleId, firstIdx, lastIdx]);
 
-  const isPrevDisabled = isLocked || !allowBack || currentQ <= firstIdx; // NEW
-  const isNextDisabled = isLocked || currentQ >= lastIdx; // NEW
+  // When attempt updates, trust server cursor
+  useEffect(() => {
+    if (typeof attempt?.current_index === "number") setCurrentQ(attempt.current_index);
+  }, [attempt?.current_index]);
 
-  // actions
+  // Compute prev/next target INSIDE module list
+  const posInModule = Math.max(0, moduleIndices.indexOf(currentQ));
+  const prevTarget = posInModule > 0 ? moduleIndices[posInModule - 1] : undefined;
+  const nextTarget = posInModule < moduleIndices.length - 1 ? moduleIndices[posInModule + 1] : undefined;
+
+  const earliestAllowed = allowBack ? -Infinity : (attempt?.max_reached_index ?? 0);
+
+  const isPrevDisabled = isLocked || (!allowBack) || (moduleLocked && currentQ <= firstIdx);
+  const isNextDisabled = isLocked || (moduleLocked && currentQ >= lastIdx);
+
+  // ---------- server actions ----------
   async function startAttempt() {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
-      // derive user from JWT (backend currently needs explicit user_id)
       const userId = getJWTSubject(jwt) || "student";
-  
       const payload: any = { exam_id: exam.id, user_id: userId };
-      // harmless for current backend (ignored if not used)
       if (offering?.id) payload.offering_id = offering.id;
-  
-      const data = await api<Attempt>("/attempts", {
+
+      // Create
+      const created = await api<Attempt>("/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
         body: JSON.stringify(payload),
       });
-      setAttempt(data);
-      snack.setMsg(`Attempt ${data.id} started.`);
-      if (timeLimit) setSecondsLeft(timeLimit);
+
+      // Fetch fresh so we get current_index/remaining_seconds set by backend
+      const fresh = await api<Attempt>(`/attempts/${encodeURIComponent(created.id)}`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setAttemptAndSyncUI(fresh);
+      snack.setMsg(`Attempt ${fresh.id} started.`);
     } catch (err: any) {
       snack.setErr(err.message);
     } finally { setBusy(false); }
@@ -727,7 +764,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   async function saveResponses(manual = false) {
     if (!attempt) return;
-    if (isLocked) { // NEW
+    if (isLocked) {
       if (manual) snack.setMsg("Already submitted.");
       return;
     }
@@ -737,7 +774,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
         body: JSON.stringify(responses),
       });
-      if (res.status === 409) { // NEW
+      if (res.status === 409) {
         setAttempt((a) => (a ? { ...a, status: "submitted" } : a));
         if (manual) snack.setMsg("Already submitted.");
         return;
@@ -749,8 +786,29 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     }
   }
 
+  async function navigateTo(targetIndex: number) {
+    if (!attempt) return;
+    try {
+      const res = await fetch(`${API_BASE}/attempts/${attempt.id}/navigate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify({ target: targetIndex }),
+      });
+      if (!res.ok) {
+        const t = await res.text();
+        // 409s from backend carry business-rule messages
+        snack.setErr(parseNavErr(t));
+        return;
+      }
+      const a = await res.json() as Attempt;
+      setAttemptAndSyncUI(a);
+    } catch (err: any) {
+      snack.setErr(err.message);
+    }
+  }
+
   async function submitAttempt() {
-    if (!attempt || isLocked) { // NEW
+    if (!attempt || isLocked) {
       setShowSubmitted(true);
       return;
     }
@@ -760,11 +818,10 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
         method: "POST",
         headers: { Authorization: `Bearer ${jwt}` },
       });
-      setAttempt(data);
-      setSecondsLeft(0); // NEW
-      if (timerRef.current) window.clearInterval(timerRef.current!); // NEW
-      if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current!); // NEW
-      setShowSubmitted(true); // NEW
+      setAttemptAndSyncUI(data);
+      if (timerRef.current) window.clearInterval(timerRef.current!);
+      if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current!);
+      setShowSubmitted(true);
       snack.setMsg(`Submitted. Score: ${data.score ?? 0}`);
     } catch (err: any) {
       snack.setErr(err.message);
@@ -792,66 +849,36 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   async function nextModule() {
     if (!attempt) return;
-  
-    // Save before advancing
     await saveResponses(false);
-  
     try {
       const res = await fetch(`${API_BASE}/attempts/${attempt.id}/next-module`, {
         method: "POST",
         headers: { Authorization: `Bearer ${jwt}` },
       });
-  
       if (!res.ok) {
         const t = await res.text();
-        // 409/400 is a common “not eligible yet” response — surface it
         throw new Error(t || `Advance blocked (${res.status})`);
       }
-  
-      // If server returns JSON with remaining_seconds, use it
-      try {
-        const data = await res.json();
-        if (typeof data?.remaining_seconds === "number") {
-          setSecondsLeft(data.remaining_seconds);
-        }
-      } catch {
-        // no body (204) is fine
-      }
-  
-      // UX reset for the new module
-      setCurrentQ(0);
+      const data = await res.json() as Attempt;
+      setAttemptAndSyncUI(data);
       snack.setMsg("Moved to next module.");
     } catch (e: any) {
-      snack.setErr(e?.message || "Could not advance to the next module. You may need to complete current requirements first.");
+      snack.setErr(e?.message || "Could not advance to the next module.");
     }
   }
 
-  const totalModules = useMemo(() => {
-    const secs = exam?.policy?.sections;
-    if (!Array.isArray(secs)) return 0;
-    return secs.reduce((n: number, s: any) => n + (Array.isArray(s?.modules) ? s.modules.length : 0), 0);
-  }, [exam?.policy]);
-
-  const canAdvanceModule = useMemo(() => {
-    if (!attempt) return false;
-    if (typeof attempt?.module_index === "number") {
-      return totalModules > 0 && attempt.module_index < totalModules - 1;
-    }
-    return totalModules > 1;
-  }, [attempt, totalModules]);
-
-  // autosave (debounced, no per-keystroke stringify)
+  // ---------- autosave ----------
   useEffect(() => {
-    if (!attempt || isLocked) return; // UPDATED
+    if (!attempt || isLocked) return;
     if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current);
     autosaveTRef.current = window.setTimeout(() => { saveResponses(false); }, 1000) as unknown as number;
     return () => { if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [responses, attempt?.id, isLocked]); // UPDATED
+  }, [responses, attempt?.id, isLocked]);
 
-  // timer
+  // ---------- timer ----------
   useEffect(() => {
-    if (secondsLeft == null || !attempt || isLocked) return; // UPDATED
+    if (secondsLeft == null || !attempt || isLocked) return;
     if (timerRef.current) window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
       setSecondsLeft((prev) => {
@@ -866,8 +893,9 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     }, 1000) as unknown as number;
     return () => { if (timerRef.current) window.clearInterval(timerRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attempt?.id, secondsLeft !== null, isLocked]); // UPDATED
+  }, [attempt?.id, secondsLeft !== null, isLocked]);
 
+  // ---------- fetch or resume attempt ----------
   useEffect(() => {
     if (!jwt || !exam?.id) return;
     (async () => {
@@ -883,21 +911,14 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
         const list = await api<Attempt[]>(`/attempts?${params}`, { headers: { Authorization: `Bearer ${jwt}` } });
         if (list[0]) {
           const a = await api<Attempt>(`/attempts/${encodeURIComponent(list[0].id)}`, { headers: { Authorization: `Bearer ${jwt}` } });
-          setAttempt(a);
-          setResponses(a.responses ?? {});
-          // server-synced timer
-          const tl = (offering?.time_limit_sec ?? exam.time_limit_sec) || 0;
-          if (tl && a.started_at) {
-            const elapsed = Math.floor(Date.now()/1000) - a.started_at;
-            setSecondsLeft(Math.max(0, tl - elapsed));
-          }
+          setAttemptAndSyncUI(a);
         }
-      } catch {/* ignore */}
+      } catch { /* ignore */ }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwt, exam?.id]);
-  
-  useEffect(() => { // NEW: lock UI and stop timers when submitted
+
+  useEffect(() => {
     if (attempt?.status === "submitted") {
       setShowSubmitted(true);
       if (timerRef.current) window.clearInterval(timerRef.current);
@@ -905,7 +926,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     }
   }, [attempt?.status]);
 
-  useEffect(() => { // NEW: leave-page protection while in progress
+  useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
       if (attempt && !isLocked) {
         e.preventDefault();
@@ -921,6 +942,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     return q ? normType(q.type) === "essay" : false;
   }, [exam, currentQ]);
 
+  // ---------- UI ----------
   return (
     <Shell authed={true} onSignOut={onExit} attempt={attempt} progressPct={progressPct} timer={formatTime(secondsLeft)} title={exam.title}>
       <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3}>
@@ -980,8 +1002,12 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                     const r = responses[q.id];
                     const done = r != null && r !== "" && (!Array.isArray(r) || r.length > 0);
 
-                    const notInModule = idx < firstIdx || idx > lastIdx; // NEW
-                    const disabledBtn = isLocked || notInModule || (!allowBack && idx < currentQ); // NEW
+                    const notInModule = moduleLocked && (idx < firstIdx || idx > lastIdx);
+                    const curIdx = attempt?.current_index ?? currentQ;
+                    const disabledBtn =
+                      isLocked ||
+                      notInModule ||
+                      (!allowBack && idx < curIdx);
 
                     return (
                       <Box key={q.id} sx={{ width: '25%', p: 0.5 }}>
@@ -989,7 +1015,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                           fullWidth
                           size="small"
                           variant={currentQ === idx ? "contained" : (done ? "outlined" : "text")}
-                          onClick={() => setCurrentQ(idx)}
+                          onClick={() => navigateTo(idx)}
                           disabled={disabledBtn}
                         >
                           {idx + 1}
@@ -1032,17 +1058,17 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                       value={currentQ}
                       onChange={(e) => {
                         const v = Number(e.target.value);
-                        // Guard: only forward jumps when allow_back is false, and only inside module
+                        const curIdx = attempt?.current_index ?? currentQ;
                         if (isLocked) return;
-                        if ((v < firstIdx || v > lastIdx)) return;
-                        if (!allowBack && v < currentQ) return;
-                        setCurrentQ(v);
+                        if (moduleLocked && (v < firstIdx || v > lastIdx)) return;
+                        if (!allowBack && v < curIdx) return;
+                        navigateTo(v);
                       }}
                       disabled={isLocked}
                     >
                       {exam.questions.map((q, idx) => {
                         const notInModule = idx < firstIdx || idx > lastIdx;
-                        const itemDisabled = isLocked || notInModule || (!allowBack && idx < currentQ);
+                        const itemDisabled = isLocked || notInModule || (!allowBack && idx < (attempt?.max_reached_index ?? 0));
                         return (
                           <MenuItem key={q.id} value={idx} disabled={itemDisabled}>Q{idx + 1}</MenuItem>
                         );
@@ -1057,12 +1083,24 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                   idx={currentQ}
                   value={responses[exam.questions[currentQ].id]}
                   onChange={updateResponse}
-                  disabled={isLocked} // NEW
+                  disabled={isLocked}
                 />
 
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
-                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(firstIdx, i - 1))} disabled={isPrevDisabled}>← Prev</Button>
-                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.min(lastIdx, i + 1))} disabled={isNextDisabled}>Next →</Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => prevTarget !== undefined ? navigateTo(prevTarget) : null}
+                    disabled={isPrevDisabled}
+                  >
+                    ← Prev
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => nextTarget !== undefined ? navigateTo(nextTarget) : null}
+                    disabled={isNextDisabled}
+                  >
+                    Next →
+                  </Button>
                   <Box sx={{ flexGrow: 1 }} />
                   <Typography variant="caption" color="text.secondary">Answered {answered} of {total}</Typography>
                 </Stack>
@@ -1076,7 +1114,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>Autosaves as you type.</Typography>
                 <Button onClick={() => saveResponses(true)} variant="outlined" disabled={isLocked}>Save now</Button>
-                <Button onClick={nextModule} variant="outlined" disabled={!canAdvanceModule || isLocked}>Next Module</Button>
+                <Button onClick={nextModule} variant="outlined" disabled={isLocked}>Next Module</Button>
                 <Button component="label" variant="outlined" disabled={!isEssayQ || uploading || isLocked}>
                   {uploading ? "Uploading…" : "Upload scan"}
                   <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAsset(f); }} />
@@ -1109,7 +1147,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
         </DialogActions>
       </Dialog>
 
-      {/* Submitted dialog (NEW) */}
+      {/* Submitted dialog */}
       <Dialog open={showSubmitted} onClose={() => setShowSubmitted(false)}>
         <DialogTitle>Attempt submitted</DialogTitle>
         <DialogContent>
@@ -1127,6 +1165,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     </Shell>
   );
 }
+
 
 
 

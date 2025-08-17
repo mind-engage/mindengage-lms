@@ -1,0 +1,827 @@
+{
+    "id": "module-nolock-allo-back-001",
+    "title": "Module Locking Allow Back",
+    "profile": "stem.v1",
+    "policy": {
+      "sections": [
+        {
+          "id": "main",
+          "title": "Linear Algebra for Quantum Mechanics Exam",
+          "modules": [
+            {
+              "id": "main-m1",
+              "time_limit_sec": 1800
+            },
+            {
+              "id": "main-m2",
+              "time_limit_sec": 1800
+            }
+          ]
+        }
+      ],
+      "navigation": {
+        "allow_back": true,
+        "module_locked": false
+      },
+      "item_constraints": {
+        "main": {
+          "mcq_single": {
+            "choices": 4
+          },
+          "mcq_multi": {
+            "choices": 5
+          },
+          "numeric": {
+            "allow_fraction": true,
+            "tolerance": 0.01
+          }
+        }
+      }
+    },
+    "questions": [
+      {
+        "id": "q1",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>In the context of quantum mechanics, what does an eigenvector of a Hamiltonian operator represent?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "The average energy of the system."
+          },
+          {
+            "id": "B",
+            "label_html": "A stationary state of the system."
+          },
+          {
+            "id": "C",
+            "label_html": "The probability of finding the particle at a certain position."
+          },
+          {
+            "id": "D",
+            "label_html": "The momentum of the particle."
+          }
+        ],
+        "answer_key": [
+          "B"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Eigenvectors and Eigenvalues"
+        }
+      },
+      {
+        "id": "q2",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "true_false",
+        "prompt_html": "<p>True or False: All Hermitian operators have real eigenvalues.</p>",
+        "answer_key": [
+          "true"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Hermitian Operators"
+        }
+      },
+      {
+        "id": "q3",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "numeric",
+        "prompt_html": "<p>A quantum system is in a state represented by the vector |ψ⟩ = (3/5)|0⟩ + (4/5)|1⟩, where {|0⟩, |1⟩} is an orthonormal basis. What is the probability of measuring the system to be in the state |0⟩?</p>",
+        "answer_key": [
+          "0.36"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Quantum States and Measurement"
+        }
+      },
+      {
+        "id": "q4",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following matrices is unitary?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "<p>[[1, 1], [0, 1]]</p>"
+          },
+          {
+            "id": "B",
+            "label_html": "<p>[[1/sqrt(2), i/sqrt(2)], [i/sqrt(2), 1/sqrt(2)]]</p>"
+          },
+          {
+            "id": "C",
+            "label_html": "<p>[[1, 0], [0, -1]]</p>"
+          },
+          {
+            "id": "D",
+            "label_html": "<p>[[0, 1], [1, 0]]</p>"
+          }
+        ],
+        "answer_key": [
+          "B"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Unitary Operators"
+        }
+      },
+      {
+        "id": "q5",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_multi",
+        "prompt_html": "<p>Which of the following statements about inner products in a complex vector space are true? (Select all that apply)</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "⟨ψ|φ⟩ = ⟨φ|ψ⟩*"
+          },
+          {
+            "id": "B",
+            "label_html": "⟨ψ|ψ⟩ is always a real number."
+          },
+          {
+            "id": "C",
+            "label_html": "⟨ψ|cφ⟩ = c⟨ψ|φ⟩ for any complex scalar c."
+          },
+          {
+            "id": "D",
+            "label_html": "⟨cψ|φ⟩ = c*⟨ψ|φ⟩ for any complex scalar c."
+          },
+          {
+            "id": "E",
+            "label_html": "The inner product is linear in both arguments."
+          }
+        ],
+        "answer_key": [
+          "A",
+          "B",
+          "D"
+        ],
+        "points": 3,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Inner Product Spaces"
+        }
+      },
+      {
+        "id": "q6",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "short_word",
+        "prompt_html": "<p>What is the name for a vector with a norm equal to one?</p>",
+        "answer_key": [
+          "normalized"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Vector Norms"
+        }
+      },
+      {
+        "id": "q7",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The Pauli matrices are a set of three 2x2 complex matrices which are Hermitian and unitary. What is the determinant of the Pauli-Y matrix, σ_y = [[0, -i], [i, 0]]?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "1"
+          },
+          {
+            "id": "B",
+            "label_html": "-1"
+          },
+          {
+            "id": "C",
+            "label_html": "i"
+          },
+          {
+            "id": "D",
+            "label_html": "-i"
+          }
+        ],
+        "answer_key": [
+          "B"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Matrix Properties"
+        }
+      },
+      {
+        "id": "q8",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "essay",
+        "prompt_html": "<p>Briefly explain the physical significance of the commutator of two operators in quantum mechanics.</p>",
+        "points": 4,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Commutators"
+        }
+      },
+      {
+        "id": "q9",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Consider the operator A = |ψ⟩⟨φ|. What is the result of applying A to the vector |χ⟩?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "|ψ⟩⟨φ|χ⟩"
+          },
+          {
+            "id": "B",
+            "label_html": "⟨φ|χ⟩|ψ⟩"
+          },
+          {
+            "id": "C",
+            "label_html": "⟨ψ|χ⟩|φ⟩"
+          },
+          {
+            "id": "D",
+            "label_html": "|φ⟩⟨ψ|χ⟩"
+          }
+        ],
+        "answer_key": [
+          "B"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Outer Product"
+        }
+      },
+      {
+        "id": "q10",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "true_false",
+        "prompt_html": "<p>True or False: The tensor product of two vector spaces is itself a vector space.</p>",
+        "answer_key": [
+          "true"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Tensor Products"
+        }
+      },
+      {
+        "id": "q11",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>What is the dimension of the vector space formed by the tensor product of a 2-dimensional vector space V and a 3-dimensional vector space W?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "2"
+          },
+          {
+            "id": "B",
+            "label_html": "3"
+          },
+          {
+            "id": "C",
+            "label_html": "5"
+          },
+          {
+            "id": "D",
+            "label_html": "6"
+          }
+        ],
+        "answer_key": [
+          "D"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Tensor Products"
+        }
+      },
+      {
+        "id": "q12",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which principle states that it is impossible to know both the position and the momentum of a particle with perfect accuracy simultaneously?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "Pauli Exclusion Principle"
+          },
+          {
+            "id": "B",
+            "label_html": "Heisenberg Uncertainty Principle"
+          },
+          {
+            "id": "C",
+            "label_html": "Aufbau Principle"
+          },
+          {
+            "id": "D",
+            "label_html": "Correspondence Principle"
+          }
+        ],
+        "answer_key": [
+          "B"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Fundamental Principles"
+        }
+      },
+      {
+        "id": "q13",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Refer to the Bloch sphere representation below. Which point represents the quantum state |+⟩ = (1/√2)(|0⟩ + |1⟩)?</p><svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><circle cx='100' cy='100' r='80' fill='none' stroke='black'/><line x1='100' y1='20' x2='100' y2='180' stroke='black' stroke-dasharray='4'/><line x1='20' y1='100' x2='180' y2='100' stroke='black' stroke-dasharray='4'/><text x='95' y='15'>|0⟩</text><text x='95' y='195'>|1⟩</text><text x='185' y='105'>A</text><circle cx='180' cy='100' r='3' fill='black'/><text x='15' y='105'>B</text><circle cx='20' cy='100' r='3' fill='black'/></svg>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "Point A"
+          },
+          {
+            "id": "B",
+            "label_html": "Point B"
+          },
+          {
+            "id": "C",
+            "label_html": "The origin"
+          },
+          {
+            "id": "D",
+            "label_html": "A point on the vertical axis"
+          }
+        ],
+        "answer_key": [
+          "A"
+        ],
+        "points": 3,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Bloch Sphere"
+        }
+      },
+      {
+        "id": "q14",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_multi",
+        "prompt_html": "<p>Select all the properties of a density matrix ρ.</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "Tr(ρ) = 1"
+          },
+          {
+            "id": "B",
+            "label_html": "ρ is Hermitian"
+          },
+          {
+            "id": "C",
+            "label_html": "ρ is always a projection operator."
+          },
+          {
+            "id": "D",
+            "label_html": "ρ is a positive semi-definite operator."
+          },
+          {
+            "id": "E",
+            "label_html": "For a pure state |ψ⟩, ρ = |ψ⟩⟨ψ|."
+          }
+        ],
+        "answer_key": [
+          "A",
+          "B",
+          "D",
+          "E"
+        ],
+        "points": 3,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Density Matrices"
+        }
+      },
+      {
+        "id": "q15",
+        "section_id": "main",
+        "module_id": "main-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The evolution of a closed quantum system is described by which equation?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "Newton's second law"
+          },
+          {
+            "id": "B",
+            "label_html": "Maxwell's equations"
+          },
+          {
+            "id": "C",
+            "label_html": "The time-dependent Schrödinger equation"
+          },
+          {
+            "id": "D",
+            "label_html": "The Helmholtz equation"
+          }
+        ],
+        "answer_key": [
+          "C"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Quantum Dynamics"
+        }
+      },
+      {
+        "id": "q16",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "numeric",
+        "prompt_html": "<p>Let A = [[2, 1], [1, 2]]. What is the largest eigenvalue of A?</p>",
+        "answer_key": [
+          "3"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Eigenvectors and Eigenvalues"
+        }
+      },
+      {
+        "id": "q17",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>In Dirac notation, what does the expression ⟨ψ|A|φ⟩ represent?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "The probability of finding the system in state |φ⟩ after applying operator A to state |ψ⟩."
+          },
+          {
+            "id": "B",
+            "label_html": "The expectation value of the observable A in the state |ψ⟩."
+          },
+          {
+            "id": "C",
+            "label_html": "The inner product of |ψ⟩ with the state that results from A acting on |φ⟩."
+          },
+          {
+            "id": "D",
+            "label_html": "The outer product of the vectors |ψ⟩ and A|φ⟩."
+          }
+        ],
+        "answer_key": [
+          "C"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Dirac Notation"
+        }
+      },
+      {
+        "id": "q18",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "true_false",
+        "prompt_html": "<p>True or False: A change of basis in a vector space is represented by a unitary transformation.</p>",
+        "answer_key": [
+          "true"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Change of Basis"
+        }
+      },
+      {
+        "id": "q19",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>What is the trace of the outer product of two vectors |ψ⟩ and |φ⟩, given by P = |ψ⟩⟨φ|?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "1"
+          },
+          {
+            "id": "B",
+            "label_html": "0"
+          },
+          {
+            "id": "C",
+            "label_html": "⟨φ|ψ⟩"
+          },
+          {
+            "id": "D",
+            "label_html": "⟨ψ|φ⟩"
+          }
+        ],
+        "answer_key": [
+          "C"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Trace and Outer Product"
+        }
+      },
+      {
+        "id": "q20",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "essay",
+        "prompt_html": "<p>Explain the concept of quantum entanglement and why it is a key resource in quantum information processing. Provide an example of an entangled state.</p>",
+        "points": 4,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Quantum Entanglement"
+        }
+      },
+      {
+        "id": "q21",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>A projection operator P has which of the following properties?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "P^2 = P"
+          },
+          {
+            "id": "B",
+            "label_html": "P^2 = I"
+          },
+          {
+            "id": "C",
+            "label_html": "P^† = -P"
+          },
+          {
+            "id": "D",
+            "label_html": "det(P) = -1"
+          }
+        ],
+        "answer_key": [
+          "A"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Projection Operators"
+        }
+      },
+      {
+        "id": "q22",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which of the following is NOT a valid quantum state vector?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "(1/√2)|0⟩ + (1/√2)|1⟩"
+          },
+          {
+            "id": "B",
+            "label_html": "|0⟩"
+          },
+          {
+            "id": "C",
+            "label_html": "(1/2)|0⟩ + (√3/2)|1⟩"
+          },
+          {
+            "id": "D",
+            "label_html": "|0⟩ + |1⟩"
+          }
+        ],
+        "answer_key": [
+          "D"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Quantum States and Measurement"
+        }
+      },
+      {
+        "id": "q23",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "short_word",
+        "prompt_html": "<p>The set of all possible linear combinations of a set of vectors is called their what?</p>",
+        "answer_key": [
+          "span"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Vector Spaces"
+        }
+      },
+      {
+        "id": "q24",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>The Hilbert space for a single qubit is isomorphic to which complex vector space?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "C"
+          },
+          {
+            "id": "B",
+            "label_html": "C^2"
+          },
+          {
+            "id": "C",
+            "label_html": "C^3"
+          },
+          {
+            "id": "D",
+            "label_html": "C^4"
+          }
+        ],
+        "answer_key": [
+          "B"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Hilbert Spaces"
+        }
+      },
+      {
+        "id": "q25",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "true_false",
+        "prompt_html": "<p>True or False: Any linear operator on a finite-dimensional Hilbert space can be represented by a matrix.</p>",
+        "answer_key": [
+          "true"
+        ],
+        "points": 1,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Linear Operators"
+        }
+      },
+      {
+        "id": "q26",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_multi",
+        "prompt_html": "<p>Which of the following are postulates of quantum mechanics? (Select all that apply)</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "The state of a quantum system is described by a vector in a Hilbert space."
+          },
+          {
+            "id": "B",
+            "label_html": "Every measurable physical quantity is described by a Hermitian operator."
+          },
+          {
+            "id": "C",
+            "label_html": "The energy of a quantum system must be continuous."
+          },
+          {
+            "id": "D",
+            "label_html": "The time evolution of a quantum state is governed by the Schrödinger equation."
+          },
+          {
+            "id": "E",
+            "label_html": "The measurement of a quantum state is deterministic."
+          }
+        ],
+        "answer_key": [
+          "A",
+          "B",
+          "D"
+        ],
+        "points": 3,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Postulates of Quantum Mechanics"
+        }
+      },
+      {
+        "id": "q27",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>What is the dimension of the subspace spanned by the vectors (1, 0, 0), (0, 1, 0), and (1, 1, 0) in R^3?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "0"
+          },
+          {
+            "id": "B",
+            "label_html": "1"
+          },
+          {
+            "id": "C",
+            "label_html": "2"
+          },
+          {
+            "id": "D",
+            "label_html": "3"
+          }
+        ],
+        "answer_key": [
+          "C"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Vector Spaces"
+        }
+      },
+      {
+        "id": "q28",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "numeric",
+        "prompt_html": "<p>Given |ψ⟩ = (1/√5)|0⟩ + (2/√5)|1⟩ and |φ⟩ = (2/√5)|0⟩ - (1/√5)|1⟩. Calculate the value of |⟨φ|ψ⟩|^2.</p>",
+        "answer_key": [
+          "0"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Inner Product Spaces"
+        }
+      },
+      {
+        "id": "q29",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>A quantum system is described by the Hamiltonian H. If the state of the system |ψ⟩ is an eigenstate of H with eigenvalue E, what is the state of the system after a time t?</p>",
+        "choices": [
+          {
+            "id": "A",
+            "label_html": "|ψ(t)⟩ = |ψ⟩"
+          },
+          {
+            "id": "B",
+            "label_html": "|ψ(t)⟩ = e^(-iEt/ħ)|ψ⟩"
+          },
+          {
+            "id": "C",
+            "label_html": "|ψ(t)⟩ = e^(iEt/ħ)|ψ⟩"
+          },
+          {
+            "id": "D",
+            "label_html": "|ψ(t)⟩ = cos(Et/ħ)|ψ⟩"
+          }
+        ],
+        "answer_key": [
+          "B"
+        ],
+        "points": 2,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Quantum Dynamics"
+        }
+      },
+      {
+        "id": "q30",
+        "section_id": "main",
+        "module_id": "main-m2",
+        "type": "essay",
+        "prompt_html": "<p>Describe the Gram-Schmidt process and explain its importance in constructing an orthonormal basis for a Hilbert space.</p>",
+        "points": 4,
+        "tags": {
+          "domain": "Linear Algebra for Quantum Mechanics",
+          "skill": "Gram-Schmidt Process"
+        }
+      }
+    ]
+  }

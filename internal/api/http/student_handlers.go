@@ -108,23 +108,23 @@ func NextModuleHandler(store exam.Store) http.HandlerFunc {
 	}
 }
 
+// internal/api/http/student_handlers.go
 func NavigateHandler(store exam.Store) http.HandlerFunc {
+	type reqBody struct {
+		Target int `json:"target"`
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "attemptID")
-		var req struct {
-			TargetIndex int `json:"target_index"`
-		}
+		var req reqBody
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, "bad json", 400)
 			return
 		}
-		a, err := store.Navigate(id, req.TargetIndex)
+		a, err := store.Navigate(id, req.Target)
 		if err != nil {
 			switch err {
-			case exam.ErrBackwardNavBlocked, exam.ErrOutsideModule, exam.ErrEditBackBlocked:
-				http.Error(w, err.Error(), 409)
-			case exam.ErrAttemptSubmitted, exam.ErrTimeOver:
-				http.Error(w, err.Error(), 409)
+			case exam.ErrAttemptSubmitted, exam.ErrOutsideModule, exam.ErrBackwardNavBlocked, exam.ErrEditBackBlocked, exam.ErrTimeOver:
+				http.Error(w, err.Error(), 409) // conflict semantics
 			default:
 				http.Error(w, err.Error(), 400)
 			}

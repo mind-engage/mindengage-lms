@@ -149,19 +149,17 @@ func (s *SQLStore) ListExams(ctx context.Context, opts ListOpts) ([]ExamSummary,
 /* ------------------------ Attempts ------------------------ */
 
 func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
-	// Ensure exam exists & load admin for policy/timing.
+	// --- unchanged prelude: load exam (admin view) for policy/timing ---
 	ex, err := s.GetExamAdmin(context.Background(), examID)
 	if err != nil {
-		// Normalize "not found"
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("exam not found")
 		}
 		return Attempt{}, err
 	}
 
-	// Compute module timings from policy (if any)
+	// Compute module timings from policy (if any), with fallback to overall time_limit_sec
 	modules := extractModuleTimes(ex.PolicyRaw) // []int (seconds)
-	// NEW: fallback to overall exam time limit if no per-module limits exist
 	if len(modules) == 0 && ex.TimeLimitSec > 0 {
 		modules = []int{ex.TimeLimitSec}
 	}
@@ -178,6 +176,18 @@ func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
 		firstMod = int64(modules[0])
 	}
 
+	// --- nav defaults (NEW) ---
+	startIdx := 0
+	nav := parseNavPolicy(ex.PolicyRaw)
+	modIDs := extractModuleIDs(ex.PolicyRaw)
+	if nav.ModuleLocked && len(modIDs) > 0 {
+		win := moduleWindowFor(ex, modIDs[0])
+		if win.hasAny {
+			startIdx = win.firstIdx
+		}
+	}
+
+	// --- persist attempt ---
 	id := time.Now().Format("20060102150405")
 	resp := map[string]interface{}{}
 	respJSON, _ := json.Marshal(resp)
@@ -185,24 +195,30 @@ func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
 	_, err = s.db.Exec(`
 		INSERT INTO attempts (
 			id, exam_id, user_id, status, score, responses_json, started_at,
-			module_index, module_started_at, module_deadline, overall_deadline
+			module_index, module_started_at, module_deadline, overall_deadline,
+			current_index, max_reached_index
 		)
-		VALUES ($1,$2,$3,'in_progress',0,$4,$5,$6,$7,$8,$9)
+		VALUES ($1,$2,$3,'in_progress',0,$4,$5,$6,$7,$8,$9,$10,$11)
 	`,
 		id, examID, userID, string(respJSON), now,
 		0, now, nullableDeadline(now, firstMod), nullableDeadline(now, overall),
+		startIdx, startIdx,
 	)
 	if err != nil {
 		return Attempt{}, err
 	}
+
+	// Return a basic view; clients can call GetAttempt to fetch full timing fields
 	return Attempt{
-		ID:        id,
-		ExamID:    examID,
-		UserID:    userID,
-		Status:    "in_progress",
-		Score:     0,
-		Responses: resp,
-		StartedAt: now,
+		ID:              id,
+		ExamID:          examID,
+		UserID:          userID,
+		Status:          "in_progress",
+		Score:           0,
+		Responses:       resp,
+		StartedAt:       now,
+		ModuleIndex:     0,
+		ModuleStartedAt: now,
 	}, nil
 }
 
@@ -210,15 +226,17 @@ func (s *SQLStore) SaveResponses(attemptID string, resp map[string]interface{}) 
 	// Load attempt (with timing columns for enforcement)
 	var a Attempt
 	var rjson string
-	var moduleIdx int
+	var moduleIdx, curIdx, maxIdx int // NEW: cur/max
 	var moduleStarted, moduleDeadline, overallDeadline sql.NullInt64
 
 	row := s.db.QueryRow(`
-		SELECT id, exam_id, user_id, status, score, responses_json,
-		       module_index, module_started_at, module_deadline, overall_deadline
-		FROM attempts WHERE id=$1`, attemptID)
+	  SELECT id, exam_id, user_id, status, score, responses_json,
+			 module_index, module_started_at, module_deadline, overall_deadline,
+			 current_index, max_reached_index
+	  FROM attempts WHERE id=$1`, attemptID)
 	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson,
-		&moduleIdx, &moduleStarted, &moduleDeadline, &overallDeadline); err != nil {
+		&moduleIdx, &moduleStarted, &moduleDeadline, &overallDeadline,
+		&curIdx, &maxIdx); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -228,44 +246,53 @@ func (s *SQLStore) SaveResponses(attemptID string, resp map[string]interface{}) 
 		a.Responses = map[string]interface{}{}
 	}
 
-	// Enforce timing (server-side source of truth)
+	// timing guards (unchanged)
 	now := time.Now().Unix()
 	if overallDeadline.Valid && now > overallDeadline.Int64 {
-		return Attempt{}, errors.New("time over: overall deadline reached")
+		return Attempt{}, ErrTimeOver
 	}
 	if moduleDeadline.Valid && now > moduleDeadline.Int64 {
-		return Attempt{}, errors.New("time over: module deadline reached")
+		return Attempt{}, ErrTimeOver
 	}
-
 	if a.Status == "submitted" {
-		return Attempt{}, errors.New("attempt already submitted")
+		return Attempt{}, ErrAttemptSubmitted
 	}
 
-	// NEW: enforce module-locked navigation if policy requires it
+	// Load exam/policy for enforcement
 	ex, err := s.GetExamAdmin(context.Background(), a.ExamID)
 	if err != nil {
 		return Attempt{}, err
 	}
-	if policyModuleLocked(ex.PolicyRaw) {
+	nav := parseNavPolicy(ex.PolicyRaw)
+
+	// Module lock (as you already had)
+	if nav.ModuleLocked {
 		allowed := allowedQIDsForModule(ex, moduleIdx)
-		// allowed == nil means no restriction could be derived -> allow
 		if allowed != nil {
 			for k := range resp {
 				if _, ok := allowed[k]; !ok {
-					return Attempt{}, errors.New("module locked: cannot modify items outside current module")
+					return Attempt{}, ErrOutsideModule
 				}
 			}
 		}
 	}
 
-	// merge responses
+	// NEW: forward-only editing guard when allow_back=false
+	if !nav.AllowBack {
+		qidToIdx, _, _ := buildIndexMaps(ex.Questions)
+		for k := range resp {
+			if idx, ok := qidToIdx[k]; ok && idx < curIdx {
+				return Attempt{}, ErrEditBackBlocked
+			}
+		}
+	}
+
+	// merge + save (unchanged)
 	for k, v := range resp {
 		a.Responses[k] = v
 	}
 	buf, _ := json.Marshal(a.Responses)
-
-	_, err = s.db.Exec(`UPDATE attempts SET responses_json=$1 WHERE id=$2`, string(buf), attemptID)
-	if err != nil {
+	if _, err := s.db.Exec(`UPDATE attempts SET responses_json=$1 WHERE id=$2`, string(buf), attemptID); err != nil {
 		return Attempt{}, err
 	}
 	return s.GetAttempt(attemptID)
@@ -327,15 +354,17 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 }
 
 func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
-	// NEW: include module timing fields so clients can render timers reliably
 	row := s.db.QueryRow(`SELECT id,exam_id,user_id,status,score,responses_json,started_at,submitted_at,
-		module_index, COALESCE(module_started_at,0), COALESCE(module_deadline,0), COALESCE(overall_deadline,0)
-		FROM attempts WHERE id=$1`, id)
+	  module_index, COALESCE(module_started_at,0), COALESCE(module_deadline,0), COALESCE(overall_deadline,0),
+	  current_index, max_reached_index
+	  FROM attempts WHERE id=$1`, id)
+
 	var a Attempt
 	var rjson string
 	var moduleStarted, moduleDeadline, overallDeadline int64
 	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson, &a.StartedAt, &a.SubmittedAt,
-		&a.ModuleIndex, &moduleStarted, &moduleDeadline, &overallDeadline); err != nil {
+		&a.ModuleIndex, &moduleStarted, &moduleDeadline, &overallDeadline,
+		&a.CurrentIndex, &a.MaxReachedIndex); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -344,7 +373,6 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 	if err := json.Unmarshal([]byte(rjson), &a.Responses); err != nil {
 		a.Responses = map[string]interface{}{}
 	}
-	// NEW: populate timing fields if your struct exposes them
 	if moduleStarted > 0 {
 		a.ModuleStartedAt = moduleStarted
 	}
@@ -354,7 +382,8 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 	if overallDeadline > 0 {
 		a.OverallDeadline = overallDeadline
 	}
-	// NEW: convenience—remaining seconds (min of module/overall if both exist)
+
+	// remaining seconds (unchanged logic)
 	now := time.Now().Unix()
 	rem := 0
 	if a.ModuleDeadline > 0 {
@@ -369,16 +398,13 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 			}
 		}
 	}
-	// If your Attempt struct has this field, it will be filled; otherwise this is a no-op in spirit.
 	a.RemainingSeconds = rem
-
 	return a, nil
 }
 
 /* ------------------ Multi-module support ------------------ */
 
 func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
-	// load attempt (need exam_id and current module_index + deadlines)
 	var a Attempt
 	var rjson string
 	var moduleIdx int
@@ -391,13 +417,11 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	}
 	_ = json.Unmarshal([]byte(rjson), &a.Responses)
 
-	// load exam policy
 	ex, err := s.GetExamAdmin(context.Background(), a.ExamID)
 	if err != nil {
 		return Attempt{}, err
 	}
 	modules := extractModuleTimes(ex.PolicyRaw)
-	// NEW: same fallback as NewAttempt
 	if len(modules) == 0 && ex.TimeLimitSec > 0 {
 		modules = []int{ex.TimeLimitSec}
 	}
@@ -408,22 +432,34 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 		return Attempt{}, errors.New("already at last module")
 	}
 
-	// advance
 	nextIdx := moduleIdx + 1
 	now := time.Now().Unix()
 	nextDur := int64(0)
 	if modules[nextIdx] > 0 {
 		nextDur = int64(modules[nextIdx])
 	}
+
+	// Compute first question index of next module (if any)
+	modIDs := extractModuleIDs(ex.PolicyRaw)
+	cur := 0
+	if nextIdx >= 0 && nextIdx < len(modIDs) {
+		win := moduleWindowFor(ex, modIDs[nextIdx])
+		if win.hasAny {
+			cur = win.firstIdx
+		}
+	}
+
 	_, err = s.db.Exec(`
-		UPDATE attempts
-		SET module_index=$1, module_started_at=$2, module_deadline=$3
-		WHERE id=$4`,
-		nextIdx, now, nullableDeadline(now, nextDur), attemptID)
+	  UPDATE attempts
+	  SET module_index=$1, module_started_at=$2, module_deadline=$3,
+		  current_index=$4, max_reached_index=$4
+	  WHERE id=$5`,
+		nextIdx, now, nullableDeadline(now, nextDur),
+		cur, attemptID,
+	)
 	if err != nil {
 		return Attempt{}, err
 	}
-	// return fresh view (without timing fields in struct)
 	return s.GetAttempt(attemptID)
 }
 
