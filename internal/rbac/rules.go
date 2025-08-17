@@ -11,7 +11,9 @@ var RolePermissions = map[string][]string{
 		"user:change_password",
 	},
 	"teacher": {
+		"course:delete_own",
 		"exam:create",
+		"exam:delete_own",
 		"exam:view",
 		"exam:export",
 		"attempt:view-all",

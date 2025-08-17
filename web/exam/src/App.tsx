@@ -159,10 +159,17 @@ type QuestionCardProps = {
   idx: number;
   value: any;
   onChange: (qid: string, val: any) => void;
+  disabled?: boolean; // NEW
 };
 
-const QuestionCard = React.memo(function QuestionCard({ q, idx, value, onChange }: QuestionCardProps) {
+const QuestionCard = React.memo(function QuestionCard({ q, idx, value, onChange, disabled }: QuestionCardProps) {
   const qtype = normType(q.type);
+
+  // Helper to short-circuit when disabled
+  const handleChange = (qid: string, val: any) => {
+    if (disabled) return;
+    onChange(qid, val);
+  };
 
   return (
     <Paper variant="outlined" sx={{ p: 2.5 }}>
@@ -175,87 +182,102 @@ const QuestionCard = React.memo(function QuestionCard({ q, idx, value, onChange 
 
         <Box sx={{ "& p": { my: 0.5 } }} dangerouslySetInnerHTML={htmlify(q.prompt_html || q.prompt)} />
 
-        {qtype === "mcq_single" && (
-          <RadioGroup value={value ?? ""} onChange={(e) => onChange(q.id, e.target.value)}>
-            {q.choices?.map((c) => (
+      {qtype === "mcq_single" && (
+        <RadioGroup value={value ?? ""} onChange={(e) => handleChange(q.id, e.target.value)}>
+          {q.choices?.map((c) => (
+            <FormControlLabel
+              key={c.id}
+              value={c.id}
+              control={<Radio disabled={disabled} />}
+              label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />}
+              disabled={disabled} // ensure label also disabled
+            />
+          ))}
+        </RadioGroup>
+      )}
+
+      {qtype === "true_false" && (
+        <RadioGroup value={value ?? ""} onChange={(e) => handleChange(q.id, e.target.value)}>
+          {(["true", "false"] as const).map((v) => (
+            <FormControlLabel
+              key={v}
+              value={v}
+              control={<Radio disabled={disabled} />}
+              label={<span style={{ textTransform: "capitalize" }}>{v}</span>}
+              disabled={disabled}
+            />
+          ))}
+        </RadioGroup>
+      )}
+
+      {qtype === "mcq_multi" && (
+        <FormGroup>
+          {q.choices?.map((c) => {
+            const arr: string[] = Array.isArray(value) ? value : [];
+            const checked = arr.includes(c.id);
+            return (
               <FormControlLabel
                 key={c.id}
-                value={c.id}
-                control={<Radio />}
+                control={
+                  <Checkbox
+                    disabled={disabled}
+                    checked={checked}
+                    onChange={(e) => {
+                      const next = new Set(arr);
+                      if (e.target.checked) next.add(c.id);
+                      else next.delete(c.id);
+                      handleChange(q.id, Array.from(next));
+                    }}
+                  />
+                }
                 label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />}
+                disabled={disabled}
               />
-            ))}
-          </RadioGroup>
-        )}
+            );
+          })}
+        </FormGroup>
+      )}
 
-        {qtype === "true_false" && (
-          <RadioGroup value={value ?? ""} onChange={(e) => onChange(q.id, e.target.value)}>
-            {(["true", "false"] as const).map((v) => (
-              <FormControlLabel key={v} value={v} control={<Radio />} label={<span style={{ textTransform: "capitalize" }}>{v}</span>} />
-            ))}
-          </RadioGroup>
-        )}
+      {qtype === "short_word" && (
+        <TextField
+          fullWidth
+          placeholder="Your answer"
+          value={value ?? ""}
+          onChange={(e) => handleChange(q.id, e.target.value)}
+          disabled={disabled}
+          InputProps={{ readOnly: disabled }}
+        />
+      )}
 
-        {qtype === "mcq_multi" && (
-          <FormGroup>
-            {q.choices?.map((c) => {
-              const arr: string[] = Array.isArray(value) ? value : [];
-              const checked = arr.includes(c.id);
-              return (
-                <FormControlLabel
-                  key={c.id}
-                  control={
-                    <Checkbox
-                      checked={checked}
-                      onChange={(e) => {
-                        const next = new Set(arr);
-                        if (e.target.checked) next.add(c.id);
-                        else next.delete(c.id);
-                        onChange(q.id, Array.from(next));
-                      }}
-                    />
-                  }
-                  label={<span dangerouslySetInnerHTML={htmlify(c.label_html)} />}
-                />
-              );
-            })}
-          </FormGroup>
-        )}
+      {qtype === "numeric" && (
+        <TextField
+          type="number"
+          fullWidth
+          placeholder="0"
+          value={value ?? ""}
+          onChange={(e) => handleChange(q.id, e.target.value)}
+          disabled={disabled}
+          InputProps={{ readOnly: disabled }}
+        />
+      )}
 
-        {qtype === "short_word" && (
-          <TextField
-            fullWidth
-            autoFocus
-            placeholder="Your answer"
-            value={value ?? ""}
-            onChange={(e) => onChange(q.id, e.target.value)}
-          />
-        )}
-
-        {qtype === "numeric" && (
-          <TextField
-            type="number"
-            fullWidth
-            placeholder="0"
-            value={value ?? ""}
-            onChange={(e) => onChange(q.id, e.target.value)}
-          />
-        )}
-
-        {qtype === "essay" && (
-          <TextField
-            fullWidth
-            multiline
-            minRows={6}
-            placeholder="Write your answer..."
-            value={value ?? ""}
-            onChange={(e) => onChange(q.id, e.target.value)}
-          />
-        )}
+      {qtype === "essay" && (
+        <TextField
+          fullWidth
+          multiline
+          minRows={6}
+          placeholder="Write your answer..."
+          value={value ?? ""}
+          onChange={(e) => handleChange(q.id, e.target.value)}
+          disabled={disabled}
+          InputProps={{ readOnly: disabled }}
+        />
+      )}
       </Stack>
     </Paper>
   );
-}, (prev, next) => prev.q === next.q && prev.idx === next.idx && prev.value === next.value);
+}, (prev, next) => prev.q === next.q && prev.idx === next.idx && prev.value === next.value && prev.disabled === next.disabled);
+
 /* -------------------------------------------------- */
 
 /* -------------------- Shared Shell -------------------- */
@@ -597,6 +619,7 @@ function SelectScreen({
 }
 
 /* -------------------- Screen 3: Exam -------------------- */
+/* -------------------- Screen 3: Exam -------------------- */
 function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; offering?: Offering; onExit: () => void; }) {
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [responses, setResponses] = useState<Record<string, any>>({});
@@ -611,13 +634,17 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   const moduleLocked = !!exam?.policy?.navigation?.module_locked;
 
+  const [showSubmitted, setShowSubmitted] = useState(false); // NEW
+  const isLocked = attempt?.status === "submitted"; // NEW
+
   // Stable updater so memoized children don't re-render unnecessarily
   const updateResponse = useCallback((qid: string, val: any) => {
+    if (isLocked) return; // NEW
     setResponses((r) => {
       if (r[qid] === val) return r;
       return { ...r, [qid]: val };
     });
-  }, []);
+  }, [isLocked]); // UPDATED
 
   const timeLimit = offering?.time_limit_sec ?? exam.time_limit_sec ?? null;
 
@@ -658,12 +685,22 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   async function saveResponses(manual = false) {
     if (!attempt) return;
+    if (isLocked) { // NEW
+      if (manual) snack.setMsg("Already submitted.");
+      return;
+    }
     try {
-      await api(`/attempts/${attempt.id}/responses`, {
+      const res = await fetch(`${API_BASE}/attempts/${attempt.id}/responses`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
         body: JSON.stringify(responses),
       });
+      if (res.status === 409) { // NEW
+        setAttempt((a) => (a ? { ...a, status: "submitted" } : a));
+        if (manual) snack.setMsg("Already submitted.");
+        return;
+      }
+      if (!res.ok) throw new Error(await res.text());
       if (manual) snack.setMsg("Responses saved.");
     } catch (err: any) {
       snack.setErr(err.message);
@@ -671,7 +708,10 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   }
 
   async function submitAttempt() {
-    if (!attempt) return;
+    if (!attempt || isLocked) { // NEW
+      setShowSubmitted(true);
+      return;
+    }
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
       const data = await api<Attempt>(`/attempts/${attempt.id}/submit`, {
@@ -679,6 +719,10 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
         headers: { Authorization: `Bearer ${jwt}` },
       });
       setAttempt(data);
+      setSecondsLeft(0); // NEW
+      if (timerRef.current) window.clearInterval(timerRef.current!); // NEW
+      if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current!); // NEW
+      setShowSubmitted(true); // NEW
       snack.setMsg(`Submitted. Score: ${data.score ?? 0}`);
     } catch (err: any) {
       snack.setErr(err.message);
@@ -756,16 +800,16 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   // autosave (debounced, no per-keystroke stringify)
   useEffect(() => {
-    if (!attempt) return;
+    if (!attempt || isLocked) return; // UPDATED
     if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current);
     autosaveTRef.current = window.setTimeout(() => { saveResponses(false); }, 1000) as unknown as number;
     return () => { if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [responses, attempt?.id]);
+  }, [responses, attempt?.id, isLocked]); // UPDATED
 
   // timer
   useEffect(() => {
-    if (secondsLeft == null) return;
+    if (secondsLeft == null || !attempt || isLocked) return; // UPDATED
     if (timerRef.current) window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
       setSecondsLeft((prev) => {
@@ -780,7 +824,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     }, 1000) as unknown as number;
     return () => { if (timerRef.current) window.clearInterval(timerRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attempt?.id, secondsLeft !== null]);
+  }, [attempt?.id, secondsLeft !== null, isLocked]); // UPDATED
 
   useEffect(() => {
     if (!jwt || !exam?.id) return;
@@ -811,6 +855,25 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jwt, exam?.id]);
   
+  useEffect(() => { // NEW: lock UI and stop timers when submitted
+    if (attempt?.status === "submitted") {
+      setShowSubmitted(true);
+      if (timerRef.current) window.clearInterval(timerRef.current);
+      if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current);
+    }
+  }, [attempt?.status]);
+
+  useEffect(() => { // NEW: leave-page protection while in progress
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (attempt && !isLocked) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [attempt?.id, isLocked]);
+
   const isEssayQ = React.useMemo(() => {
     const q = exam?.questions?.[currentQ];
     return q ? normType(q.type) === "essay" : false;
@@ -881,6 +944,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                           size="small"
                           variant={currentQ === idx ? "contained" : (done ? "outlined" : "text")}
                           onClick={() => setCurrentQ(idx)}
+                          disabled={isLocked} // NEW
                         >
                           {idx + 1}
                         </Button>
@@ -916,7 +980,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                 <Box sx={{ display: { lg: "none" }, mb: 2 }}>
                   <FormControl fullWidth>
                     <InputLabel id="jump-q">Jump to question</InputLabel>
-                    <Select labelId="jump-q" label="Jump to question" value={currentQ} onChange={(e) => setCurrentQ(Number(e.target.value))}>
+                    <Select labelId="jump-q" label="Jump to question" value={currentQ} onChange={(e) => setCurrentQ(Number(e.target.value))} disabled={isLocked}>
                       {exam.questions.map((q, idx) => (
                         <MenuItem key={q.id} value={idx}>Q{idx + 1}</MenuItem>
                       ))}
@@ -930,11 +994,12 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                   idx={currentQ}
                   value={responses[exam.questions[currentQ].id]}
                   onChange={updateResponse}
+                  disabled={isLocked} // NEW
                 />
 
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
-                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(0, i - 1))} disabled={moduleLocked || currentQ === 0}>← Prev</Button>
-                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.min((exam.questions.length - 1), i + 1))} disabled={currentQ >= exam.questions.length - 1}>Next →</Button>
+                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(0, i - 1))} disabled={moduleLocked || currentQ === 0 || isLocked}>← Prev</Button>
+                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.min((exam.questions.length - 1), i + 1))} disabled={currentQ >= exam.questions.length - 1 || isLocked}>Next →</Button>
                   <Box sx={{ flexGrow: 1 }} />
                   <Typography variant="caption" color="text.secondary">Answered {answered} of {total}</Typography>
                 </Stack>
@@ -947,16 +1012,19 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
             <Paper elevation={3} sx={{ position: "sticky", bottom: 0, mt: 3, p: 1.5, borderRadius: 2 }}>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>Autosaves as you type.</Typography>
-                <Button onClick={() => saveResponses(true)} variant="outlined">Save now</Button>
-                <Button onClick={nextModule} variant="outlined" disabled={!canAdvanceModule}>Next Module</Button>
-                <Button component="label" variant="outlined" disabled={!isEssayQ || uploading}>
+                <Button onClick={() => saveResponses(true)} variant="outlined" disabled={isLocked}>Save now</Button>
+                <Button onClick={nextModule} variant="outlined" disabled={!canAdvanceModule || isLocked}>Next Module</Button>
+                <Button component="label" variant="outlined" disabled={!isEssayQ || uploading || isLocked}>
                   {uploading ? "Uploading…" : "Upload scan"}
                   <input type="file" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAsset(f); }} />
                 </Button>
                 <Box sx={{ flexGrow: 1 }} />
-                <Button onClick={() => setConfirmOpen(true)} variant="contained" disableElevation>Submit</Button>
+                <Button onClick={() => setConfirmOpen(true)} variant="contained" disableElevation disabled={isLocked}>Submit</Button>
                 {attempt?.score !== undefined && (
                   <Chip color="success" label={`Score: ${attempt.score}`} sx={{ ml: 1 }} />
+                )}
+                {isLocked && attempt?.submitted_at && (
+                  <Chip label={`Submitted ${new Date(attempt.submitted_at*1000).toLocaleString()}`} sx={{ ml: 1 }} />
                 )}
               </Stack>
             </Paper>
@@ -978,10 +1046,25 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
         </DialogActions>
       </Dialog>
 
+      {/* Submitted dialog (NEW) */}
+      <Dialog open={showSubmitted} onClose={() => setShowSubmitted(false)}>
+        <DialogTitle>Attempt submitted</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {typeof attempt?.score === "number" ? `Your score: ${attempt.score}` : "Your attempt was submitted."}
+            {attempt?.submitted_at ? ` • ${new Date(attempt.submitted_at*1000).toLocaleString()}` : ""}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onExit} variant="contained" disableElevation>Back to exams</Button>
+        </DialogActions>
+      </Dialog>
+
       {snack.node}
     </Shell>
   );
 }
+
 
 /* -------------------- Root App -------------------- */
 export default function StudentApp() {

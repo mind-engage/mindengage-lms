@@ -140,7 +140,7 @@ func main() {
 
 			// Exams
 			pr.With(rbac.Require("exam:create")).
-				Post("/exams", api.UploadExamHandler(store))
+				Post("/exams", api.UploadExamHandler(store, dbh, authSvc))
 			pr.With(rbac.Require("exam:view")).
 				Get("/exams/{examID}", api.GetExamHandler(store))
 			pr.With(rbac.Require("exam:create")).
@@ -149,6 +149,9 @@ func main() {
 				Get("/exams/{id}/export", api.ExportQTIHandler(store))
 			pr.With(rbac.Require("exam:view")).
 				Get("/exams", api.ListExamsHandler(store))
+
+			pr.With(rbac.RequireAny("exam:delete_any", "exam:delete_own")).
+				Delete("/exams/{examID}", api.DeleteExamHandler(dbh, authSvc))
 
 			// Attempts (create/save/submit/next)
 			pr.With(rbac.Require("attempt:create")).
@@ -198,6 +201,9 @@ func main() {
 
 				// List offerings for a course
 				cr.Get("/{courseID}/offerings", api.ListOfferingsHandler(dbh, authSvc))
+
+				cr.With(rbac.RequireAny("course:delete_any", "course:delete_own")).
+					Delete("/{courseID}", api.DeleteCourseHandler(dbh, authSvc))
 			})
 
 			apiR.Group(func(pr chi.Router) {

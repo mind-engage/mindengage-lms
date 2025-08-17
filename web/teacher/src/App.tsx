@@ -255,6 +255,9 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
 }`);
   const snack = useSnack();
 
+  const [confirmDelExam, setConfirmDelExam] = useState<{ id: string; title: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   const fetchExams = useCallback(async (query: string) => {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
@@ -348,6 +351,26 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
     }
   }
 
+  async function doDeleteExam() {
+    if (!confirmDelExam) return;
+    setDeleting(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const res = await fetch(`${API_BASE}/exams/${encodeURIComponent(confirmDelExam.id)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      if (!res.ok && res.status !== 204) throw new Error(await res.text());
+      snack.setMsg(`Deleted exam "${confirmDelExam.title}".`);
+      setConfirmDelExam(null);
+      fetchExams(q);
+    } catch (e: any) {
+      // Typical server msg on blocked delete: "cannot delete: attempts exist (archive instead)"
+      snack.setErr(e.message);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
@@ -420,6 +443,9 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
                 </Box>
                 <Button variant="text" onClick={() => openExam(e.id)}>Preview</Button>
                 <Button variant="outlined" startIcon={<FileDownloadIcon />} onClick={() => exportQTI(e.id)}>Export QTI</Button>
+                <Button variant="outlined" color="error" onClick={() => setConfirmDelExam({ id: e.id, title: e.title })}>
+                  Delete
+                </Button>
               </Stack>
             </Paper>
           ))}
@@ -454,6 +480,22 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
         </DialogActions>
       </Dialog>
 
+      {/* Confirm delete exam */}
+      <Dialog open={!!confirmDelExam} onClose={() => !deleting && setConfirmDelExam(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Delete exam?</DialogTitle>
+        <DialogContent dividers>
+          <DialogContentText>
+            {`This will permanently remove exam "${confirmDelExam?.title}". `}
+            Deletion is blocked if any attempts exist—use Archive instead in that case.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDelExam(null)} disabled={deleting}>Cancel</Button>
+          <Button variant="contained" color="error" disableElevation onClick={doDeleteExam} disabled={deleting}>
+            {deleting ? "Deleting…" : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       {snack.node}
     </Stack>
   );
@@ -758,6 +800,8 @@ function CoursesPanel({ jwt }: { jwt: string }) {
   const [maxAttempts, setMaxAttempts] = useState<string>("1");
   const [visibility, setVisibility] = useState<"course" | "public" | "link">("course");
   const [accessToken, setAccessToken] = useState<string>("");
+  const [confirmDelCourse, setConfirmDelCourse] = useState(false);
+  const [deletingCourse, setDeletingCourse] = useState(false);
 
   function fmtRFC(s?: string | null) {
     if (!s) return "";
@@ -813,6 +857,11 @@ function CoursesPanel({ jwt }: { jwt: string }) {
 
   useEffect(() => { loadCourses(); loadExams(); }, [loadCourses, loadExams]);
   useEffect(() => { if (selectedCourseId) loadOfferings(selectedCourseId); }, [selectedCourseId, loadOfferings]);
+
+  const selectedCourse = useMemo(
+    () => courses.find(c => c.id === selectedCourseId) || null,
+    [courses, selectedCourseId]
+  );
 
   async function createCourse() {
     if (!newCourseName.trim()) return;
@@ -893,6 +942,28 @@ function CoursesPanel({ jwt }: { jwt: string }) {
     } catch (e: any) { snack.setErr(e.message); }
   }
 
+  async function deleteCourse() {
+    if (!selectedCourseId) return;
+    setDeletingCourse(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      if (!res.ok && res.status !== 204) throw new Error(await res.text());
+      snack.setMsg("Course deleted");
+      setConfirmDelCourse(false);
+      setSelectedCourseId("");
+      setOfferings([]);
+      loadCourses();
+    } catch (e: any) {
+      // e.g., "cannot delete: attempts exist (end/archive instead)"
+      snack.setErr(e.message);
+    } finally {
+      setDeletingCourse(false);
+    }
+  }
+
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
@@ -916,6 +987,15 @@ function CoursesPanel({ jwt }: { jwt: string }) {
             </Select>
           </FormControl>
           <Button variant="outlined" onClick={loadCourses} disabled={busy}>{busy ? "…" : "Refresh"}</Button>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => setConfirmDelCourse(true)}
+            disabled={!selectedCourseId}
+            aria-label={selectedCourse ? `Delete course ${selectedCourse.name} ${selectedCourse.id}`: "Delete course (disabled; no selection)"}
+          >
+            Delete Course
+          </Button>
           <Box sx={{ flexGrow: 1 }} />
           <TextField
             label="New course name"
@@ -926,6 +1006,8 @@ function CoursesPanel({ jwt }: { jwt: string }) {
           <Button variant="contained" disableElevation onClick={createCourse} disabled={!newCourseName.trim()}>
             Create Course
           </Button>
+
+
         </Stack>
       </Paper>
 
@@ -1074,6 +1156,24 @@ function CoursesPanel({ jwt }: { jwt: string }) {
           </Paper>
         </Grid>
       </Grid>
+      {/* Confirm delete course */}
+      <Dialog open={confirmDelCourse} onClose={() => !deletingCourse && setConfirmDelCourse(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Delete course?</DialogTitle>
+        <DialogContent dividers>
+        <DialogContentText>
+          {selectedCourse
+            ? <>You’re about to delete <b>{selectedCourse.name}</b> (<code>{selectedCourse.id}</code>).</>
+            : "No course selected."}
+          {" "}This removes enrollments and offerings. If any attempts exist, deletion will be blocked.
+        </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDelCourse(false)} disabled={deletingCourse}>Cancel</Button>
+          <Button variant="contained" color="error" disableElevation onClick={deleteCourse} disabled={deletingCourse || !selectedCourseId}>
+            {deletingCourse ? "Deleting…" : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {snack.node}
     </Stack>
