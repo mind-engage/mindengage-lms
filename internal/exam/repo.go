@@ -31,4 +31,5 @@ type Store interface {
 
 	// NEW: list attempts with filters for teacher/admin dashboards (and student “my attempts”)
 	ListAttempts(ctx context.Context, opts AttemptListOpts) ([]Attempt, error)
+	Navigate(attemptID string, target int) (Attempt, error)
 }

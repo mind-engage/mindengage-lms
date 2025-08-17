@@ -633,6 +633,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   const snack = useSnack();
 
   const moduleLocked = !!exam?.policy?.navigation?.module_locked;
+  const allowBack = !!exam?.policy?.navigation?.allow_back; // NEW
 
   const [showSubmitted, setShowSubmitted] = useState(false); // NEW
   const isLocked = attempt?.status === "submitted"; // NEW
@@ -658,6 +659,47 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     }, 0);
   }, [exam, responses]);
   const progressPct = total ? (answered / total) * 100 : 0;
+
+  // ---- Module awareness (NEW) ----
+  const moduleOrder = useMemo(() => {
+    const secs = exam?.policy?.sections;
+    if (!Array.isArray(secs)) return [];
+    const ids: string[] = [];
+    secs.forEach((s: any) => (s?.modules || []).forEach((m: any) => { if (m?.id) ids.push(m.id); }));
+    return ids;
+  }, [exam?.policy]);
+
+  const qIdxByModule = useMemo(() => {
+    const map = new Map<string, number[]>();
+    (exam?.questions || []).forEach((q, i) => {
+      const mid = (q as any)?.module_id || "__all__";
+      if (!map.has(mid)) map.set(mid, []);
+      map.get(mid)!.push(i);
+    });
+    return map;
+  }, [exam?.questions]);
+
+  const currentModuleId = useMemo(() => {
+    if (attempt?.module_id) return attempt.module_id;
+    if (typeof attempt?.module_index === "number" && moduleOrder[attempt.module_index]) return moduleOrder[attempt.module_index];
+    return (exam?.questions?.[currentQ] as any)?.module_id || null;
+  }, [attempt?.module_id, attempt?.module_index, moduleOrder, exam?.questions, currentQ]);
+
+  const moduleIndices = useMemo(() => {
+    if (currentModuleId) return qIdxByModule.get(currentModuleId) || [];
+    return (exam?.questions || []).map((_, i) => i);
+  }, [currentModuleId, qIdxByModule, exam?.questions]);
+
+  const firstIdx = moduleIndices.length ? moduleIndices[0] : 0;
+  const lastIdx = moduleIndices.length ? moduleIndices[moduleIndices.length - 1] : Math.max(0, (exam?.questions?.length || 1) - 1);
+
+  // Keep currentQ inside the current module window
+  useEffect(() => {
+    if (currentQ < firstIdx || currentQ > lastIdx) setCurrentQ(firstIdx);
+  }, [currentModuleId, firstIdx, lastIdx]); // NEW
+
+  const isPrevDisabled = isLocked || !allowBack || currentQ <= firstIdx; // NEW
+  const isNextDisabled = isLocked || currentQ >= lastIdx; // NEW
 
   // actions
   async function startAttempt() {
@@ -937,6 +979,10 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                   {exam.questions.map((q, idx) => {
                     const r = responses[q.id];
                     const done = r != null && r !== "" && (!Array.isArray(r) || r.length > 0);
+
+                    const notInModule = idx < firstIdx || idx > lastIdx; // NEW
+                    const disabledBtn = isLocked || notInModule || (!allowBack && idx < currentQ); // NEW
+
                     return (
                       <Box key={q.id} sx={{ width: '25%', p: 0.5 }}>
                         <Button
@@ -944,7 +990,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                           size="small"
                           variant={currentQ === idx ? "contained" : (done ? "outlined" : "text")}
                           onClick={() => setCurrentQ(idx)}
-                          disabled={isLocked} // NEW
+                          disabled={disabledBtn}
                         >
                           {idx + 1}
                         </Button>
@@ -980,10 +1026,27 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                 <Box sx={{ display: { lg: "none" }, mb: 2 }}>
                   <FormControl fullWidth>
                     <InputLabel id="jump-q">Jump to question</InputLabel>
-                    <Select labelId="jump-q" label="Jump to question" value={currentQ} onChange={(e) => setCurrentQ(Number(e.target.value))} disabled={isLocked}>
-                      {exam.questions.map((q, idx) => (
-                        <MenuItem key={q.id} value={idx}>Q{idx + 1}</MenuItem>
-                      ))}
+                    <Select
+                      labelId="jump-q"
+                      label="Jump to question"
+                      value={currentQ}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        // Guard: only forward jumps when allow_back is false, and only inside module
+                        if (isLocked) return;
+                        if ((v < firstIdx || v > lastIdx)) return;
+                        if (!allowBack && v < currentQ) return;
+                        setCurrentQ(v);
+                      }}
+                      disabled={isLocked}
+                    >
+                      {exam.questions.map((q, idx) => {
+                        const notInModule = idx < firstIdx || idx > lastIdx;
+                        const itemDisabled = isLocked || notInModule || (!allowBack && idx < currentQ);
+                        return (
+                          <MenuItem key={q.id} value={idx} disabled={itemDisabled}>Q{idx + 1}</MenuItem>
+                        );
+                      })}
                     </Select>
                   </FormControl>
                 </Box>
@@ -998,8 +1061,8 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                 />
 
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
-                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(0, i - 1))} disabled={moduleLocked || currentQ === 0 || isLocked}>← Prev</Button>
-                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.min((exam.questions.length - 1), i + 1))} disabled={currentQ >= exam.questions.length - 1 || isLocked}>Next →</Button>
+                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.max(firstIdx, i - 1))} disabled={isPrevDisabled}>← Prev</Button>
+                  <Button variant="outlined" onClick={() => setCurrentQ((i) => Math.min(lastIdx, i + 1))} disabled={isNextDisabled}>Next →</Button>
                   <Box sx={{ flexGrow: 1 }} />
                   <Typography variant="caption" color="text.secondary">Answered {answered} of {total}</Typography>
                 </Stack>
@@ -1064,6 +1127,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
     </Shell>
   );
 }
+
 
 
 /* -------------------- Root App -------------------- */

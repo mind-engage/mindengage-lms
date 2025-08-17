@@ -158,6 +158,8 @@ CREATE TABLE IF NOT EXISTS attempts (
   module_started_at BIGINT,
   module_deadline BIGINT,
   overall_deadline BIGINT,
+  current_index INTEGER NOT NULL DEFAULT 0,
+  max_reached_index INTEGER NOT NULL DEFAULT 0,
   offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL
 );
 
@@ -266,6 +268,8 @@ CREATE TABLE IF NOT EXISTS attempts (
   module_started_at BIGINT,
   module_deadline BIGINT,
   overall_deadline BIGINT,
+  current_index INTEGER NOT NULL DEFAULT 0,
+  max_reached_index INTEGER NOT NULL DEFAULT 0,  
   offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL
 );
 

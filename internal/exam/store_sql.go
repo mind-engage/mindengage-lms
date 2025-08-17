@@ -13,6 +13,14 @@ import (
 	syncx "github.com/mind-engage/mindengage-lms/internal/sync"
 )
 
+var (
+	ErrAttemptSubmitted   = errors.New("attempt already submitted")
+	ErrOutsideModule      = errors.New("outside current module window")
+	ErrBackwardNavBlocked = errors.New("backward navigation blocked")
+	ErrEditBackBlocked    = errors.New("editing a locked (past) question")
+	ErrTimeOver           = errors.New("time over")
+)
+
 // SQLStore persists exams/attempts in SQL (SQLite or Postgres).
 type SQLStore struct {
 	db     *sql.DB
@@ -153,6 +161,11 @@ func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
 
 	// Compute module timings from policy (if any)
 	modules := extractModuleTimes(ex.PolicyRaw) // []int (seconds)
+	// NEW: fallback to overall exam time limit if no per-module limits exist
+	if len(modules) == 0 && ex.TimeLimitSec > 0 {
+		modules = []int{ex.TimeLimitSec}
+	}
+
 	now := time.Now().Unix()
 	overall := int64(0)
 	for _, sec := range modules {
@@ -228,13 +241,30 @@ func (s *SQLStore) SaveResponses(attemptID string, resp map[string]interface{}) 
 		return Attempt{}, errors.New("attempt already submitted")
 	}
 
+	// NEW: enforce module-locked navigation if policy requires it
+	ex, err := s.GetExamAdmin(context.Background(), a.ExamID)
+	if err != nil {
+		return Attempt{}, err
+	}
+	if policyModuleLocked(ex.PolicyRaw) {
+		allowed := allowedQIDsForModule(ex, moduleIdx)
+		// allowed == nil means no restriction could be derived -> allow
+		if allowed != nil {
+			for k := range resp {
+				if _, ok := allowed[k]; !ok {
+					return Attempt{}, errors.New("module locked: cannot modify items outside current module")
+				}
+			}
+		}
+	}
+
 	// merge responses
 	for k, v := range resp {
 		a.Responses[k] = v
 	}
 	buf, _ := json.Marshal(a.Responses)
 
-	_, err := s.db.Exec(`UPDATE attempts SET responses_json=$1 WHERE id=$2`, string(buf), attemptID)
+	_, err = s.db.Exec(`UPDATE attempts SET responses_json=$1 WHERE id=$2`, string(buf), attemptID)
 	if err != nil {
 		return Attempt{}, err
 	}
@@ -297,10 +327,15 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 }
 
 func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
-	row := s.db.QueryRow(`SELECT id,exam_id,user_id,status,score,responses_json,started_at,submitted_at FROM attempts WHERE id=$1`, id)
+	// NEW: include module timing fields so clients can render timers reliably
+	row := s.db.QueryRow(`SELECT id,exam_id,user_id,status,score,responses_json,started_at,submitted_at,
+		module_index, COALESCE(module_started_at,0), COALESCE(module_deadline,0), COALESCE(overall_deadline,0)
+		FROM attempts WHERE id=$1`, id)
 	var a Attempt
 	var rjson string
-	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson, &a.StartedAt, &a.SubmittedAt); err != nil {
+	var moduleStarted, moduleDeadline, overallDeadline int64
+	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson, &a.StartedAt, &a.SubmittedAt,
+		&a.ModuleIndex, &moduleStarted, &moduleDeadline, &overallDeadline); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -309,6 +344,34 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 	if err := json.Unmarshal([]byte(rjson), &a.Responses); err != nil {
 		a.Responses = map[string]interface{}{}
 	}
+	// NEW: populate timing fields if your struct exposes them
+	if moduleStarted > 0 {
+		a.ModuleStartedAt = moduleStarted
+	}
+	if moduleDeadline > 0 {
+		a.ModuleDeadline = moduleDeadline
+	}
+	if overallDeadline > 0 {
+		a.OverallDeadline = overallDeadline
+	}
+	// NEW: convenience—remaining seconds (min of module/overall if both exist)
+	now := time.Now().Unix()
+	rem := 0
+	if a.ModuleDeadline > 0 {
+		if d := int(a.ModuleDeadline - now); d > 0 {
+			rem = d
+		}
+	}
+	if a.OverallDeadline > 0 {
+		if d := int(a.OverallDeadline - now); d > 0 {
+			if rem == 0 || d < rem {
+				rem = d
+			}
+		}
+	}
+	// If your Attempt struct has this field, it will be filled; otherwise this is a no-op in spirit.
+	a.RemainingSeconds = rem
+
 	return a, nil
 }
 
@@ -334,6 +397,10 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 		return Attempt{}, err
 	}
 	modules := extractModuleTimes(ex.PolicyRaw)
+	// NEW: same fallback as NewAttempt
+	if len(modules) == 0 && ex.TimeLimitSec > 0 {
+		modules = []int{ex.TimeLimitSec}
+	}
 	if len(modules) == 0 {
 		return Attempt{}, errors.New("no modules in policy")
 	}
@@ -454,10 +521,206 @@ func extractModuleTimes(policyRaw json.RawMessage) []int {
 	return out
 }
 
+// NEW: extract ordered module IDs from policy to align with Question.ModuleID
+func extractModuleIDs(policyRaw json.RawMessage) []string {
+	if len(policyRaw) == 0 {
+		return nil
+	}
+	var pol struct {
+		Sections []struct {
+			Modules []struct {
+				ID string `json:"id"`
+			} `json:"modules"`
+		} `json:"sections"`
+	}
+	if err := json.Unmarshal(policyRaw, &pol); err != nil {
+		return nil
+	}
+	out := make([]string, 0, 8)
+	for _, s := range pol.Sections {
+		for _, m := range s.Modules {
+			out = append(out, strings.TrimSpace(m.ID))
+		}
+	}
+	return out
+}
+
+// NEW: check navigation.module_locked
+func policyModuleLocked(policyRaw json.RawMessage) bool {
+	if len(policyRaw) == 0 {
+		return false
+	}
+	var pol struct {
+		Navigation struct {
+			ModuleLocked bool `json:"module_locked"`
+		} `json:"navigation"`
+	}
+	if err := json.Unmarshal(policyRaw, &pol); err != nil {
+		return false
+	}
+	return pol.Navigation.ModuleLocked
+}
+
+// NEW: set of question IDs allowed in the given module index (nil => no restriction)
+func allowedQIDsForModule(ex Exam, moduleIdx int) map[string]struct{} {
+	modIDs := extractModuleIDs(ex.PolicyRaw)
+	if len(modIDs) == 0 || moduleIdx < 0 || moduleIdx >= len(modIDs) {
+		return nil // nothing to enforce
+	}
+	target := strings.TrimSpace(modIDs[moduleIdx])
+	if target == "" {
+		return nil // cannot enforce without an ID
+	}
+	set := map[string]struct{}{}
+	for _, q := range ex.Questions {
+		if strings.TrimSpace(q.ModuleID) == target {
+			set[q.ID] = struct{}{}
+		}
+	}
+	if len(set) == 0 {
+		// If nothing matches, be permissive (avoid accidental lockout due to bad authoring)
+		return nil
+	}
+	return set
+}
+
 func nullableDeadline(start int64, dur int64) *int64 {
 	if dur <= 0 {
 		return nil // stored as NULL
 	}
 	sum := start + dur
 	return &sum
+}
+
+type navPolicy struct {
+	AllowBack    bool `json:"allow_back"`
+	ModuleLocked bool `json:"module_locked"`
+}
+
+func parseNavPolicy(policyRaw json.RawMessage) navPolicy {
+	if len(policyRaw) == 0 {
+		return navPolicy{AllowBack: true, ModuleLocked: false}
+	}
+	var p struct {
+		Navigation struct {
+			AllowBack    *bool `json:"allow_back"`
+			ModuleLocked *bool `json:"module_locked"`
+		} `json:"navigation"`
+	}
+	_ = json.Unmarshal(policyRaw, &p)
+	np := navPolicy{AllowBack: true, ModuleLocked: false}
+	if p.Navigation.AllowBack != nil {
+		np.AllowBack = *p.Navigation.AllowBack
+	}
+	if p.Navigation.ModuleLocked != nil {
+		np.ModuleLocked = *p.Navigation.ModuleLocked
+	}
+	return np
+}
+
+// Map question -> absolute index, question -> moduleID, and reverse index->qid.
+func buildIndexMaps(questions []Question) (qidToIdx map[string]int, qidToMod map[string]string, idxToQID []string) {
+	qidToIdx = make(map[string]int, len(questions))
+	qidToMod = make(map[string]string, len(questions))
+	idxToQID = make([]string, 0, len(questions))
+	for i, q := range questions {
+		qidToIdx[q.ID] = i
+		qidToMod[q.ID] = q.ModuleID
+		idxToQID = append(idxToQID, q.ID)
+	}
+	return
+}
+
+// Compute the absolute index set (and min/max) for the current module.
+type moduleWindow struct {
+	indices  map[int]struct{}
+	firstIdx int
+	lastIdx  int
+	hasAny   bool
+}
+
+func moduleWindowFor(ex Exam, moduleID string) moduleWindow {
+	qidToIdx, qidToMod, _ := buildIndexMaps(ex.Questions)
+	win := moduleWindow{indices: map[int]struct{}{}, firstIdx: 0, lastIdx: 0, hasAny: false}
+	for qid, mid := range qidToMod {
+		if mid == moduleID {
+			i := qidToIdx[qid]
+			win.indices[i] = struct{}{}
+			if !win.hasAny {
+				win.firstIdx, win.lastIdx, win.hasAny = i, i, true
+			} else {
+				if i < win.firstIdx {
+					win.firstIdx = i
+				}
+				if i > win.lastIdx {
+					win.lastIdx = i
+				}
+			}
+		}
+	}
+	return win
+}
+
+// Navigate moves the attempt cursor to target absolute question index.
+func (s *SQLStore) Navigate(attemptID string, target int) (Attempt, error) {
+	// load attempt core + nav
+	var examID string
+	var status string
+	var moduleIdx, curIdx, maxIdx int
+	var moduleDeadline, overallDeadline sql.NullInt64
+
+	row := s.db.QueryRow(`
+		SELECT exam_id, status, module_index, current_index, max_reached_index,
+		       module_deadline, overall_deadline
+		FROM attempts WHERE id=$1`, attemptID)
+	if err := row.Scan(&examID, &status, &moduleIdx, &curIdx, &maxIdx, &moduleDeadline, &overallDeadline); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return Attempt{}, errors.New("attempt not found")
+		}
+		return Attempt{}, err
+	}
+	if status == "submitted" {
+		return Attempt{}, ErrAttemptSubmitted
+	}
+
+	now := time.Now().Unix()
+	if (moduleDeadline.Valid && now > moduleDeadline.Int64) || (overallDeadline.Valid && now > overallDeadline.Int64) {
+		return Attempt{}, ErrTimeOver
+	}
+
+	// exam + policy
+	ex, err := s.GetExamAdmin(context.Background(), examID)
+	if err != nil {
+		return Attempt{}, err
+	}
+	nav := parseNavPolicy(ex.PolicyRaw)
+	modIDs := extractModuleIDs(ex.PolicyRaw)
+
+	// window
+	var curModID string
+	if moduleIdx >= 0 && moduleIdx < len(modIDs) {
+		curModID = modIDs[moduleIdx]
+	}
+	win := moduleWindowFor(ex, curModID)
+
+	// Validate target inside window if locked
+	if nav.ModuleLocked && win.hasAny {
+		if _, ok := win.indices[target]; !ok {
+			return Attempt{}, ErrOutsideModule
+		}
+	}
+	// Forward-only validation
+	if !nav.AllowBack && target < maxIdx {
+		return Attempt{}, ErrBackwardNavBlocked
+	}
+
+	// persist
+	newMax := maxIdx
+	if target > newMax {
+		newMax = target
+	}
+	if _, err := s.db.Exec(`UPDATE attempts SET current_index=$1, max_reached_index=$2 WHERE id=$3`, target, newMax, attemptID); err != nil {
+		return Attempt{}, err
+	}
+	return s.GetAttempt(attemptID)
 }

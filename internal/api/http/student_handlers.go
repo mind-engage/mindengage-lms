@@ -43,7 +43,12 @@ func SaveResponsesHandler(store exam.Store) http.HandlerFunc {
 		}
 		a, err := store.SaveResponses(id, resp)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			switch err {
+			case exam.ErrAttemptSubmitted, exam.ErrTimeOver, exam.ErrOutsideModule, exam.ErrEditBackBlocked:
+				http.Error(w, err.Error(), 409)
+			default:
+				http.Error(w, err.Error(), 400)
+			}
 			return
 		}
 		_ = json.NewEncoder(w).Encode(a)
@@ -55,7 +60,11 @@ func SubmitAttemptHandler(store exam.Store) http.HandlerFunc {
 		id := chi.URLParam(r, "attemptID")
 		a, err := store.Submit(id)
 		if err != nil {
-			http.Error(w, err.Error(), 400)
+			if err == exam.ErrAttemptSubmitted {
+				http.Error(w, err.Error(), 409)
+			} else {
+				http.Error(w, err.Error(), 400)
+			}
 			return
 		}
 		_ = json.NewEncoder(w).Encode(a)
@@ -93,6 +102,32 @@ func NextModuleHandler(store exam.Store) http.HandlerFunc {
 		a, err := store.AdvanceModule(id) // new method
 		if err != nil {
 			http.Error(w, err.Error(), 400)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(a)
+	}
+}
+
+func NavigateHandler(store exam.Store) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "attemptID")
+		var req struct {
+			TargetIndex int `json:"target_index"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "bad json", 400)
+			return
+		}
+		a, err := store.Navigate(id, req.TargetIndex)
+		if err != nil {
+			switch err {
+			case exam.ErrBackwardNavBlocked, exam.ErrOutsideModule, exam.ErrEditBackBlocked:
+				http.Error(w, err.Error(), 409)
+			case exam.ErrAttemptSubmitted, exam.ErrTimeOver:
+				http.Error(w, err.Error(), 409)
+			default:
+				http.Error(w, err.Error(), 400)
+			}
 			return
 		}
 		_ = json.NewEncoder(w).Encode(a)

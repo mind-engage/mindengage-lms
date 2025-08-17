@@ -158,6 +158,9 @@ func main() {
 				Post("/attempts", api.CreateAttemptHandler(store))
 			pr.With(rbac.Require("attempt:save")).
 				Post("/attempts/{attemptID}/responses", api.SaveResponsesHandler(store))
+
+			pr.With(rbac.Require("attempt:save")).
+				Post("/attempts/{attemptID}/navigate", api.NavigateHandler(store))
 			pr.With(rbac.Require("attempt:submit")).
 				Post("/attempts/{attemptID}/submit", api.SubmitAttemptHandler(store))
 			pr.With(rbac.Require("attempt:save")).

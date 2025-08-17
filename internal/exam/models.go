@@ -19,6 +19,8 @@ type Question struct {
 	Choices   []Choice `json:"choices,omitempty"` // NEW: for MCQ rendered from QTI
 	AnswerKey []string `json:"answer_key,omitempty"`
 	Points    float64  `json:"points"`
+	SectionID string   `json:"section_id,omitempty"`
+	ModuleID  string   `json:"module_id,omitempty"`
 }
 
 type Attempt struct {
@@ -37,6 +39,10 @@ type Attempt struct {
 	// Timestamps (useful for teacher/admin list views)
 	StartedAt   int64 `json:"started_at,omitempty"`
 	SubmittedAt int64 `json:"submitted_at,omitempty"`
+
+	RemainingSeconds int `json:"remaining_seconds,omitempty"`
+	CurrentIndex     int `json:"current_index,omitempty"`
+	MaxReachedIndex  int `json:"max_reached_index,omitempty"`
 }
 
 type Exam struct {
