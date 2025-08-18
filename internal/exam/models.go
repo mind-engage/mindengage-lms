@@ -40,9 +40,10 @@ type Attempt struct {
 	StartedAt   int64 `json:"started_at,omitempty"`
 	SubmittedAt int64 `json:"submitted_at,omitempty"`
 
-	RemainingSeconds int `json:"remaining_seconds,omitempty"`
-	CurrentIndex     int `json:"current_index,omitempty"`
-	MaxReachedIndex  int `json:"max_reached_index,omitempty"`
+	RemainingSeconds int    `json:"remaining_seconds,omitempty"`
+	CurrentIndex     int    `json:"current_index,omitempty"`
+	MaxReachedIndex  int    `json:"max_reached_index,omitempty"`
+	CurrentModuleID  string `json:"current_module_id,omitempty"`
 }
 
 type Exam struct {

@@ -533,30 +533,6 @@ func (s *SQLStore) ListAttempts(ctx context.Context, opts AttemptListOpts) ([]At
 
 /* ------------------------- Helpers ------------------------ */
 
-func extractModuleTimes(policyRaw json.RawMessage) []int {
-	if len(policyRaw) == 0 {
-		return nil
-	}
-	// Minimal inline struct to avoid importing formats package here.
-	var pol struct {
-		Sections []struct {
-			Modules []struct {
-				TimeLimitSec int `json:"time_limit_sec"`
-			} `json:"modules"`
-		} `json:"sections"`
-	}
-	if err := json.Unmarshal(policyRaw, &pol); err != nil {
-		return nil
-	}
-	out := make([]int, 0, 8)
-	for _, s := range pol.Sections {
-		for _, m := range s.Modules {
-			out = append(out, m.TimeLimitSec)
-		}
-	}
-	return out
-}
-
 // NEW: extract ordered module IDs from policy to align with Question.ModuleID
 func extractModuleIDs(policyRaw json.RawMessage) []string {
 	if len(policyRaw) == 0 {
@@ -579,22 +555,6 @@ func extractModuleIDs(policyRaw json.RawMessage) []string {
 		}
 	}
 	return out
-}
-
-// NEW: check navigation.module_locked
-func policyModuleLocked(policyRaw json.RawMessage) bool {
-	if len(policyRaw) == 0 {
-		return false
-	}
-	var pol struct {
-		Navigation struct {
-			ModuleLocked bool `json:"module_locked"`
-		} `json:"navigation"`
-	}
-	if err := json.Unmarshal(policyRaw, &pol); err != nil {
-		return false
-	}
-	return pol.Navigation.ModuleLocked
 }
 
 // NEW: set of question IDs allowed in the given module index (nil => no restriction)
@@ -759,4 +719,17 @@ func (s *SQLStore) Navigate(attemptID string, target int) (Attempt, error) {
 		return Attempt{}, err
 	}
 	return s.GetAttempt(attemptID)
+}
+
+// internal/exam/store_sql.go (helpers)
+func extractModuleTimes(policyRaw json.RawMessage) []int {
+	ms := extractModules(policyRaw)
+	if len(ms) == 0 {
+		return nil
+	}
+	out := make([]int, 0, len(ms))
+	for _, m := range ms {
+		out = append(out, m.TimeLimitSec)
+	}
+	return out
 }

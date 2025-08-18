@@ -160,6 +160,7 @@ CREATE TABLE IF NOT EXISTS attempts (
   overall_deadline BIGINT,
   current_index INTEGER NOT NULL DEFAULT 0,
   max_reached_index INTEGER NOT NULL DEFAULT 0,
+  current_module_id TEXT,
   offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL
 );
 
