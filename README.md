@@ -122,14 +122,23 @@ ENABLE_JWKS=0
 
 ```
 
+## Build docker image
+```
+docker build -t mindengage-lms .
+```
 ## Running with docker
 
 ```
-docker run -p 8080:8080 \
-  -e DB_DRIVER=sqlite \
-  -e DB_DSN='file:/tmp/mindengage.db?cache=shared&mode=rwc' \
-  -e BLOB_BASE_PATH=/tmp/assets \
-  mindengale-lms
+docker run -it --network host  --env-file .env -v $PWD/data:/app/data:rw   -p 8080:8080  mindengage-lms
+
+docker run --restart unless-stopped -d  --network host --env-file .env  -p 8080:8080  mindengage-lms
+docker run -it --network host --env-file .env  -p 8080:8080  mindengage-lms
+
+```
+
+```
+docker run -it --network host -v $PWD/data:/app/data:rw  -e DB_DSN='file:/app/db/mindengage.db' -v $PWD/db:/app/db:rw -p 8080:8080  mindengage-lms
+
 ```
 
 ```bash

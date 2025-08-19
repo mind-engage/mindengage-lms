@@ -76,8 +76,8 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # ---------- Final image ------------------
 ############################################
 FROM gcr.io/distroless/base-debian12
+WORKDIR /app
+COPY --from=gobuild /bin/gateway /app/gateway
 ENV PORT=8080
 EXPOSE 8080
-COPY --from=gobuild /bin/gateway /gateway
-USER 65532:65532
-ENTRYPOINT ["/gateway"]
+ENTRYPOINT ["/app/gateway"]

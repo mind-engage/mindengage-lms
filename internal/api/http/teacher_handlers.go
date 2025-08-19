@@ -162,6 +162,7 @@ func subjectAndRole(authSvc *authmw.AuthService, r *http.Request) (string, strin
 //
 // It also removes related ownership rows and offerings in the same tx.
 // (Your FKs would cascade exam_offerings on exam delete, but we do it explicitly.)
+// DeleteExamHandler: remove the attempts-count guard
 func DeleteExamHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		examID := strings.TrimSpace(chi.URLParam(r, "examID"))
@@ -198,16 +199,6 @@ func DeleteExamHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFunc
 			}
 		}
 
-		// Ref guard: any attempts for this exam?
-		var attemptsCnt int
-		_ = db.QueryRowContext(r.Context(),
-			`SELECT COUNT(1) FROM attempts WHERE exam_id=$1`, examID,
-		).Scan(&attemptsCnt)
-		if attemptsCnt > 0 {
-			http.Error(w, "cannot delete: attempts exist (archive instead)", http.StatusConflict)
-			return
-		}
-
 		tx, err := db.BeginTx(r.Context(), nil)
 		if err != nil {
 			http.Error(w, "tx begin", http.StatusInternalServerError)
@@ -215,24 +206,19 @@ func DeleteExamHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFunc
 		}
 		defer func() { _ = tx.Rollback() }()
 
-		// Clean related rows (order is conservative; FKs would also handle this)
-		if _, err := tx.ExecContext(r.Context(),
-			`DELETE FROM exam_offerings WHERE exam_id=$1`, examID); err != nil {
-			http.Error(w, "delete offerings", http.StatusInternalServerError)
-			return
-		}
-		_, _ = tx.ExecContext(r.Context(), `DELETE FROM exam_owners WHERE exam_id=$1`, examID)
+		// Optional explicit cleanup (FKs already handle offerings/attempts via CASCADE)
+		_, _ = tx.ExecContext(r.Context(), `DELETE FROM exam_offerings WHERE exam_id=$1`, examID)
+		_, _ = tx.ExecContext(r.Context(), `DELETE FROM exam_owners   WHERE exam_id=$1`, examID)
 
-		if _, err := tx.ExecContext(r.Context(),
-			`DELETE FROM exams WHERE id=$1`, examID); err != nil {
+		if _, err := tx.ExecContext(r.Context(), `DELETE FROM exams WHERE id=$1`, examID); err != nil {
 			http.Error(w, "delete exam", http.StatusInternalServerError)
 			return
 		}
-
 		if err := tx.Commit(); err != nil {
 			http.Error(w, "tx commit", http.StatusInternalServerError)
 			return
 		}
+
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
@@ -242,6 +228,7 @@ func DeleteExamHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFunc
 //   - and there are NO attempts in any offering of this course.
 //
 // It also removes enrollments/co-teachers/offerings before deleting the course.
+// DeleteCourseHandler: delete attempts for this course's offerings first
 func DeleteCourseHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		courseID := strings.TrimSpace(chi.URLParam(r, "courseID"))
@@ -265,30 +252,19 @@ func DeleteCourseHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFu
 			return
 		}
 
-		// Ownership check (admins bypass). Require role='owner' on this course.
+		// Ownership check (admins bypass). Require role='owner'
 		if !isAdmin {
 			var isOwner bool
 			_ = db.QueryRowContext(r.Context(),
-				`SELECT EXISTS(SELECT 1 FROM course_teachers WHERE course_id=$1 AND teacher_id=$2 AND role='owner')`,
-				courseID, sub,
+				`SELECT EXISTS(
+			 SELECT 1 FROM course_teachers
+			 WHERE course_id=$1 AND teacher_id=$2 AND role='owner'
+		   )`, courseID, sub,
 			).Scan(&isOwner)
 			if !isOwner {
 				http.Error(w, "forbidden (not course owner)", http.StatusForbidden)
 				return
 			}
-		}
-
-		// Any attempts tied to offerings of this course?
-		var attemptsCnt int
-		_ = db.QueryRowContext(r.Context(), `
-			SELECT COUNT(1)
-			FROM attempts a
-			JOIN exam_offerings o ON a.offering_id = o.id
-			WHERE o.course_id = $1
-		`, courseID).Scan(&attemptsCnt)
-		if attemptsCnt > 0 {
-			http.Error(w, "cannot delete: attempts exist (end/archive instead)", http.StatusConflict)
-			return
 		}
 
 		tx, err := db.BeginTx(r.Context(), nil)
@@ -298,15 +274,26 @@ func DeleteCourseHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFu
 		}
 		defer func() { _ = tx.Rollback() }()
 
-		// Remove enrollments / co-teachers and offerings
+		// 1) Delete attempts that belong to offerings of this course
+		if _, err := tx.ExecContext(r.Context(), `
+		DELETE FROM attempts
+		WHERE offering_id IN (SELECT id FROM exam_offerings WHERE course_id=$1)
+	  `, courseID); err != nil {
+			http.Error(w, "delete attempts", http.StatusInternalServerError)
+			return
+		}
+
+		// 2) Remove enrollments / co-teachers
 		_, _ = tx.ExecContext(r.Context(), `DELETE FROM course_students WHERE course_id=$1`, courseID)
 		_, _ = tx.ExecContext(r.Context(), `DELETE FROM course_teachers WHERE course_id=$1`, courseID)
+
+		// 3) Delete offerings (FK from attempts was handled in step 1)
 		if _, err := tx.ExecContext(r.Context(), `DELETE FROM exam_offerings WHERE course_id=$1`, courseID); err != nil {
 			http.Error(w, "delete offerings", http.StatusInternalServerError)
 			return
 		}
 
-		// Finally the course
+		// 4) Finally delete the course
 		if _, err := tx.ExecContext(r.Context(), `DELETE FROM courses WHERE id=$1`, courseID); err != nil {
 			http.Error(w, "delete course", http.StatusInternalServerError)
 			return

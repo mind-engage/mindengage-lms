@@ -1,3 +1,4 @@
+// internal/exam/store_sql.go
 package exam
 
 import (
@@ -187,6 +188,12 @@ func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
 		}
 	}
 
+	// Initialize concrete module id for module 0 (usually placeholder id)
+	firstConcrete := ""
+	if len(modIDs) > 0 {
+		firstConcrete = modIDs[0]
+	}
+
 	// --- persist attempt ---
 	id := time.Now().Format("20060102150405")
 	resp := map[string]interface{}{}
@@ -196,13 +203,13 @@ func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
 		INSERT INTO attempts (
 			id, exam_id, user_id, status, score, responses_json, started_at,
 			module_index, module_started_at, module_deadline, overall_deadline,
-			current_index, max_reached_index
+			current_index, max_reached_index, current_module_id
 		)
-		VALUES ($1,$2,$3,'in_progress',0,$4,$5,$6,$7,$8,$9,$10,$11)
+		VALUES ($1,$2,$3,'in_progress',0,$4,$5,$6,$7,$8,$9,$10,$11,$12)
 	`,
 		id, examID, userID, string(respJSON), now,
 		0, now, nullableDeadline(now, firstMod), nullableDeadline(now, overall),
-		startIdx, startIdx,
+		startIdx, startIdx, firstConcrete,
 	)
 	if err != nil {
 		return Attempt{}, err
@@ -219,6 +226,7 @@ func (s *SQLStore) NewAttempt(examID, userID string) (Attempt, error) {
 		StartedAt:       now,
 		ModuleIndex:     0,
 		ModuleStartedAt: now,
+		CurrentModuleID: firstConcrete,
 	}, nil
 }
 
@@ -228,15 +236,16 @@ func (s *SQLStore) SaveResponses(attemptID string, resp map[string]interface{}) 
 	var rjson string
 	var moduleIdx, curIdx, maxIdx int // NEW: cur/max
 	var moduleStarted, moduleDeadline, overallDeadline sql.NullInt64
+	var curModID sql.NullString
 
 	row := s.db.QueryRow(`
 	  SELECT id, exam_id, user_id, status, score, responses_json,
 			 module_index, module_started_at, module_deadline, overall_deadline,
-			 current_index, max_reached_index
+			 current_index, max_reached_index, current_module_id
 	  FROM attempts WHERE id=$1`, attemptID)
 	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson,
 		&moduleIdx, &moduleStarted, &moduleDeadline, &overallDeadline,
-		&curIdx, &maxIdx); err != nil {
+		&curIdx, &maxIdx, &curModID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -244,6 +253,9 @@ func (s *SQLStore) SaveResponses(attemptID string, resp map[string]interface{}) 
 	}
 	if err := json.Unmarshal([]byte(rjson), &a.Responses); err != nil || a.Responses == nil {
 		a.Responses = map[string]interface{}{}
+	}
+	if curModID.Valid {
+		a.CurrentModuleID = curModID.String
 	}
 
 	// timing guards (unchanged)
@@ -265,9 +277,17 @@ func (s *SQLStore) SaveResponses(attemptID string, resp map[string]interface{}) 
 	}
 	nav := parseNavPolicy(ex.PolicyRaw)
 
-	// Module lock (as you already had)
+	// Module lock (prefer the concrete current_module_id)
 	if nav.ModuleLocked {
-		allowed := allowedQIDsForModule(ex, moduleIdx)
+		targetID := strings.TrimSpace(a.CurrentModuleID)
+		if targetID == "" {
+			// fallback to placeholder by index
+			modIDs := extractModuleIDs(ex.PolicyRaw)
+			if moduleIdx >= 0 && moduleIdx < len(modIDs) {
+				targetID = strings.TrimSpace(modIDs[moduleIdx])
+			}
+		}
+		allowed := allowedQIDsForModuleID(ex, targetID)
 		if allowed != nil {
 			for k := range resp {
 				if _, ok := allowed[k]; !ok {
@@ -356,15 +376,16 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 	row := s.db.QueryRow(`SELECT id,exam_id,user_id,status,score,responses_json,started_at,submitted_at,
 	  module_index, COALESCE(module_started_at,0), COALESCE(module_deadline,0), COALESCE(overall_deadline,0),
-	  current_index, max_reached_index
+	  current_index, max_reached_index, current_module_id
 	  FROM attempts WHERE id=$1`, id)
 
 	var a Attempt
 	var rjson string
 	var moduleStarted, moduleDeadline, overallDeadline int64
+	var curModID sql.NullString
 	if err := row.Scan(&a.ID, &a.ExamID, &a.UserID, &a.Status, &a.Score, &rjson, &a.StartedAt, &a.SubmittedAt,
 		&a.ModuleIndex, &moduleStarted, &moduleDeadline, &overallDeadline,
-		&a.CurrentIndex, &a.MaxReachedIndex); err != nil {
+		&a.CurrentIndex, &a.MaxReachedIndex, &curModID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -381,6 +402,9 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 	}
 	if overallDeadline > 0 {
 		a.OverallDeadline = overallDeadline
+	}
+	if curModID.Valid {
+		a.CurrentModuleID = curModID.String
 	}
 
 	// remaining seconds (unchanged logic)
@@ -408,24 +432,33 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	var a Attempt
 	var rjson string
 	var moduleIdx int
-	row := s.db.QueryRow(`SELECT exam_id, responses_json, module_index FROM attempts WHERE id=$1`, attemptID)
-	if err := row.Scan(&a.ExamID, &rjson, &moduleIdx); err != nil {
+	var curModID sql.NullString
+
+	row := s.db.QueryRow(`SELECT exam_id, responses_json, module_index, current_module_id FROM attempts WHERE id=$1`, attemptID)
+	if err := row.Scan(&a.ExamID, &rjson, &moduleIdx, &curModID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
 		return Attempt{}, err
 	}
 	_ = json.Unmarshal([]byte(rjson), &a.Responses)
+	if curModID.Valid {
+		a.CurrentModuleID = curModID.String
+	}
+	a.ModuleIndex = moduleIdx
 
 	ex, err := s.GetExamAdmin(context.Background(), a.ExamID)
 	if err != nil {
 		return Attempt{}, err
 	}
+
+	// Placeholder-derived times and ids
 	modules := extractModuleTimes(ex.PolicyRaw)
+	modIDs := extractModuleIDs(ex.PolicyRaw)
 	if len(modules) == 0 && ex.TimeLimitSec > 0 {
 		modules = []int{ex.TimeLimitSec}
 	}
-	if len(modules) == 0 {
+	if len(modules) == 0 || len(modIDs) == 0 {
 		return Attempt{}, errors.New("no modules in policy")
 	}
 	if moduleIdx+1 >= len(modules) {
@@ -433,17 +466,33 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	}
 
 	nextIdx := moduleIdx + 1
+	nextPlaceholderID := modIDs[nextIdx]
+
+	// Build performance on the module that just finished (prefer concrete id)
+	prevID := strings.TrimSpace(a.CurrentModuleID)
+	if prevID == "" && moduleIdx >= 0 && moduleIdx < len(modIDs) {
+		prevID = strings.TrimSpace(modIDs[moduleIdx])
+	}
+	perfRaw := s.moduleRawPerf(ex, a, prevID)
+
+	// Route to a concrete next module id (variant) if router exists
+	concreteNextID := nextPlaceholderID
+	if r := RouterForProfile(ex.Profile); r != nil {
+		if chosen, _ := r.NextModule(context.Background(), ex, a, Perf{RawPoints: perfRaw}); strings.TrimSpace(chosen) != "" {
+			concreteNextID = strings.TrimSpace(chosen)
+		}
+	}
+
 	now := time.Now().Unix()
 	nextDur := int64(0)
 	if modules[nextIdx] > 0 {
 		nextDur = int64(modules[nextIdx])
 	}
 
-	// Compute first question index of next module (if any)
-	modIDs := extractModuleIDs(ex.PolicyRaw)
+	// Compute first question index of the concrete next module (if any)
 	cur := 0
-	if nextIdx >= 0 && nextIdx < len(modIDs) {
-		win := moduleWindowFor(ex, modIDs[nextIdx])
+	if concreteNextID != "" {
+		win := moduleWindowFor(ex, concreteNextID)
 		if win.hasAny {
 			cur = win.firstIdx
 		}
@@ -452,10 +501,10 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	_, err = s.db.Exec(`
 	  UPDATE attempts
 	  SET module_index=$1, module_started_at=$2, module_deadline=$3,
-		  current_index=$4, max_reached_index=$4
-	  WHERE id=$5`,
+		  current_index=$4, max_reached_index=$4, current_module_id=$5
+	  WHERE id=$6`,
 		nextIdx, now, nullableDeadline(now, nextDur),
-		cur, attemptID,
+		cur, concreteNextID, attemptID,
 	)
 	if err != nil {
 		return Attempt{}, err
@@ -533,31 +582,21 @@ func (s *SQLStore) ListAttempts(ctx context.Context, opts AttemptListOpts) ([]At
 
 /* ------------------------- Helpers ------------------------ */
 
-// NEW: extract ordered module IDs from policy to align with Question.ModuleID
+// extract ordered module IDs from policy to align with Question.ModuleID
 func extractModuleIDs(policyRaw json.RawMessage) []string {
-	if len(policyRaw) == 0 {
+	ms := extractModules(policyRaw)
+	if len(ms) == 0 {
 		return nil
 	}
-	var pol struct {
-		Sections []struct {
-			Modules []struct {
-				ID string `json:"id"`
-			} `json:"modules"`
-		} `json:"sections"`
-	}
-	if err := json.Unmarshal(policyRaw, &pol); err != nil {
-		return nil
-	}
-	out := make([]string, 0, 8)
-	for _, s := range pol.Sections {
-		for _, m := range s.Modules {
-			out = append(out, strings.TrimSpace(m.ID))
-		}
+	out := make([]string, 0, len(ms))
+	for _, m := range ms {
+		out = append(out, m.ModuleID)
 	}
 	return out
 }
 
-// NEW: set of question IDs allowed in the given module index (nil => no restriction)
+// set of question IDs allowed in the given module index (nil => no restriction)
+// (kept for backward-compat; variant-aware code should prefer allowedQIDsForModuleID)
 func allowedQIDsForModule(ex Exam, moduleIdx int) map[string]struct{} {
 	modIDs := extractModuleIDs(ex.PolicyRaw)
 	if len(modIDs) == 0 || moduleIdx < 0 || moduleIdx >= len(modIDs) {
@@ -567,9 +606,18 @@ func allowedQIDsForModule(ex Exam, moduleIdx int) map[string]struct{} {
 	if target == "" {
 		return nil // cannot enforce without an ID
 	}
+	return allowedQIDsForModuleID(ex, target)
+}
+
+// variant-aware: set of question IDs allowed for the given concrete module id
+func allowedQIDsForModuleID(ex Exam, moduleID string) map[string]struct{} {
+	moduleID = strings.TrimSpace(moduleID)
+	if moduleID == "" {
+		return nil
+	}
 	set := map[string]struct{}{}
 	for _, q := range ex.Questions {
-		if strings.TrimSpace(q.ModuleID) == target {
+		if strings.TrimSpace(q.ModuleID) == moduleID {
 			set[q.ID] = struct{}{}
 		}
 	}
@@ -664,12 +712,13 @@ func (s *SQLStore) Navigate(attemptID string, target int) (Attempt, error) {
 	var status string
 	var moduleIdx, curIdx, maxIdx int
 	var moduleDeadline, overallDeadline sql.NullInt64
+	var curModID sql.NullString
 
 	row := s.db.QueryRow(`
 		SELECT exam_id, status, module_index, current_index, max_reached_index,
-		       module_deadline, overall_deadline
+		       module_deadline, overall_deadline, current_module_id
 		FROM attempts WHERE id=$1`, attemptID)
-	if err := row.Scan(&examID, &status, &moduleIdx, &curIdx, &maxIdx, &moduleDeadline, &overallDeadline); err != nil {
+	if err := row.Scan(&examID, &status, &moduleIdx, &curIdx, &maxIdx, &moduleDeadline, &overallDeadline, &curModID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -692,12 +741,12 @@ func (s *SQLStore) Navigate(attemptID string, target int) (Attempt, error) {
 	nav := parseNavPolicy(ex.PolicyRaw)
 	modIDs := extractModuleIDs(ex.PolicyRaw)
 
-	// window
-	var curModID string
-	if moduleIdx >= 0 && moduleIdx < len(modIDs) {
-		curModID = modIDs[moduleIdx]
+	// window: prefer concrete current_module_id
+	activeID := strings.TrimSpace(curModID.String)
+	if activeID == "" && moduleIdx >= 0 && moduleIdx < len(modIDs) {
+		activeID = strings.TrimSpace(modIDs[moduleIdx])
 	}
-	win := moduleWindowFor(ex, curModID)
+	win := moduleWindowFor(ex, activeID)
 
 	// Validate target inside window if locked
 	if nav.ModuleLocked && win.hasAny {
@@ -721,7 +770,29 @@ func (s *SQLStore) Navigate(attemptID string, target int) (Attempt, error) {
 	return s.GetAttempt(attemptID)
 }
 
-// internal/exam/store_sql.go (helpers)
+// Compute raw performance for a module (simple correct-count; tweak as needed).
+func (s *SQLStore) moduleRawPerf(ex Exam, a Attempt, moduleID string) float64 {
+	moduleID = strings.TrimSpace(moduleID)
+	if moduleID == "" {
+		return 0
+	}
+	raw := 0.0
+	for _, q := range ex.Questions {
+		if strings.TrimSpace(q.ModuleID) != moduleID {
+			continue
+		}
+		if resp, ok := a.Responses[q.ID]; ok {
+			res, err := s.grader.Grade(context.Background(),
+				grading.Q{Type: q.Type, Points: 1, AnswerKey: q.AnswerKey}, resp)
+			if err == nil && res.AutoPoints > 0 {
+				raw += 1
+			}
+		}
+	}
+	return raw
+}
+
+// helpers
 func extractModuleTimes(policyRaw json.RawMessage) []int {
 	ms := extractModules(policyRaw)
 	if len(ms) == 0 {

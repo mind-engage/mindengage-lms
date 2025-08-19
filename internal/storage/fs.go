@@ -2,6 +2,7 @@
 package storage
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -11,8 +12,8 @@ import (
 type FSStore struct{ base string }
 
 func NewFSStore(base string) (*FSStore, error) {
-	if base == "" {
-		base = "./data"
+	if strings.TrimSpace(base) == "" {
+		return nil, fmt.Errorf("blob base path is empty; set BLOB_BASE_PATH or Config.BlobBasePath")
 	}
 	abs, err := filepath.Abs(base)
 	if err != nil {

@@ -97,6 +97,8 @@ export type Offering = {
   visibility: "course" | "public" | "link";
 };
 
+type Features = { mode: "online"|"offline"; enable_google_auth: boolean };
+
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
@@ -172,10 +174,12 @@ function Shell({ children, authed, onSignOut, title, right }: { children: React.
 
 /* -------------------- Login -------------------- */
 /** UPDATED: adds Google Sign-On button; keeps existing local login intact */
-function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string, r: "teacher" | "admin") => void; }) {
+function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: string, p: string, r: "teacher" | "admin") => void;  features?: { enable_google_auth: boolean } | null;}) {
   const [username, setUsername] = useState("teacher");
   const [password, setPassword] = useState("teacher");
   const [role, setRole] = useState<"teacher" | "admin">("teacher");
+
+  const canGoogle = !!features?.enable_google_auth;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -208,11 +212,15 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
                   </Select>
                 </FormControl>
                 <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
-                <Divider>or</Divider>
-                {/* NEW: Google SSO */}
-                <Button variant="outlined" size="large" onClick={googleSignIn} disabled={busy}>
-                  Sign in with Google
-                </Button>
+                
+                {canGoogle && (
+                  <Divider>or</Divider>
+                )}
+                {canGoogle && (
+                  <Button variant="outlined" size="large" onClick={googleSignIn} disabled={busy}>
+                    Sign in with Google
+                  </Button>
+                )}
               </Stack>
             </Box>
           </Paper>
@@ -1190,6 +1198,8 @@ export default function TeacherApp() {
   const [tab, setTab] = useState(0); // 0=Exams, 1=Courses, 2=Attempts, 3=Users
   const snack = useSnack();
 
+  const [features, setFeatures] = useState<Features | null>(null);
+
   async function login(username: string, password: string, role: "teacher" | "admin") {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
@@ -1204,6 +1214,17 @@ export default function TeacherApp() {
       snack.setMsg("Logged in.");
     } catch (err: any) { snack.setErr(err.message); } finally { setBusy(false); }
   }
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const f = await api<Features>("/features");
+        setFeatures(f);
+      } catch {
+        setFeatures({ mode: "offline", enable_google_auth: false }); // safe fallback
+      }
+    })();
+  }, []);
 
   /** NEW: Accept JWT returned by Google callback via query or hash, and persist */
   useEffect(() => {
@@ -1267,7 +1288,7 @@ export default function TeacherApp() {
   if (screen === "login") {
     return (
       <ThemeProvider theme={theme}>
-        <LoginScreen busy={busy} onLogin={login} />
+        <LoginScreen busy={busy} onLogin={login} features={features}/>
       </ThemeProvider>
     );
   }

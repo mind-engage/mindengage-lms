@@ -94,6 +94,8 @@ type Offering = {
   visibility: "course" | "public" | "link";
 };
 
+type Features = { mode: "online"|"offline"; enable_google_auth: boolean };
+
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
@@ -355,9 +357,11 @@ function useSnack() {
 }
 
 /* -------------------- Screen 1: Login -------------------- */
-function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string) => void; }) {
+function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: string, p: string) => void; features?: { enable_google_auth: boolean } | null;}) {
   const [username, setUsername] = useState("student");
   const [password, setPassword] = useState("student");
+
+  const canGoogle = !!features?.enable_google_auth;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -381,7 +385,12 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
                 <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth />
                 <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
                 <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
-                <Button type="button" variant="outlined" size="large" onClick={loginWithGoogle} disabled={busy}>Sign in with Google</Button>
+                {canGoogle && (
+                  <Divider>or</Divider>
+                )}
+                {canGoogle && (
+                  <Button type="button" variant="outlined" size="large" onClick={loginWithGoogle} disabled={busy}>Sign in with Google</Button>
+                )}
               </Stack>
             </Box>
           </Paper>
@@ -640,17 +649,18 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   const [showSubmitted, setShowSubmitted] = useState(false);
   const isLocked = attempt?.status === "submitted";
+  const lastChangeRef = useRef<{ qid: string; val: any } | null>(null);
 
   // ---------- helpers ----------
   const setAttemptAndSyncUI = useCallback((a: Attempt) => {
     setAttempt(a);
-    if (typeof a.current_index === "number") {
-      setCurrentQ(a.current_index);
+    if (typeof a.current_index === "number") setCurrentQ(a.current_index);
+    if (typeof a.remaining_seconds === "number") setSecondsLeft(a.remaining_seconds);
+    if (a.responses) {
+      setResponses((prev) => {
+        return JSON.stringify(prev) === JSON.stringify(a.responses) ? prev : a.responses;
+      });
     }
-    if (typeof a.remaining_seconds === "number") {
-      setSecondsLeft(a.remaining_seconds);
-    }
-    if (a.responses) setResponses(a.responses);
   }, []);
 
   const parseNavErr = (raw: string) => {
@@ -667,6 +677,7 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
   const updateResponse = useCallback((qid: string, val: any) => {
     if (isLocked) return;
     setResponses((r) => (r[qid] === val ? r : { ...r, [qid]: val }));
+    lastChangeRef.current = { qid, val };   // mark dirty
   }, [isLocked]);
 
   const timeLimit = offering?.time_limit_sec ?? exam.time_limit_sec ?? null;
@@ -764,30 +775,59 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   async function saveResponses(manual = false) {
     if (!attempt) return;
-    if (isLocked) {
-      if (manual) snack.setMsg("Already submitted.");
-      return;
+    if (isLocked) return;
+  
+    // Build payload
+    let payload: Record<string, any> = {};
+    if (manual) {
+      payload = responses; // full snapshot
+    } else if (lastChangeRef.current) {
+      const { qid, val } = lastChangeRef.current;
+      payload = { [qid]: val };
+    } else {
+      return; // nothing to save
     }
+  
     try {
       const res = await fetch(`${API_BASE}/attempts/${attempt.id}/responses`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
-        body: JSON.stringify(responses),
+        body: JSON.stringify(payload),
       });
+  
       if (res.status === 409) {
-        setAttempt((a) => (a ? { ...a, status: "submitted" } : a));
-        if (manual) snack.setMsg("Already submitted.");
+        const t = (await res.text()) || "";
+        // Only mark submitted if it's actually submitted
+        if (t.toLowerCase().includes("already submitted")) {
+          setAttempt((a) => (a ? { ...a, status: "submitted" } : a));
+          return;
+        }
+        // Surface the real conflict message
+        snack.setErr(parseNavErr(t));
         return;
       }
+  
       if (!res.ok) throw new Error(await res.text());
+      // on success: keep going; no toast unless manual=true
+      if (!manual) lastChangeRef.current = null;
+
       if (manual) snack.setMsg("Responses saved.");
     } catch (err: any) {
       snack.setErr(err.message);
     }
   }
 
+  async function flushAutosave() {
+    if (autosaveTRef.current) {
+      window.clearTimeout(autosaveTRef.current);
+      autosaveTRef.current = null;
+    }
+    await saveResponses(false); // delta save of the last change
+  }
+
   async function navigateTo(targetIndex: number) {
     if (!attempt) return;
+    await flushAutosave(); // <-- prevent race
     try {
       const res = await fetch(`${API_BASE}/attempts/${attempt.id}/navigate`, {
         method: "POST",
@@ -796,7 +836,6 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
       });
       if (!res.ok) {
         const t = await res.text();
-        // 409s from backend carry business-rule messages
         snack.setErr(parseNavErr(t));
         return;
       }
@@ -849,16 +888,13 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
 
   async function nextModule() {
     if (!attempt) return;
-    await saveResponses(false);
+    await saveResponses(true); // full snapshot
     try {
       const res = await fetch(`${API_BASE}/attempts/${attempt.id}/next-module`, {
         method: "POST",
         headers: { Authorization: `Bearer ${jwt}` },
       });
-      if (!res.ok) {
-        const t = await res.text();
-        throw new Error(t || `Advance blocked (${res.status})`);
-      }
+      if (!res.ok) throw new Error(await res.text());
       const data = await res.json() as Attempt;
       setAttemptAndSyncUI(data);
       snack.setMsg("Moved to next module.");
@@ -866,10 +902,10 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
       snack.setErr(e?.message || "Could not advance to the next module.");
     }
   }
-
   // ---------- autosave ----------
   useEffect(() => {
     if (!attempt || isLocked) return;
+    if (!lastChangeRef.current) return;     // no unsaved change -> skip
     if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current);
     autosaveTRef.current = window.setTimeout(() => { saveResponses(false); }, 1000) as unknown as number;
     return () => { if (autosaveTRef.current) window.clearTimeout(autosaveTRef.current); };
@@ -1056,13 +1092,13 @@ function ExamScreen({ jwt, exam, offering, onExit }: { jwt: string; exam: Exam; 
                       labelId="jump-q"
                       label="Jump to question"
                       value={currentQ}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const v = Number(e.target.value);
                         const curIdx = attempt?.current_index ?? currentQ;
                         if (isLocked) return;
                         if (moduleLocked && (v < firstIdx || v > lastIdx)) return;
                         if (!allowBack && v < curIdx) return;
-                        navigateTo(v);
+                        await navigateTo(v); // goes through flushAutosave
                       }}
                       disabled={isLocked}
                     >
@@ -1178,6 +1214,7 @@ export default function StudentApp() {
   const [loadedExam, setLoadedExam] = useState<Exam | null>(null);
   const [loadedOffering, setLoadedOffering] = useState<Offering | undefined>(undefined); // NEW
   const snack = useSnack();
+  const [features, setFeatures] = useState<Features | null>(null);
 
   // Capture JWT from URL (for Google callback redirects): ?access_token=... or #access_token=...
   useEffect(() => {
@@ -1197,6 +1234,17 @@ export default function StudentApp() {
         window.history.replaceState({}, document.title, clean);
       }
     } catch {}
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const f = await api<Features>("/features");
+        setFeatures(f);
+      } catch {
+        setFeatures({ mode: "offline", enable_google_auth: false }); // safe fallback
+      }
+    })();
   }, []);
 
   async function login(username: string, password: string) {
@@ -1249,7 +1297,7 @@ export default function StudentApp() {
 
   return (
     <ThemeProvider theme={theme}>
-      {screen === "login" && <LoginScreen busy={busy} onLogin={login} />}
+      {screen === "login" && <LoginScreen busy={busy} onLogin={login} features={features} />}
       {screen === "select" && jwt && <SelectScreen jwt={jwt} onBack={signOut} onLoadExam={loadExamById} />}
       {screen === "exam" && jwt && loadedExam && (
         <ExamScreen jwt={jwt} exam={loadedExam} offering={loadedOffering} onExit={() => setScreen("select")} />

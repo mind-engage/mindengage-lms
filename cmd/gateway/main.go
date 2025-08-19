@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"encoding/json"
 	"io/fs"
 	"log"
 	"net/http"
@@ -97,6 +98,16 @@ func main() {
 		apiR.Get("/healthz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 		apiR.Get("/readyz", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 
+		apiR.Get("/features", func(w http.ResponseWriter, r *http.Request) {
+			type resp struct {
+				Mode             string `json:"mode"` // "online" | "offline"
+				EnableGoogleAuth bool   `json:"enable_google_auth"`
+			}
+			_ = json.NewEncoder(w).Encode(resp{
+				Mode:             string(cfg.Mode),
+				EnableGoogleAuth: cfg.EnableGoogleAuth && cfg.Mode == config.ModeOnline,
+			})
+		})
 		// --- JWKS ---
 		if cfg.EnableJWKS {
 			apiR.Get("/.well-known/jwks.json", jwks.Handler(jwks.JWKS{Keys: []jwks.JWK{}}))

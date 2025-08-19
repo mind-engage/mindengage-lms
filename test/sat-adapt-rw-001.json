@@ -1,0 +1,891 @@
+{
+    "id": "sat-adapt-rw-001",
+    "title": "SAT Adaptive Exam Practice – Reading & Writing",
+    "profile": "sat.v1",
+    "policy": {
+      "sections": [
+        {
+          "id": "rw",
+          "title": "Reading & Writing",
+          "modules": [
+            { "id": "rw-m1", "time_limit_sec": 2340 },
+            { "id": "rw-m2", "time_limit_sec": 2340 }
+          ]
+        }
+      ],
+      "navigation": { "allow_back": false, "module_locked": true },
+      "calculator": { "allowed_sections": ["math"], "policy": "desmos", "allow_keypad": true },
+      "scoring": { "raw_to_scale": "sat.v1.scale", "penalty": 0 },
+      "item_constraints": {
+        "rw":   { "mcq_single": { "choices": 4 } }
+      },
+      "proctor": { "screenshot": false, "camera": false },
+      "meta": { "version": "gen-1" }
+    },
+    "questions": [
+      {
+        "id": "rw-q01-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The documentary filmmaker was known for her ______ approach, always seeking to present events without personal bias and letting the facts speak for themselves.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>objective</p>"},
+          {"id":"B","label_html":"<p>passionate</p>"},
+          {"id":"C","label_html":"<p>deceptive</p>"},
+          {"id":"D","label_html":"<p>sporadic</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q02-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>After the long hike, the group of friends ______ too tired to cook dinner, so they ordered pizza instead.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>was</p>"},
+          {"id":"B","label_html":"<p>were</p>"},
+          {"id":"C","label_html":"<p>is</p>"},
+          {"id":"D","label_html":"<p>have been</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q03-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The following text is from a student’s essay. Which choice best combines the two underlined sentences?</p><p><u>The city council approved the new park. The park will include a playground, walking trails, and a community garden.</u></p>",
+        "choices": [
+          {"id":"A","label_html":"<p>The city council approved the new park, and it will include a playground, walking trails, and a community garden.</p>"},
+          {"id":"B","label_html":"<p>The city council approved the new park, which will include a playground, walking trails, and a community garden.</p>"},
+          {"id":"C","label_html":"<p>The new park which was approved by the city council it will include a playground, walking trails, and a community garden.</p>"},
+          {"id":"D","label_html":"<p>Approved by the city council was the new park, including a playground, walking trails, and a community garden.</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Sentence Combining"}
+      },
+      {
+        "id": "rw-q04-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical transition?</p><p>Many animals have developed camouflage to avoid predators. The chameleon, for instance, can change its skin color to match its surroundings. ______, the stick insect has evolved to resemble a twig, making it nearly invisible to birds.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>Similarly</p>"},
+          {"id":"B","label_html":"<p>However</p>"},
+          {"id":"C","label_html":"<p>Therefore</p>"},
+          {"id":"D","label_html":"<p>Finally</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Transitions"}
+      },
+      {
+        "id": "rw-q05-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>The discovery of penicillin, one of the most important breakthroughs in modern ______ had a profound impact on medicine.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>history</p>"},
+          {"id":"B","label_html":"<p>history,</p>"},
+          {"id":"C","label_html":"<p>history;</p>"},
+          {"id":"D","label_html":"<p>history—</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q06-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>Despite the storm's intensity, the old lighthouse remained ______, a steadfast beacon for ships navigating the treacherous waters.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>unscathed</p>"},
+          {"id":"B","label_html":"<p>obsolete</p>"},
+          {"id":"C","label_html":"<p>ambiguous</p>"},
+          {"id":"D","label_html":"<p>inconspicuous</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q07-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The following text is from a review of a novel. Which choice best states the main purpose of the text?</p><p>In her latest novel, author Anya Sharma masterfully weaves together three distinct narratives that, at first, seem entirely unrelated. A 17th-century mapmaker, a modern-day programmer, and a far-future space explorer each grapple with their own unique challenges. It is only in the final chapters that the intricate connections between their stories are revealed, culminating in a powerful and unexpected conclusion about the enduring nature of human curiosity.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>To argue that Sharma's previous novels are superior to her latest one.</p>"},
+          {"id":"B","label_html":"<p>To summarize the plot of Sharma's novel and reveal its ending.</p>"},
+          {"id":"C","label_html":"<p>To describe the narrative structure of Sharma's novel and praise its effectiveness.</p>"},
+          {"id":"D","label_html":"<p>To criticize the novel for its overly complex and confusing plot.</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Main Purpose"}
+      },
+      {
+        "id": "rw-q08-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>Neither the coach nor the players ______ satisfied with the outcome of the championship game.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>was</p>"},
+          {"id":"B","label_html":"<p>were</p>"},
+          {"id":"C","label_html":"<p>is</p>"},
+          {"id":"D","label_html":"<p>are</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q09-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>A student wants to add a supporting detail to their argument that public libraries are valuable community resources. Which of the following choices best accomplishes this goal?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>For example, many libraries offer free internet access and computer workshops, bridging the digital divide for low-income residents.</p>"},
+          {"id":"B","label_html":"<p>Libraries are often housed in architecturally significant buildings that add character to a city's downtown area.</p>"},
+          {"id":"C","label_html":"<p>The Dewey Decimal System, used by most libraries, can be confusing for new patrons to learn.</p>"},
+          {"id":"D","label_html":"<p>Furthermore, the quiet atmosphere in libraries is something that many people find calming and conducive to focus.</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Rhetorical Synthesis"}
+      },
+      {
+        "id": "rw-q10-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical transition?</p><p>Urban gardening has numerous benefits, from providing fresh produce to beautifying neighborhoods. ______ a lack of space and poor soil quality can present significant challenges for aspiring city gardeners.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>For instance,</p>"},
+          {"id":"B","label_html":"<p>In addition,</p>"},
+          {"id":"C","label_html":"<p>That is,</p>"},
+          {"id":"D","label_html":"<p>However,</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Transitions"}
+      },
+      {
+        "id": "rw-q11-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>The artist, whose paintings were celebrated for ______ bold use of color, recently had a retrospective exhibition at the museum.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>their</p>"},
+          {"id":"B","label_html":"<p>its</p>"},
+          {"id":"C","label_html":"<p>it's</p>"},
+          {"id":"D","label_html":"<p>there</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q12-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice most logically completes the text?</p><p>A recent study on circadian rhythms found that exposure to blue light from electronic devices in the evening can suppress the production of melatonin, a hormone that regulates sleep. Consequently, the researchers concluded that ______ might improve sleep quality for many individuals.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>listening to calming music before bed</p>"},
+          {"id":"B","label_html":"<p>avoiding screen time for an hour or two before sleeping</p>"},
+          {"id":"C","label_html":"<p>exercising vigorously right before going to bed</p>"},
+          {"id":"D","label_html":"<p>maintaining a consistent room temperature throughout the night</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Logical Completion"}
+      },
+      {
+        "id": "rw-q13-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The following text is from a biography of scientist Marie Curie. Which choice best states the main idea of the text?</p><p>Marie Curie's dedication to her research was relentless. Despite facing significant financial hardship and skepticism from the scientific community, she and her husband, Pierre, spent countless hours in a drafty shed, painstakingly processing tons of pitchblende to isolate a tiny amount of radium. Her perseverance not only led to two Nobel Prizes but also fundamentally changed our understanding of radioactivity and laid the groundwork for new medical treatments.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>Marie Curie's most significant achievement was winning two Nobel Prizes.</p>"},
+          {"id":"B","label_html":"<p>Marie Curie's groundbreaking work was accomplished through remarkable persistence in the face of major obstacles.</p>"},
+          {"id":"C","label_html":"<p>The process of isolating radium was a physically demanding task for the Curies.</p>"},
+          {"id":"D","label_html":"<p>Radioactivity was not well understood by the scientific community in Marie Curie's time.</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Main Idea"}
+      },
+      {
+        "id": "rw-q14-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>Each of the contestants ______ given a different set of materials to work with for the design challenge.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>are</p>"},
+          {"id":"B","label_html":"<p>were</p>"},
+          {"id":"C","label_html":"<p>was</p>"},
+          {"id":"D","label_html":"<p>have been</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q15-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The committee's report was criticized for being ______, offering vague recommendations without providing any specific data or actionable steps.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>exhaustive</p>"},
+          {"id":"B","label_html":"<p>nebulous</p>"},
+          {"id":"C","label_html":"<p>concise</p>"},
+          {"id":"D","label_html":"<p>controversial</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q16-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice best combines the underlined sentences?</p><p><u>Bees are vital pollinators for many crops. Their populations have been declining in recent years.</u> This decline poses a threat to global food security.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>Bees, vital pollinators for many crops, their populations have been declining in recent years.</p>"},
+          {"id":"B","label_html":"<p>Bees are vital pollinators for many crops, and their populations have been declining in recent years.</p>"},
+          {"id":"C","label_html":"<p>The populations of bees, which are vital pollinators for many crops, have been declining in recent years.</p>"},
+          {"id":"D","label_html":"<p>Declining in recent years are the populations of bees, vital pollinators for many crops.</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Sentence Combining"}
+      },
+      {
+        "id": "rw-q17-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>To whomever is in charge of scheduling, ______ please consider adding more weekend shifts.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>we</p>"},
+          {"id":"B","label_html":"<p>us</p>"},
+          {"id":"C","label_html":"<p>they</p>"},
+          {"id":"D","label_html":"<p>yours truly</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q18-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>The student wants to emphasize the contrast between the two types of planets. Which choice most effectively uses relevant information from the notes to accomplish this goal?</p><p><b>Student's Notes:</b><br>• Terrestrial planets (Mercury, Venus, Earth, Mars): rocky, dense, close to the Sun.<br>• Gas giants (Jupiter, Saturn, Uranus, Neptune): massive, low-density, composed of hydrogen/helium, far from the Sun.<br>• Terrestrial planets have solid surfaces. Gas giants do not.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>While terrestrial planets like Earth are small, rocky worlds with solid surfaces, gas giants such as Jupiter are enormous, low-density orbs of hydrogen and helium without a solid surface to stand on.</p>"},
+          {"id":"B","label_html":"<p>There are two types of planets in our solar system, terrestrial planets and gas giants, which are all unique.</p>"},
+          {"id":"C","label_html":"<p>Planets like Mercury and Venus are close to the Sun, and planets like Saturn and Neptune are far from the Sun.</p>"},
+          {"id":"D","label_html":"<p>Gas giants are composed mainly of hydrogen and helium, whereas terrestrial planets are dense and have features like volcanoes and canyons.</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Rhetorical Synthesis"}
+      },
+      {
+        "id": "rw-q19-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The ancient philosopher's teachings were not written down but were instead ______ through generations of his devoted followers.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>fabricated</p>"},
+          {"id":"B","label_html":"<p>disseminated</p>"},
+          {"id":"C","label_html":"<p>eradicated</p>"},
+          {"id":"D","label_html":"<p>scrutinized</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q20-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>The quality of the student's essays ______ dramatically over the course of the semester.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>have improved</p>"},
+          {"id":"B","label_html":"<p>improve</p>"},
+          {"id":"C","label_html":"<p>are improving</p>"},
+          {"id":"D","label_html":"<p>has improved</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q21-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice provides the most effective transition from the previous sentence to the information that follows in this one?</p><p>Many cities are investing in green infrastructure, such as parks and rooftop gardens, to mitigate the urban heat island effect. ______ these installations also help manage stormwater runoff and improve air quality.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>Nevertheless,</p>"},
+          {"id":"B","label_html":"<p>In addition,</p>"},
+          {"id":"C","label_html":"<p>In contrast,</p>"},
+          {"id":"D","label_html":"<p>As a result,</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Transitions"}
+      },
+      {
+        "id": "rw-q22-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which quotation from a researcher on artificial intelligence best supports the student's claim that AI development requires careful ethical consideration?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>\"Our latest model can process natural language with 99% accuracy, a significant leap from previous versions.\"</p>"},
+          {"id":"B","label_html":"<p>\"The computational power required to train these large-scale models is immense, posing a challenge for smaller labs.\"</p>"},
+          {"id":"C","label_html":"<p>\"As we build more autonomous systems, we must urgently address questions of accountability, bias, and control to ensure they operate for the benefit of all humanity.\"</p>"},
+          {"id":"D","label_html":"<p>\"The potential applications of AI in medicine are vast, from diagnosing diseases earlier to discovering new drugs.\"</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Evidence"}
+      },
+      {
+        "id": "rw-q23-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>Driven by a desire to see the world, the journey of the young adventurer ______ him to remote jungles, vast deserts, and bustling foreign cities.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>take</p>"},
+          {"id":"B","label_html":"<p>have taken</p>"},
+          {"id":"C","label_html":"<p>took</p>"},
+          {"id":"D","label_html":"<p>were taking</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q24-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The manager's ______ praise for the team's minor accomplishment seemed excessive and insincere, making the employees uncomfortable.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>effusive</p>"},
+          {"id":"B","label_html":"<p>scarce</p>"},
+          {"id":"C","label_html":"<p>subtle</p>"},
+          {"id":"D","label_html":"<p>constructive</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q25-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice best combines the underlined sentences?</p><p><u>The historian analyzed the ancient manuscript. She discovered it contained previously unknown details about daily life in the Roman Empire.</u></p>",
+        "choices": [
+          {"id":"A","label_html":"<p>The historian analyzed the ancient manuscript, and in it she discovered previously unknown details about daily life in the Roman Empire.</p>"},
+          {"id":"B","label_html":"<p>Analyzing the ancient manuscript, the historian discovered it contained previously unknown details about daily life in the Roman Empire.</p>"},
+          {"id":"C","label_html":"<p>The ancient manuscript was analyzed by the historian, it contained previously unknown details about daily life in the Roman Empire.</p>"},
+          {"id":"D","label_html":"<p>While analyzing the ancient manuscript, previously unknown details about daily life in the Roman Empire were discovered by the historian.</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Sentence Combining"}
+      },
+      {
+        "id": "rw-q26-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>My sister, along with her two best friends, ______ planning a trip to the Grand Canyon next summer.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>are</p>"},
+          {"id":"B","label_html":"<p>is</p>"},
+          {"id":"C","label_html":"<p>were</p>"},
+          {"id":"D","label_html":"<p>have been</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q27-m1",
+        "section_id": "rw",
+        "module_id": "rw-m1",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice most logically completes the text?</p><p>For centuries, the existence of giant squid was the stuff of legend. However, in 2004, Japanese researchers captured the first-ever images of a live giant squid in its deep-sea habitat. This breakthrough was significant because it ______.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>allowed for the first time the study of giant squid behavior in a laboratory setting</p>"},
+          {"id":"B","label_html":"<p>proved that many other mythical sea creatures are also likely to be real</p>"},
+          {"id":"C","label_html":"<p>transformed the giant squid from a mythical beast into a real animal that could be scientifically studied</p>"},
+          {"id":"D","label_html":"<p>revealed that giant squid are much smaller than sailors' legends had suggested</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Logical Completion"}
+      },
+      {
+        "id": "rw-q01-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The new software was designed to be ______, allowing users to easily navigate its features without any prior training.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>intuitive</p>"},
+          {"id":"B","label_html":"<p>complex</p>"},
+          {"id":"C","label_html":"<p>unreliable</p>"},
+          {"id":"D","label_html":"<p>arcane</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q02-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>Despite the traffic, we arrived at the airport with time to spare, checked our bags, and ______ through security without any issues.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>pass</p>"},
+          {"id":"B","label_html":"<p>to pass</p>"},
+          {"id":"C","label_html":"<p>passing</p>"},
+          {"id":"D","label_html":"<p>passed</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q03-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical transition?</p><p>The company invested heavily in new technology to increase efficiency. ______, production costs have decreased by over 20% in the last quarter.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>In contrast</p>"},
+          {"id":"B","label_html":"<p>Nevertheless</p>"},
+          {"id":"C","label_html":"<p>As a result</p>"},
+          {"id":"D","label_html":"<p>Meanwhile</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Transitions"}
+      },
+      {
+        "id": "rw-q04-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>The collection of short stories, each with ______ own unique narrator and perspective, offers a multifaceted view of life in the city.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>their</p>"},
+          {"id":"B","label_html":"<p>it's</p>"},
+          {"id":"C","label_html":"<p>its</p>"},
+          {"id":"D","label_html":"<p>there</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q05-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>The following text is from a student's notes on the process of photosynthesis. A student wants to summarize the primary outcome of photosynthesis. Which choice most effectively uses relevant information from the notes to accomplish this goal?</p><p><b>Student's Notes:</b><br>• Photosynthesis uses sunlight, water, and carbon dioxide.<br>• Takes place in chloroplasts within plant cells.<br>• Primary inputs: 6CO₂ + 6H₂O + Light Energy.<br>• Primary outputs: C₆H₁₂O₆ (glucose) + 6O₂ (oxygen).<br>• Glucose is a sugar used by the plant for energy.<br>• Oxygen is released into the atmosphere.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>Photosynthesis is a complex process that occurs in the chloroplasts of plant cells.</p>"},
+          {"id":"B","label_html":"<p>Ultimately, photosynthesis converts light energy, water, and carbon dioxide into chemical energy in the form of glucose, releasing oxygen as a byproduct.</p>"},
+          {"id":"C","label_html":"<p>The inputs for photosynthesis are carbon dioxide, water, and sunlight, which are all readily available in most ecosystems.</p>"},
+          {"id":"D","label__html":"<p>Through photosynthesis, plants create oxygen, which is essential for animal life, and also produce glucose.</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Rhetorical Synthesis"}
+      },
+      {
+        "id": "rw-q06-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>Given the ______ evidence against him, the suspect's claims of innocence were met with skepticism by the jury.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>scant</p>"},
+          {"id":"B","label_html":"<p>copious</p>"},
+          {"id":"C","label_html":"<p>inconclusive</p>"},
+          {"id":"D","label_html":"<p>irrelevant</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q07-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>A key aspect of the new urban plan is ______ revitalization of the downtown waterfront area.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>its'</p>"},
+          {"id":"B","label_html":"<p>its</p>"},
+          {"id":"C","label_html":"<p>it's</p>"},
+          {"id":"D","label_html":"<p>their</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q08-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice best combines the two underlined sentences?</p><p><u>The artist uses recycled materials in her sculptures. Her work sends a powerful message about sustainability.</u></p>",
+        "choices": [
+          {"id":"A","label_html":"<p>The artist uses recycled materials in her sculptures, and her work sends a powerful message about sustainability.</p>"},
+          {"id":"B","label_html":"<p>By using recycled materials in her sculptures, the artist sends a powerful message about sustainability.</p>"},
+          {"id":"C","label_html":"<p>Recycled materials are used in the artist's sculptures, this sends a powerful message about sustainability.</p>"},
+          {"id":"D","label_html":"<p>The artist's work sends a powerful message about sustainability, she uses recycled materials in her sculptures.</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Sentence Combining"}
+      },
+      {
+        "id": "rw-q09-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The seasoned diplomat was praised for her ability to ______ tense negotiations and guide opposing parties toward a mutually acceptable compromise.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>exacerbate</p>"},
+          {"id":"B","label_html":"<p>obfuscate</p>"},
+          {"id":"C","label_html":"<p>navigate</p>"},
+          {"id":"D","label_html":"<p>derail</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q10-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>The following text describes the discovery of the Rosetta Stone. Which choice best states the main purpose of the text?</p><p>Discovered in 1799 by a French soldier in Egypt, the Rosetta Stone became the crucial key to deciphering ancient Egyptian hieroglyphs. The stone contained the same text inscribed in three different scripts: hieroglyphic, Demotic, and ancient Greek. Because scholars could read Greek, they were able to use it as a guide to unlock the meaning of the hieroglyphs, a script that had been unreadable for over a thousand years. This single discovery opened a window into the rich history and culture of ancient Egypt.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>To describe the military career of the French soldier who found the Rosetta Stone.</p>"},
+          {"id":"B","label_html":"<p>To compare the difficulty of reading hieroglyphic, Demotic, and ancient Greek scripts.</p>"},
+          {"id":"C","label_html":"<p>To explain the historical significance of the Rosetta Stone as a tool for linguistic decipherment.</p>"},
+          {"id":"D","label_html":"<p>To argue that ancient Greek is the most important of the three scripts found on the Rosetta Stone.</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Main Purpose"}
+      },
+      {
+        "id": "rw-q11-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>The list of ingredients for the recipe ______ flour, sugar, eggs, and vanilla extract.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>include</p>"},
+          {"id":"B","label_html":"<p>are including</p>"},
+          {"id":"C","label_html":"<p>have included</p>"},
+          {"id":"D","label_html":"<p>includes</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q12-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical transition?</p><p>Plate tectonics is the theory that Earth's outer shell is divided into several plates that glide over the mantle. The movement of these plates is responsible for the formation of mountains, earthquakes, and volcanoes. ______ these geological processes can be destructive, they are also essential for the planet's rock cycle and the creation of new landmasses.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>After</p>"},
+          {"id":"B","label_html":"<p>Although</p>"},
+          {"id":"C","label_html":"<p>Because</p>"},
+          {"id":"D","label_html":"<p>Therefore</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Transitions"}
+      },
+      {
+        "id": "rw-q13-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>Having completed the research, ______ was written and submitted for publication.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>the report</p>"},
+          {"id":"B","label_html":"<p>the scientists' report</p>"},
+          {"id":"C","label_html":"<p>a report by the scientists</p>"},
+          {"id":"D","label_html":"<p>the scientists wrote a report</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q14-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice most logically completes the text?</p><p>Echolocation, a biological sonar used by animals like bats and dolphins, involves emitting sound waves and interpreting the returning echoes to navigate and find prey. The precision of this system is remarkable. For example, a bat can detect an object as thin as a human hair in complete darkness. This ability suggests that ______.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>echolocation is only useful for large-scale navigation</p>"},
+          {"id":"B","label_html":"<p>the sensory information provided by echolocation is incredibly detailed</p>"},
+          {"id":"C","label_html":"<p>bats have better vision than most other nocturnal animals</p>"},
+          {"id":"D","label_html":"<p>dolphins and bats evolved from a common ancestor</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Logical Completion"}
+      },
+      {
+        "id": "rw-q15-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The CEO's ______ decision to sell the company's most profitable division was met with widespread disbelief and criticism from shareholders.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>prudent</p>"},
+          {"id":"B","label_html":"<p>infallible</p>"},
+          {"id":"C","label_html":"<p>incredulous</p>"},
+          {"id":"D","label_html":"<p>inexplicable</p>"}
+        ],
+        "answer_key": ["D"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q16-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>The novel, which ______ three generations of a single family, explores themes of love, loss, and resilience.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>span</p>"},
+          {"id":"B","label_html":"<p>spanning</p>"},
+          {"id":"C","label_html":"<p>spans</p>"},
+          {"id":"D","label_html":"<p>are spanning</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q17-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice best combines the two underlined sentences?</p><p><u>The team conducted a series of experiments. The goal was to test the new drug's effectiveness.</u></p>",
+        "choices": [
+          {"id":"A","label_html":"<p>The team conducted a series of experiments, they wanted to test the new drug's effectiveness.</p>"},
+          {"id":"B","label_html":"<p>To test the new drug's effectiveness, the team conducted a series of experiments.</p>"},
+          {"id":"C","label_html":"<p>A series of experiments were conducted by the team, the goal being to test the new drug's effectiveness.</p>"},
+          {"id":"D","label_html":"<p>The team conducted a series of experiments, and the goal of the experiments was to test the new drug's effectiveness.</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Sentence Combining"}
+      },
+      {
+        "id": "rw-q18-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which quotation from a sociologist best supports the argument that social media can have a negative impact on mental well-being?</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>\"Social media platforms allow for the rapid dissemination of information, which can be a powerful tool for social movements.\"</p>"},
+          {"id":"B","label_html":"<p>\"We've observed a strong correlation between high levels of social media use and increased rates of anxiety and depression, particularly among adolescents.\"</p>"},
+          {"id":"C","label_html":"<p>\"For many, online communities provide a sense of belonging and connection that may be absent in their offline lives.\"</p>"},
+          {"id":"D","label_html":"<p>\"The architecture of these platforms is designed to capture user attention and maximize engagement time.\"</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Evidence"}
+      },
+      {
+        "id": "rw-q19-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>Anyone who has traveled extensively knows that experiencing different cultures ______ one's perspective on the world.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>broaden</p>"},
+          {"id":"B","label_html":"<p>broadens</p>"},
+          {"id":"C","label_html":"<p>have broadened</p>"},
+          {"id":"D","label_html":"<p>are broadening</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q20-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The professor's lectures were famously ______, filled with dense terminology and complex theories that many students found difficult to penetrate.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>lucid</p>"},
+          {"id":"B","label_html":"<p>colloquial</p>"},
+          {"id":"C","label_html":"<p>recondite</p>"},
+          {"id":"D","label_html":"<p>engaging</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q21-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>A student is writing an essay arguing for the restoration of a local wetland. Which choice best uses information from the student's notes to illustrate the wetland's ecological benefits?</p><p><b>Student's Notes:</b><br>• Local wetland known as Black Creek Marsh.<br>• Acts as a natural water filter, removing pollutants.<br>• Provides critical habitat for over 150 species of migratory birds.<br>• Absorbs excess water during heavy rains, reducing flood risk for nearby towns.<br>• Currently degraded due to pollution and development.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>Restoring Black Creek Marsh is important because the area is currently degraded from pollution and urban development.</p>"},
+          {"id":"B","label_html":"<p>By restoring Black Creek Marsh, the community would not only regain a vital habitat for more than 150 bird species but also a natural defense system that purifies water and mitigates flooding.</p>"},
+          {"id":"C","label_html":"<p>The marsh provides a home for many types of birds and also helps prevent flooding in towns that are close to it.</p>"},
+          {"id":"D","label_html":"<p>Black Creek Marsh can be a great place for residents to enjoy nature, and its restoration would be a valuable project for the community.</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Rhetorical Synthesis"}
+      },
+      {
+        "id": "rw-q22-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>The jury, after deliberating for three days, ______ reached a unanimous verdict.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>has</p>"},
+          {"id":"B","label_html":"<p>have</p>"},
+          {"id":"C","label_html":"<p>are</p>"},
+          {"id":"D","label_html":"<p>were</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q23-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical transition?</p><p>The invention of the printing press in the 15th century dramatically lowered the cost of producing books, making them accessible to a much wider audience. ______ literacy rates across Europe began to rise, fueling the Renaissance and the Reformation.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>Subsequently,</p>"},
+          {"id":"B","label_html":"<p>For example,</p>"},
+          {"id":"C","label_html":"<p>In other words,</p>"},
+          {"id":"D","label_html":"<p>Despite this,</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Transitions"}
+      },
+      {
+        "id": "rw-q24-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice best combines the underlined sentences?</p><p><u>The volcano had been dormant for centuries. It suddenly erupted with tremendous force.</u> The eruption sent ash miles into the atmosphere.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>The volcano, which had been dormant for centuries, suddenly erupted with tremendous force.</p>"},
+          {"id":"B","label_html":"<p>The volcano had been dormant for centuries, but it suddenly erupted with tremendous force.</p>"},
+          {"id":"C","label_html":"<p>Dormant for centuries, a sudden eruption of the volcano was with tremendous force.</p>"},
+          {"id":"D","label_html":"<p>The volcano was dormant for centuries, and then, with tremendous force, it suddenly erupted.</p>"}
+        ],
+        "answer_key": ["A"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Sentence Combining"}
+      },
+      {
+        "id": "rw-q25-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text with the most logical and precise word or phrase?</p><p>The mayor's speech was intended to ______ the public's fears about the economic downturn, but his lack of concrete solutions had the opposite effect.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>validate</p>"},
+          {"id":"B","label_html":"<p>intensify</p>"},
+          {"id":"C","label_html":"<p>allay</p>"},
+          {"id":"D","label_html":"<p>articulate</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Word Choice"}
+      },
+      {
+        "id": "rw-q26-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p><p>This is the park ______ we had our first picnic many years ago.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>which</p>"},
+          {"id":"B","label_html":"<p>that</p>"},
+          {"id":"C","label_html":"<p>where</p>"},
+          {"id":"D","label_html":"<p>when</p>"}
+        ],
+        "answer_key": ["C"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Grammar/Conventions"}
+      },
+      {
+        "id": "rw-q27-m2",
+        "section_id": "rw",
+        "module_id": "rw-m2",
+        "type": "mcq_single",
+        "prompt_html": "<p>Which choice most logically completes the text?</p><p>In a controlled experiment, one group of plants was given a standard fertilizer, while a second group was given a new fertilizer containing micronutrients. After six weeks, the plants in the second group showed a 30% greater average height and more vibrant leaf color. The most logical conclusion from this experiment is that ______.</p>",
+        "choices": [
+          {"id":"A","label_html":"<p>all plants require fertilizer to grow</p>"},
+          {"id":"B","label_html":"<p>the micronutrients in the new fertilizer had a positive effect on plant growth</p>"},
+          {"id":"C","label_html":"<p>the standard fertilizer is ineffective</p>"},
+          {"id":"D","label_html":"<p>plant growth is primarily determined by the amount of water received</p>"}
+        ],
+        "answer_key": ["B"],
+        "points": 1,
+        "tags": {"domain":"R&W","skill":"Logical Completion"}
+      }
+    ]
+  }

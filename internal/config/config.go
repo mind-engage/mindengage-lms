@@ -65,7 +65,7 @@ func FromEnv() Config {
 		HTTPAddr:           addr,
 		PublicURL:          pub,
 		DBDriver:           envOr("DB_DRIVER", "sqlite"),
-		DBDSN:              os.Getenv("DB_DSN"),
+		DBDSN:              envOr("DB_DSN", ""),
 		BlobDriver:         envOr("BLOB_DRIVER", "fs"),
 		BlobBasePath:       envOr("BLOB_BASE_PATH", "./data"),
 		EnableLocalAuth:    envBool("ENABLE_LOCAL_AUTH", true),

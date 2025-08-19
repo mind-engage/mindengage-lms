@@ -28,7 +28,7 @@ func Open(ctx context.Context, driver Driver, dsn string) (*sql.DB, error) {
 	case DriverPostgres:
 		drvName = "pgx" // pgx stdlib driver
 		if dsn == "" {
-			dsn = "postgres://localhost:5432/mindengage?sslmode=disable"
+			dsn = "postgres://localhost:5432/mindengage_lms?sslmode=disable"
 		}
 	default:
 		return nil, fmt.Errorf("unsupported driver: %s", driver)
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS attempts (
 );
 
 CREATE TABLE IF NOT EXISTS event_log (
-  offset INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_offset INTEGER PRIMARY KEY AUTOINCREMENT,
   site_id TEXT NOT NULL DEFAULT 'local',
   typ TEXT NOT NULL,
   key TEXT NOT NULL,
@@ -271,11 +271,12 @@ CREATE TABLE IF NOT EXISTS attempts (
   overall_deadline BIGINT,
   current_index INTEGER NOT NULL DEFAULT 0,
   max_reached_index INTEGER NOT NULL DEFAULT 0,  
+  current_module_id TEXT,
   offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS event_log (
-  offset BIGSERIAL PRIMARY KEY,
+  event_offset BIGSERIAL PRIMARY KEY,
   site_id TEXT NOT NULL DEFAULT 'local',
   typ TEXT NOT NULL,
   key TEXT NOT NULL,

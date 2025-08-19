@@ -97,6 +97,8 @@ type User = {
   role: string;
 };
 
+type Features = { mode: "online"|"offline"; enable_google_auth: boolean };
+
 /** NEW: Tenants & Flags */
 type Tenant = { id: string; name: string; domain?: string; flags?: Record<string, boolean> };
 
@@ -152,12 +154,13 @@ function Shell({ children, authed, onSignOut, title, right }: { children: React.
 }
 
 /* -------------------- Login -------------------- */
-function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p: string) => void; }) {
+function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: string, p: string) => void; features?: { enable_google_auth: boolean } | null;}) {
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("admin");
   function submit(e: React.FormEvent) { e.preventDefault(); onLogin(username, password); }
 
   function googleSignIn() { window.location.href = `${API_BASE}/auth/google/login`; }
+  const canGoogle = !!features?.enable_google_auth;
 
   return (
     <Shell authed={false} title="Sign in">
@@ -171,8 +174,12 @@ function LoginScreen({ busy, onLogin }: { busy: boolean; onLogin: (u: string, p:
                 <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth />
                 <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
                 <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
-                <Divider>or</Divider>
-                <Button variant="outlined" size="large" onClick={googleSignIn} disabled={busy}>Sign in with Google</Button>
+                {canGoogle && (
+                  <Divider>or</Divider>
+                )}
+                {canGoogle && (
+                  <Button variant="outlined" size="large" onClick={googleSignIn} disabled={busy}>Sign in with Google</Button>
+                )}
               </Stack>
             </Box>
           </Paper>
@@ -937,6 +944,8 @@ export default function AdminApp() {
   const [tab, setTab] = useState(0);
   const snack = useSnack();
 
+  const [features, setFeatures] = useState<Features | null>(null);
+
   async function login(username: string, password: string) {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
@@ -947,6 +956,17 @@ export default function AdminApp() {
       snack.setMsg("Logged in.");
     } catch (err: any) { snack.setErr(err.message); } finally { setBusy(false); }
   }
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const f = await api<Features>("/features");
+        setFeatures(f);
+      } catch {
+        setFeatures({ mode: "offline", enable_google_auth: false }); // safe fallback
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     let token = "";
@@ -981,7 +1001,7 @@ export default function AdminApp() {
   }), []);
 
   if (screen === "login") {
-    return (<ThemeProvider theme={theme}><LoginScreen busy={busy} onLogin={login} /></ThemeProvider>);
+    return (<ThemeProvider theme={theme}><LoginScreen busy={busy} onLogin={login} features={features}/></ThemeProvider>);
   }
 
   return (
