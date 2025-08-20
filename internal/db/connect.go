@@ -161,8 +161,30 @@ CREATE TABLE IF NOT EXISTS attempts (
   current_index INTEGER NOT NULL DEFAULT 0,
   max_reached_index INTEGER NOT NULL DEFAULT 0,
   current_module_id TEXT,
-  offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL
+  offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL,
+  graded_at    BIGINT,
+  auto_score   DOUBLE PRECISION NOT NULL DEFAULT 0,
+  manual_score DOUBLE PRECISION NOT NULL DEFAULT 0 
 );
+
+CREATE TABLE IF NOT EXISTS attempt_items (
+  attempt_id    TEXT    NOT NULL,
+  question_id   TEXT    NOT NULL,
+  q_type        TEXT    NOT NULL,
+  points_max    REAL    NOT NULL DEFAULT 0,
+  auto_points   REAL    NOT NULL DEFAULT 0,
+  manual_points REAL    NOT NULL DEFAULT 0,
+  needs_manual  BOOLEAN NOT NULL DEFAULT FALSE,
+  comment       TEXT,
+  response_json TEXT,
+  graded_by     TEXT,
+  graded_at     BIGINT,
+  PRIMARY KEY (attempt_id, question_id),
+  FOREIGN KEY (attempt_id) REFERENCES attempts(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_attempt_items_attempt ON attempt_items (attempt_id);
+CREATE INDEX IF NOT EXISTS idx_attempt_items_need ON attempt_items (attempt_id, needs_manual);
 
 CREATE TABLE IF NOT EXISTS event_log (
   event_offset INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -272,8 +294,31 @@ CREATE TABLE IF NOT EXISTS attempts (
   current_index INTEGER NOT NULL DEFAULT 0,
   max_reached_index INTEGER NOT NULL DEFAULT 0,  
   current_module_id TEXT,
-  offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL
+  offering_id TEXT REFERENCES exam_offerings(id) ON DELETE SET NULL,
+  
+  graded_at    BIGINT,
+  auto_score   DOUBLE PRECISION NOT NULL DEFAULT 0,
+  manual_score DOUBLE PRECISION NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS attempt_items (
+  attempt_id    TEXT    NOT NULL,
+  question_id   TEXT    NOT NULL,
+  q_type        TEXT    NOT NULL,
+  points_max    REAL    NOT NULL DEFAULT 0,
+  auto_points   REAL    NOT NULL DEFAULT 0,
+  manual_points REAL    NOT NULL DEFAULT 0,
+  needs_manual  BOOLEAN NOT NULL DEFAULT FALSE,
+  comment       TEXT,
+  response_json TEXT,
+  graded_by     TEXT,
+  graded_at     BIGINT,
+  PRIMARY KEY (attempt_id, question_id),
+  FOREIGN KEY (attempt_id) REFERENCES attempts(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_attempt_items_attempt ON attempt_items (attempt_id);
+CREATE INDEX IF NOT EXISTS idx_attempt_items_need ON attempt_items (attempt_id, needs_manual);
 
 CREATE TABLE IF NOT EXISTS event_log (
   event_offset BIGSERIAL PRIMARY KEY,

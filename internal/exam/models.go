@@ -46,6 +46,20 @@ type Attempt struct {
 	CurrentModuleID  string `json:"current_module_id,omitempty"`
 }
 
+type AttemptItem struct {
+	AttemptID    string          `json:"attempt_id"`
+	QuestionID   string          `json:"question_id"`
+	QType        string          `json:"q_type"`
+	PointsMax    float64         `json:"points_max"`
+	AutoPoints   float64         `json:"auto_points"`
+	ManualPoints float64         `json:"manual_points"`
+	NeedsManual  bool            `json:"needs_manual"`
+	Comment      string          `json:"comment,omitempty"`
+	ResponseJSON json.RawMessage `json:"response_json,omitempty"`
+	GradedBy     string          `json:"graded_by,omitempty"`
+	GradedAt     int64           `json:"graded_at,omitempty"`
+}
+
 type Exam struct {
 	ID           string     `json:"id"`
 	Title        string     `json:"title"`

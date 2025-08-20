@@ -146,6 +146,109 @@ function useSnack() {
   } as const;
 }
 
+function ManualGradingCard({ jwt, attemptID }: { jwt: string; attemptID: string }) {
+  const snack = useSnack();
+  const [items, setItems] = useState<Array<{
+    attempt_id: string;
+    question_id: string;
+    q_type: string;
+    points_max: number;
+    auto_points: number;
+    manual_points: number;
+    needs_manual: boolean;
+    comment?: string;
+    response_json?: any;
+  }>>([]);
+  const [busy, setBusy] = useState(false);
+
+  async function load() {
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<typeof items>(`/attempts/${encodeURIComponent(attemptID)}/grading`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setItems(data);
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
+  }
+
+  useEffect(() => { if (attemptID) load(); /* eslint-disable react-hooks/exhaustive-deps */ }, [attemptID]);
+
+  async function save(finalize = false) {
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const payload = {
+        items: Object.fromEntries(
+          items.map(it => [it.question_id, { manual_points: Number(it.manual_points||0), comment: it.comment||"" }])
+        ),
+        finalize,
+      };
+      await api(`/attempts/${encodeURIComponent(attemptID)}/grading`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify(payload),
+      });
+      snack.setMsg(finalize ? "Grades saved & finalized." : "Grades saved.");
+      load();
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
+  }
+
+  return (
+    <Paper variant="outlined" sx={{ p: 2 }}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="subtitle1" fontWeight={600}>Manual grading</Typography>
+        <Stack direction="row" spacing={1}>
+          <Button size="small" onClick={load} disabled={busy}>{busy ? "…" : "Refresh"}</Button>
+          <Button size="small" variant="outlined" onClick={() => save(false)} disabled={busy}>Save</Button>
+          <Button size="small" variant="contained" onClick={() => save(true)} disabled={busy}>Save & Finalize</Button>
+        </Stack>
+      </Stack>
+      <Divider sx={{ my: 1 }} />
+      <Stack spacing={1.25} sx={{ maxHeight: 360, overflowY: "auto" }}>
+        {items.map((it) => (
+          <Paper key={it.question_id} variant="outlined" sx={{ p: 1.25 }}>
+            <Stack spacing={0.5}>
+              <Typography variant="caption" color="text.secondary">
+                QID: <Box component="span" sx={{ fontFamily: 'monospace' }}>{it.question_id}</Box> • {it.q_type}
+                {" "}• Max {it.points_max} • Auto {it.auto_points}
+                {it.needs_manual && <Chip size="small" label="needs manual" sx={{ ml: 0.75 }} />}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">Response:</Typography>
+              <Box sx={{ bgcolor: 'grey.50', p: 1, fontFamily: 'ui-monospace, monospace', whiteSpace: 'pre-wrap', borderRadius: 1 }}>
+                {JSON.stringify(it.response_json ?? null, null, 2)}
+              </Box>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 1 }}>
+                <TextField
+                  label="Manual points"
+                  type="number"
+                  size="small"
+                  value={it.manual_points}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setItems(prev => prev.map(p => p.question_id === it.question_id ? { ...p, manual_points: Number(v) } : p));
+                  }}
+                  sx={{ width: 160 }}
+                />
+                <TextField
+                  label="Comment"
+                  size="small"
+                  value={it.comment || ""}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setItems(prev => prev.map(p => p.question_id === it.question_id ? { ...p, comment: v } : p));
+                  }}
+                  fullWidth
+                />
+              </Stack>
+            </Stack>
+          </Paper>
+        ))}
+        {items.length === 0 && <Typography variant="body2" color="text.secondary">No grading items yet.</Typography>}
+      </Stack>
+      {snack.node}
+    </Paper>
+  );
+}
+
 function Shell({ children, authed, onSignOut, title, right }: { children: React.ReactNode; authed: boolean; onSignOut?: () => void; title?: string; right?: React.ReactNode; }) {
   return (
     <>
@@ -642,13 +745,33 @@ function AttemptsPanel({ jwt }: { jwt: string; }) {
         <Paper elevation={1} sx={{ p: 2.5 }}>
           <Stack spacing={1}>
             <Typography variant="h6" fontWeight={600}>Attempt {selected.id}</Typography>
-            <Typography variant="body2" color="text.secondary">Exam: <Box component="span" sx={{ fontFamily: 'monospace' }}>{selected.exam_id}</Box> • User: {selected.user_id} • Status: {selected.status} {typeof selected.score === 'number' && (<Chip size="small" color="success" label={`Score: ${selected.score}`} sx={{ ml: 1 }} />)}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Exam: <Box component="span" sx={{ fontFamily: 'monospace' }}>{selected.exam_id}</Box>
+              {' '}• User: {selected.user_id} • Status: {selected.status}
+              {typeof selected.score === 'number' && (
+                <Chip size="small" color="success" label={`Score: ${selected.score}`} sx={{ ml: 1 }} />
+              )}
+            </Typography>
             <Divider sx={{ my: 1 }} />
             <Typography variant="subtitle2">Responses (raw)</Typography>
-            <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', whiteSpace: 'pre-wrap' }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: 2,
+                bgcolor: 'grey.50',
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                whiteSpace: 'pre-wrap',
+              }}
+            >
               {JSON.stringify(selected.responses ?? {}, null, 2)}
             </Paper>
           </Stack>
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* Manual grading UI */}
+          <ManualGradingCard jwt={jwt} attemptID={selected.id} />
         </Paper>
       )}
       {snack.node}

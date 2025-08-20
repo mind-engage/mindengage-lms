@@ -324,8 +324,8 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 		return Attempt{}, err
 	}
 	if a.Status == "submitted" {
-		return a, nil
-	}
+		// still recompute scores (idempotent) to ensure item rows exist
+	} // else proceed
 
 	// load full exam WITH keys for grading
 	row := s.db.QueryRow(`SELECT questions_json FROM exams WHERE id=$1`, a.ExamID)
@@ -339,35 +339,78 @@ func (s *SQLStore) Submit(attemptID string) (Attempt, error) {
 	}
 
 	ctx := context.Background()
-	score := 0.0
+	autoTotal := 0.0
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return Attempt{}, err
+	}
+	defer func() { _ = tx.Rollback() }()
+
+	// For manual sum we look at persisted rows (may have pre-existing manual points)
 	for _, q := range questions {
 		resp, has := a.Responses[q.ID]
-		if !has {
-			continue
+		// grade what we can automatically
+		auto := 0.0
+		if has {
+			gq := grading.Q{Type: q.Type, Points: q.Points, AnswerKey: q.AnswerKey}
+			res, err := s.grader.Grade(ctx, gq, resp)
+			if err == nil {
+				auto = res.AutoPoints
+			}
 		}
-		gq := grading.Q{Type: q.Type, Points: q.Points, AnswerKey: q.AnswerKey}
-		res, err := s.grader.Grade(ctx, gq, resp)
+		autoTotal += auto
+
+		// upsert attempt_items
+		respJSON, _ := json.Marshal(resp)
+		needMan := needsManualForType(q.Type, q)
+		_, err := tx.Exec(`
+			INSERT INTO attempt_items (attempt_id, question_id, q_type, points_max, auto_points, manual_points, needs_manual, response_json)
+			VALUES ($1,$2,$3,$4,$5,
+			        COALESCE((SELECT manual_points FROM attempt_items WHERE attempt_id=$1 AND question_id=$2), 0),
+			        $6,$7)
+			ON CONFLICT (attempt_id, question_id) DO UPDATE SET
+			  q_type=EXCLUDED.q_type,
+			  points_max=EXCLUDED.points_max,
+			  auto_points=EXCLUDED.auto_points,
+			  needs_manual=EXCLUDED.needs_manual,
+			  response_json=EXCLUDED.response_json
+		`, attemptID, q.ID, q.Type, q.Points, auto, needMan, string(respJSON))
 		if err != nil {
-			continue
+			return Attempt{}, err
 		}
-		score += res.AutoPoints
 	}
 
-	a.Score = score
-	a.Status = "submitted"
-	buf, _ := json.Marshal(a.Responses)
+	// sum manual points currently on items
+	var manualSum float64
+	if err := tx.QueryRow(`SELECT COALESCE(SUM(manual_points),0) FROM attempt_items WHERE attempt_id=$1`, attemptID).Scan(&manualSum); err != nil {
+		return Attempt{}, err
+	}
+
 	now := time.Now().Unix()
-	_, err = s.db.Exec(`UPDATE attempts SET status='submitted', score=$1, responses_json=$2, submitted_at=$3 WHERE id=$4`,
-		a.Score, string(buf), now, attemptID)
+	// status becomes submitted (or stays submitted), and score is auto+manual
+	_, err = tx.Exec(`
+	  UPDATE attempts
+	     SET status='submitted',
+	         auto_score=$1,
+	         manual_score=$2,
+	         score=$3,
+	         submitted_at=COALESCE(submitted_at, $4)
+	   WHERE id=$5`,
+		autoTotal, manualSum, autoTotal+manualSum, now, attemptID)
 	if err != nil {
 		return Attempt{}, err
 	}
 
+	if err := tx.Commit(); err != nil {
+		return Attempt{}, err
+	}
+
 	_ = syncx.NewEventRepo(s.db).Append(context.Background(), syncx.Event{
-		SiteID:   "local", // later: cfg.SiteID
+		SiteID:   "local",
 		Type:     "AttemptSubmitted",
 		Key:      attemptID,
-		DataJSON: string(buf), // responses; include more if desired
+		DataJSON: "{}", // keep minimal; responses already stored
 	})
 
 	return s.GetAttempt(attemptID)
@@ -803,4 +846,149 @@ func extractModuleTimes(policyRaw json.RawMessage) []int {
 		out = append(out, m.TimeLimitSec)
 	}
 	return out
+}
+
+func needsManualForType(t string, q Question) bool {
+	switch strings.ToLower(strings.TrimSpace(t)) {
+	case "essay":
+		return true
+	case "short_word":
+		// treat short_word as manual if no answer_key is provided
+		return len(q.AnswerKey) == 0
+	default:
+		return false
+	}
+}
+
+func (s *SQLStore) GetAttemptItems(ctx context.Context, attemptID string) ([]AttemptItem, error) {
+	rows, err := s.db.QueryContext(ctx, `
+		SELECT attempt_id, question_id, q_type, points_max, auto_points, manual_points,
+		       needs_manual, response_json, graded_by, graded_at
+		FROM attempt_items
+		WHERE attempt_id = $1
+	`, attemptID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	items := make([]AttemptItem, 0, 64)
+	for rows.Next() {
+		var it AttemptItem
+		var respRaw any             // []byte on pg, string on sqlite
+		var gradedBy sql.NullString // nullable
+		var gradedAt sql.NullInt64  // nullable
+
+		if err := rows.Scan(
+			&it.AttemptID,
+			&it.QuestionID,
+			&it.QType,
+			&it.PointsMax,
+			&it.AutoPoints,
+			&it.ManualPoints,
+			&it.NeedsManual,
+			&respRaw,  // response_json (nullable JSON)
+			&gradedBy, // nullable TEXT
+			&gradedAt, // nullable BIGINT
+		); err != nil {
+			return nil, err
+		}
+
+		it.ResponseJSON = normalizeRawJSON(respRaw)
+		if gradedBy.Valid {
+			it.GradedBy = gradedBy.String
+		}
+		if gradedAt.Valid {
+			it.GradedAt = gradedAt.Int64
+		}
+
+		items = append(items, it)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func normalizeRawJSON(v any) json.RawMessage {
+	switch t := v.(type) {
+	case nil:
+		return json.RawMessage("null")
+	case []byte:
+		if len(t) == 0 {
+			return json.RawMessage("null")
+		}
+		b := make([]byte, len(t))
+		copy(b, t)
+		return json.RawMessage(b)
+	case string:
+		s := strings.TrimSpace(t)
+		if s == "" {
+			return json.RawMessage("null")
+		}
+		return json.RawMessage([]byte(s))
+	default:
+		// Fallback: marshal whatever the driver returned.
+		b, _ := json.Marshal(t)
+		return b
+	}
+}
+
+func (s *SQLStore) ApplyManualGrades(ctx context.Context, attemptID string, updates map[string]ManualGradeInput, gradedBy string, finalize bool) (Attempt, error) {
+	if len(updates) == 0 {
+		return s.GetAttempt(attemptID)
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return Attempt{}, err
+	}
+	defer func() { _ = tx.Rollback() }()
+
+	now := time.Now().Unix()
+	for qid, u := range updates {
+		if _, err := tx.ExecContext(ctx, `
+			UPDATE attempt_items
+			   SET manual_points=$1,
+			       comment=$2,
+				   graded_by=$3,
+				   graded_at=$4
+			 WHERE attempt_id=$5 AND question_id=$6`,
+			u.ManualPoints, u.Comment, gradedBy, now, attemptID, qid); err != nil {
+			return Attempt{}, err
+		}
+	}
+
+	var autoSum, manualSum float64
+	if err := tx.QueryRowContext(ctx, `SELECT COALESCE(SUM(auto_points),0) FROM attempt_items WHERE attempt_id=$1`, attemptID).Scan(&autoSum); err != nil {
+		return Attempt{}, err
+	}
+	if err := tx.QueryRowContext(ctx, `SELECT COALESCE(SUM(manual_points),0) FROM attempt_items WHERE attempt_id=$1`, attemptID).Scan(&manualSum); err != nil {
+		return Attempt{}, err
+	}
+
+	// mark attempts.graded_at if finalize OR if no remaining needs_manual without manual score
+	gradedAtExpr := "graded_at"
+	if finalize {
+		gradedAtExpr = fmt.Sprintf("%d", now)
+	} else {
+		// if all items that need manual have >0 or >=0? We just set when there is no item left with needs_manual=true AND manual_points IS NULL? We used REAL default 0
+		// Keep graded_at untouched unless finalize=true; simple & predictable.
+	}
+
+	if _, err := tx.ExecContext(ctx, fmt.Sprintf(`
+		UPDATE attempts
+		   SET manual_score=$1,
+		       auto_score=$2,
+		       score=$3,
+		       %s=%s
+		 WHERE id=$4`, gradedAtExpr, gradedAtExpr),
+		manualSum, autoSum, autoSum+manualSum, attemptID); err != nil {
+		return Attempt{}, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return Attempt{}, err
+	}
+	return s.GetAttempt(attemptID)
 }
