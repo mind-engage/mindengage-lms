@@ -498,11 +498,7 @@ function ExamsPanel({ jwt }: { jwt: string; }) {
           <Grid sx={{ display: { xs: 'none', sm: 'block' } }}>
             <Divider flexItem orientation="vertical" />
           </Grid>
-          <Grid>
-            <Button startIcon={<AddIcon />} variant="contained" disableElevation onClick={() => setOpenCreate(true)}>
-              New Exam (JSON)
-            </Button>
-          </Grid>
+
           <Grid>
             <Button component="label" startIcon={<UploadFileIcon />} variant="outlined">
               Import JSON
@@ -1095,6 +1091,21 @@ function CoursesPanel({ jwt }: { jwt: string }) {
     }
   }
 
+  function handleStartChange(v: string) {
+    setStartAt(v);
+    if (endAt && new Date(v).getTime() > new Date(endAt).getTime()) {
+      setEndAt(v); // reset end to start if start moved past end
+    }
+  }
+  
+  function handleEndChange(v: string) {
+    if (startAt && new Date(v).getTime() < new Date(startAt).getTime()) {
+      setEndAt(startAt); // enforce end >= start
+      return;
+    }
+    setEndAt(v);
+  }
+
   return (
     <Stack spacing={3}>
       <Paper elevation={1} sx={{ p: 2.5 }}>
@@ -1197,33 +1208,79 @@ function CoursesPanel({ jwt }: { jwt: string }) {
             <Typography variant="h6" fontWeight={600}>Offerings</Typography>
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>
-              <FormControl sx={{ minWidth: 220 }}>
-                <InputLabel id="exam-select">Exam</InputLabel>
-                <Select labelId="exam-select" label="Exam" value={selExamId} onChange={(e) => setSelExamId(String(e.target.value))}>
-                  {examList.map(ex => (
-                    <MenuItem key={ex.id} value={ex.id}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{ex.id}</Box>
-                        <Box component="span">• {ex.title}</Box>
-                      </Box>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TextField
-                label="Start (local)"
-                type="datetime-local"
-                value={startAt}
-                onChange={(e) => setStartAt(e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-              <TextField
-                label="End (local)"
-                type="datetime-local"
-                value={endAt}
-                onChange={(e) => setEndAt(e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
+            <FormControl sx={{ minWidth: 260 }}>
+              <InputLabel id="exam-select">Exam</InputLabel>
+              <Select
+                labelId="exam-select"
+                label="Exam"
+                value={selExamId}
+                onChange={(e) => setSelExamId(String(e.target.value))}
+                sx={{
+                  // make room for the chevron and prevent overlap
+                  "& .MuiSelect-select": {
+                    pr: 5,                            // adds ~40px right padding
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  },
+                  "& .MuiSelect-icon": { right: 8 },  // keep icon aligned
+                  maxWidth: 1,                        // allow ellipsis to kick in
+                }}
+                renderValue={(value) => {
+                  const ex = examList.find(v => v.id === value);
+                  if (!ex) return value as string;
+                  return `${ex.id} • ${ex.title}`;
+                }}
+              >
+                {examList.map(ex => (
+                  <MenuItem key={ex.id} value={ex.id}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
+                      <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12, whiteSpace: "nowrap" }}>{ex.id}</Box>
+                      <Box component="span" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>• {ex.title}</Box>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              label="Start (local)"
+              type="datetime-local"
+              value={startAt}
+              onChange={(e) => handleStartChange(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              inputProps={{
+                'aria-label': 'Start date time',
+              }}
+              sx={{
+                minWidth: 240,
+                '& input': {
+                  pr: 1,                   // room for the picker icon
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                },
+              }}
+            />
+            <TextField
+              label="End (local)"
+              type="datetime-local"
+              value={endAt}
+              onChange={(e) => handleEndChange(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              inputProps={{
+                min: startAt || undefined, // browser-level guard: cannot pick < start
+                'aria-label': 'End date time',
+              }}
+              sx={{
+                minWidth: 240,
+                '& input': {
+                  pr: 1,                   // room for the picker icon
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                },
+              }}
+            />
             </Stack>
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }} sx={{ mt: 1.5 }}>

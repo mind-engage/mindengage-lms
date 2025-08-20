@@ -186,6 +186,12 @@ func main() {
 			pr.With(rbac.RequireAny("attempt:view-all", "attempt:view-own")).
 				Get("/attempts", api.ListAttemptsHandler(store))
 
+			// in /api group where JWT + role middleware are attached
+			pr.With(rbac.Require("attempt:grade")).
+				Get("/attempts/{attemptID}/grading", api.GetAttemptGradingHandler(store))
+			pr.With(rbac.Require("attempt:grade")).
+				Post("/attempts/{attemptID}/grading", api.ApplyAttemptGradingHandler(store, authSvc))
+
 			// Users admin
 			pr.With(rbac.Require("users:bulk_upsert")).
 				Post("/users/bulk", api.BulkUpsertUsersHandler(dbh))

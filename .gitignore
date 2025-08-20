@@ -8,3 +8,5 @@ mindengage.db
 /.vscode
 
 /cmd/gateway/static
+/cmd/gateway/__debug*
+/cmd/platformd/__debug*
