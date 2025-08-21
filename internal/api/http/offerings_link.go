@@ -57,88 +57,88 @@ type Bucket struct {
 	Avg     float64 `json:"avg_points,omitempty"`
 }
 
-func GetOfferingByTokenHandler(db *sql.DB) nethttp.HandlerFunc {
-	type off struct {
-		ID           string     `json:"id"`
-		ExamID       string     `json:"exam_id"`
-		CourseID     string     `json:"course_id"`
-		StartAt      *time.Time `json:"start_at,omitempty"`
-		EndAt        *time.Time `json:"end_at,omitempty"`
-		TimeLimitSec *int       `json:"time_limit_sec,omitempty"`
-		MaxAttempts  int        `json:"max_attempts"`
-		Visibility   string     `json:"visibility"`
-		State        string     `json:"state,omitempty"` // not_started | active | ended
-	}
+type offeringResolveResp struct {
+	ID           string     `json:"id"`
+	ExamID       string     `json:"exam_id"`
+	CourseID     string     `json:"course_id"`
+	StartAt      *time.Time `json:"start_at,omitempty"`
+	EndAt        *time.Time `json:"end_at,omitempty"`
+	TimeLimitSec *int       `json:"time_limit_sec,omitempty"`
+	MaxAttempts  int        `json:"max_attempts"`
+	Visibility   string     `json:"visibility"`
+	State        string     `json:"state,omitempty"` // not_started | active | ended
+	Exam         ex.Exam    `json:"exam"`            // student-safe (no answer_key)
+}
 
-	return func(w nethttp.ResponseWriter, r *nethttp.Request) {
-		offerID := chi.URLParam(r, "offeringID")
+// GetOfferingByTokenHandler returns offering metadata + student-safe exam via store.GetExam.
+func GetOfferingByTokenHandler(db *sql.DB, store ex.Store) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		offeringID := chi.URLParam(r, "offeringID")
 		tok := strings.TrimSpace(r.URL.Query().Get("access_token"))
-		if offerID == "" || tok == "" {
-			nethttp.Error(w, "bad request", nethttp.StatusBadRequest)
+		if offeringID == "" || tok == "" {
+			http.Error(w, "bad request", http.StatusBadRequest)
 			return
 		}
 
-		// Single query: fetch everything needed
-		var o off
-		var start, end sql.NullInt64
-		var tls sql.NullInt64
+		var out offeringResolveResp
+		var start, end, tls sql.NullInt64
 		var vis, dbTok string
 
-		row := db.QueryRowContext(r.Context(), `
+		// Load offering + token
+		err := db.QueryRowContext(r.Context(), `
 			SELECT id, exam_id, course_id, start_at, end_at, time_limit_sec, max_attempts, visibility,
 			       COALESCE(access_token,'')
 			  FROM exam_offerings
 			 WHERE id = $1
-		`, offerID)
-
-		if err := row.Scan(&o.ID, &o.ExamID, &o.CourseID, &start, &end, &tls, &o.MaxAttempts, &vis, &dbTok); err != nil {
-			// Hide existence details
-			nethttp.Error(w, "not found", nethttp.StatusNotFound)
+		`, offeringID).Scan(&out.ID, &out.ExamID, &out.CourseID, &start, &end, &tls, &out.MaxAttempts, &vis, &dbTok)
+		if err != nil {
+			http.Error(w, "not found", http.StatusNotFound)
 			return
 		}
-
-		// Only link offerings are resolvable; return 404 to avoid ID enumeration
 		if vis != "link" {
-			nethttp.Error(w, "not found", nethttp.StatusNotFound)
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		if subtle.ConstantTimeCompare([]byte(strings.TrimSpace(dbTok)), []byte(tok)) != 1 {
+			http.Error(w, "not found", http.StatusNotFound)
 			return
 		}
 
-		// Constant-time token check (trim any accidental DB whitespace)
-		dbTok = strings.TrimSpace(dbTok)
-		if subtle.ConstantTimeCompare([]byte(dbTok), []byte(tok)) != 1 {
-			nethttp.Error(w, "not found", nethttp.StatusNotFound)
-			return
-		}
-
-		// Convert timestamps for JSON
+		// Timestamps / state
 		if start.Valid {
 			t := time.Unix(start.Int64, 0).UTC()
-			o.StartAt = &t
+			out.StartAt = &t
 		}
 		if end.Valid {
 			t := time.Unix(end.Int64, 0).UTC()
-			o.EndAt = &t
+			out.EndAt = &t
 		}
 		if tls.Valid {
 			v := int(tls.Int64)
-			o.TimeLimitSec = &v
+			out.TimeLimitSec = &v
 		}
-		o.Visibility = vis
-
-		// Optional: simple state for the client
+		out.Visibility = vis
 		now := time.Now().UTC().Unix()
 		switch {
 		case start.Valid && now < start.Int64:
-			o.State = "not_started"
+			out.State = "not_started"
 		case end.Valid && now > end.Int64:
-			o.State = "ended"
+			out.State = "ended"
 		default:
-			o.State = "active"
+			out.State = "active"
 		}
+
+		// Student-safe exam (no keys) + policy via store
+		examSafe, err := store.GetExam(out.ExamID)
+		if err != nil {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		out.Exam = examSafe
 
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Cache-Control", "no-store")
-		_ = json.NewEncoder(w).Encode(o)
+		_ = json.NewEncoder(w).Encode(out)
 	}
 }
 

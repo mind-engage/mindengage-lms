@@ -146,7 +146,7 @@ func main() {
 			})
 		})
 
-		apiR.Get("/offerings/{offeringID}/resolve", api.GetOfferingByTokenHandler(dbh))
+		apiR.Get("/offerings/{offeringID}/resolve", api.GetOfferingByTokenHandler(dbh, store))
 		apiR.Post("/offerings/{offeringID}/grade_ephemeral", api.GradeEphemeralHandler(dbh, store, grader))
 		apiR.Get("/offerings/{offeringID}/ephemeral_stats", api.GetEphemeralStatsHandler(dbh))
 
