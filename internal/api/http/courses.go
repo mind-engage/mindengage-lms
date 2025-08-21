@@ -174,23 +174,27 @@ func CreateOfferingHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.Han
 			EndAt        *int64  `json:"end_at,omitempty"`
 			TimeLimitSec *int    `json:"time_limit_sec,omitempty"`
 			MaxAttempts  *int    `json:"max_attempts,omitempty"`
-			Visibility   *string `json:"visibility,omitempty"`   // "course"|"public"|"link"
-			AccessToken  *string `json:"access_token,omitempty"` // for "link"
+			Visibility   *string `json:"visibility,omitempty"`
+			AccessToken  *string `json:"access_token,omitempty"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || strings.TrimSpace(req.ExamID) == "" {
 			nethttp.Error(w, "bad json", nethttp.StatusBadRequest)
 			return
 		}
+
 		offID := "o-" + strconv.FormatInt(time.Now().UnixNano(), 10)
-		var startAt, endAt *time.Time
+
+		// ✅ Keep Unix seconds as *int64 to match BIGINT columns
+		var startAt, endAt *int64
 		if req.StartAt != nil {
-			t := time.Unix(*req.StartAt, 0).UTC()
-			startAt = &t
+			v := *req.StartAt
+			startAt = &v
 		}
 		if req.EndAt != nil {
-			t := time.Unix(*req.EndAt, 0).UTC()
-			endAt = &t
+			v := *req.EndAt
+			endAt = &v
 		}
+
 		timeLimit := sql.NullInt64{}
 		if req.TimeLimitSec != nil {
 			timeLimit.Valid = true
@@ -208,13 +212,13 @@ func CreateOfferingHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.Han
 		if req.AccessToken != nil && strings.TrimSpace(*req.AccessToken) != "" {
 			accTok.Valid = true
 			accTok.String = strings.TrimSpace(*req.AccessToken)
-			// NOTE: you may also want to enforce visibility == "link" when AccessToken is present
 		}
+
 		if _, err := dbh.Exec(`
-      INSERT INTO exam_offerings
-        (id, exam_id, course_id, assigned_by, start_at, end_at, time_limit_sec, max_attempts, visibility, access_token)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-    `, offID, req.ExamID, courseID, sub, startAt, endAt, timeLimit, maxAttempts, visibility, accTok); err != nil {
+            INSERT INTO exam_offerings
+                (id, exam_id, course_id, assigned_by, start_at, end_at, time_limit_sec, max_attempts, visibility, access_token)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `, offID, req.ExamID, courseID, sub, startAt, endAt, timeLimit, maxAttempts, visibility, accTok); err != nil {
 			nethttp.Error(w, "db error", nethttp.StatusInternalServerError)
 			return
 		}

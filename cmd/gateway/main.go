@@ -57,7 +57,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("db open failed: %v", err)
 	}
-	store := exam.NewSQLStore(dbh, cfg.DBDriver, grading.NewDefaultGrader())
+	grader := grading.NewDefaultGrader() // or grading.NewDefaultGrader(grading.WithOCR(ocr.NewTesseractOCR()))
+	store := exam.NewSQLStore(dbh, cfg.DBDriver, grader)
 
 	// --- Auth ---
 	secret := getenvOr("AUTH_HMAC_SECRET", "supersecret-dev-key")
@@ -144,6 +145,10 @@ func main() {
 				api.MountAssets(ar, bs)
 			})
 		})
+
+		apiR.Get("/offerings/{offeringID}/resolve", api.GetOfferingByTokenHandler(dbh))
+		apiR.Post("/offerings/{offeringID}/grade_ephemeral", api.GradeEphemeralHandler(dbh, store, grader))
+		apiR.Get("/offerings/{offeringID}/ephemeral_stats", api.GetEphemeralStatsHandler(dbh))
 
 		apiR.Group(func(pr chi.Router) {
 			pr.Use(authmw.JWTMiddleware(authSvc))

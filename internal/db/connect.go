@@ -194,6 +194,21 @@ CREATE TABLE IF NOT EXISTS event_log (
   data TEXT NOT NULL,
   created_at INTEGER NOT NULL DEFAULT (strftime('%s','now'))
 );
+
+CREATE TABLE IF NOT EXISTS ephemeral_stats (
+  offering_id   TEXT NOT NULL,
+  question_id   TEXT NOT NULL,
+  bucket        TEXT NOT NULL,      -- "*" = totals; otherwise e.g. "A", "opt:A", "set:A,B", "text:<norm>"
+  count         BIGINT NOT NULL DEFAULT 0,
+  correct       BIGINT NOT NULL DEFAULT 0,      -- “full credit” hits
+  sum_points    DOUBLE PRECISION NOT NULL DEFAULT 0,
+  max_points    DOUBLE PRECISION NOT NULL DEFAULT 0,
+  updated_at    BIGINT NOT NULL,                -- unix seconds
+  PRIMARY KEY (offering_id, question_id, bucket)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ephem_stats_off_q
+  ON ephemeral_stats (offering_id, question_id);
 `
 
 const schemaPostgres = `
@@ -328,4 +343,19 @@ CREATE TABLE IF NOT EXISTS event_log (
   data TEXT NOT NULL,
   created_at BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW())::BIGINT)
 );
+
+CREATE TABLE IF NOT EXISTS ephemeral_stats (
+  offering_id   TEXT NOT NULL,
+  question_id   TEXT NOT NULL,
+  bucket        TEXT NOT NULL,      -- "*" = totals; otherwise e.g. "A", "opt:A", "set:A,B", "text:<norm>"
+  count         BIGINT NOT NULL DEFAULT 0,
+  correct       BIGINT NOT NULL DEFAULT 0,      -- “full credit” hits
+  sum_points    DOUBLE PRECISION NOT NULL DEFAULT 0,
+  max_points    DOUBLE PRECISION NOT NULL DEFAULT 0,
+  updated_at    BIGINT NOT NULL,                -- unix seconds
+  PRIMARY KEY (offering_id, question_id, bucket)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ephem_stats_off_q
+  ON ephemeral_stats (offering_id, question_id);
 `

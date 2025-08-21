@@ -6,7 +6,7 @@ TOK=$(curl -s -X POST http://localhost:8080/api/auth/login \
 # upload exam
 curl -s -X POST http://localhost:8080/api/exams \
   -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
-  --data @exam-101.json
+  --data @exam-001.json
 
 # login as student
 STOK=$(curl -s -X POST http://localhost:8080/api/auth/login \
@@ -15,12 +15,12 @@ STOK=$(curl -s -X POST http://localhost:8080/api/auth/login \
 
 # fetch exam
 curl -s -H "Authorization: Bearer $STOK" \
-  http://localhost:8080/api/exams/exam-101 | jq .
+  http://localhost:8080/api/exams/exam-001 | jq .
 
 # create attempt
 ATTEMPT=$(curl -s -X POST http://localhost:8080/api/attempts \
   -H "Authorization: Bearer $STOK" -H 'Content-Type: application/json' \
-  -d '{"exam_id":"exam-101","user_id":"stu-1"}' | jq -r .id)
+  -d '{"exam_id":"exam-001","user_id":"stu-1"}' | jq -r .id)
 
 # save responses
 curl -s -X POST http://localhost:8080/api/attempts/$ATTEMPT/responses \
@@ -50,3 +50,37 @@ curl -s -H "Authorization: Bearer $STOK" \
 
 # health check (root-level, not under /api)
 curl -s http://localhost:8080/healthz
+
+
+# create a course (teacher)
+COURSE=$(curl -s -X POST http://localhost:8080/api/courses/ \
+  -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
+  -d '{"name":"Physics 001 (link test)"}' | jq -r .id)
+echo "COURSE=$COURSE"
+
+# create a link offering for exam-101 with a DEMO123 token
+# start_at = now-60, end_at = now+3600 (computed inline)
+OFFER=$(curl -s -X POST http://localhost:8080/api/courses/$COURSE/offerings \
+  -H "Authorization: Bearer $TOK" -H 'Content-Type: application/json' \
+  -d "$(jq -n --arg exam "exam-001" --arg tok "DEMO123" --argjson now "$(date +%s)" \
+        '{exam_id:$exam, start_at:($now-60), end_at:($now+3600),
+          time_limit_sec:600, max_attempts:1, visibility:"link", access_token:$tok}')" \
+  | jq -r .id)
+echo "OFFER=$OFFER"
+
+# public resolve (no JWT) using the link token
+curl -s "http://localhost:8080/api/offerings/$OFFER/resolve?access_token=DEMO123" | jq .
+
+# public ephemeral grading (no JWT). Replace qIDs to match your exam.
+curl -s -X POST "http://localhost:8080/api/offerings/$OFFER/grade_ephemeral?access_token=DEMO123" \
+  -H 'Content-Type: application/json' \
+  -d '{"responses":{"q1":"9.8 m/s^2","q2":"true","q3":"v","q4":"3","q5":"My essay text..."}}' \
+  | jq .
+
+# optional: show correct answers too
+curl -s -X POST "http://localhost:8080/api/offerings/$OFFER/grade_ephemeral?access_token=DEMO123&show_answers=1" \
+  -H 'Content-Type: application/json' \
+  -d '{"responses":{"q1":"9.8 m/s^2","q2":"true","q3":"v","q4":"3","q5":"My essay text..."}}' \
+  | jq .
+
+  curl -s "http://localhost:8080/api/offerings/$OFFER/ephemeral_stats?access_token=DEMO123" | jq .
