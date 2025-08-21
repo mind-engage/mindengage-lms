@@ -3,9 +3,11 @@ package exam
 import "context"
 
 type ListOpts struct {
-	Q      string
-	Limit  int
-	Offset int
+	Q          string
+	Limit      int
+	Offset     int
+	ViewerID   string // <- NEW
+	ViewerRole string // <- NEW: "student" | "teacher" | "admin"
 }
 
 type AttemptListOpts struct {

@@ -164,7 +164,7 @@ func main() {
 			pr.With(rbac.Require("exam:export")).
 				Get("/exams/{id}/export", api.ExportQTIHandler(store))
 			pr.With(rbac.Require("exam:view")).
-				Get("/exams", api.ListExamsHandler(store))
+				Get("/exams", api.ListExamsHandler(store, authSvc))
 
 			pr.With(rbac.RequireAny("exam:delete_any", "exam:delete_own")).
 				Delete("/exams/{examID}", api.DeleteExamHandler(dbh, authSvc))

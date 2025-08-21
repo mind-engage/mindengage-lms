@@ -462,7 +462,6 @@ function ContentGovernancePanel({ jwt }: { jwt: string; }) {
   const [status, setStatus] = useState<string>("pending");
   const [list, setList] = useState<ExamSummary[]>([]);
   const [viewExam, setViewExam] = useState<Exam | null>(null);
-  const [templateJson, setTemplateJson] = useState<string>(`{\n  "id": "policy.default",\n  "time_limit_sec": 3600,\n  "max_attempts": 1,\n  "navigation": { "allow_back": false }\n}`);
   const snack = useSnack();
 
   const fetchExams = useCallback(async () => {
@@ -494,31 +493,6 @@ function ContentGovernancePanel({ jwt }: { jwt: string; }) {
       a.click();
       URL.revokeObjectURL(a.href);
     } catch (e: any) { snack.setErr(e.message); }
-  }
-  async function approve(id: string) {
-    try {
-      const res = await fetch(`${API_BASE}/admin/exams/${encodeURIComponent(id)}/approve`, { method: 'POST', headers: { Authorization: `Bearer ${jwt}` } });
-      if (!res.ok) throw new Error(await res.text());
-      snack.setMsg('Approved');
-      fetchExams();
-    } catch (e: any) { snack.setErr(e.message); }
-  }
-  async function archive(id: string) {
-    try {
-      const res = await fetch(`${API_BASE}/admin/exams/${encodeURIComponent(id)}/archive`, { method: 'POST', headers: { Authorization: `Bearer ${jwt}` } });
-      if (!res.ok) throw new Error(await res.text());
-      snack.setMsg('Archived');
-      fetchExams();
-    } catch (e: any) { snack.setErr(e.message); }
-  }
-
-  async function saveTemplate() {
-    try {
-      const payload = JSON.parse(templateJson);
-      const res = await fetch(`${API_BASE}/admin/policy-templates`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error(await res.text());
-      snack.setMsg('Template saved');
-    } catch (e: any) { snack.setErr(e.message?.startsWith('Unexpected token') ? 'Invalid JSON' : e.message); }
   }
 
   return (
@@ -565,22 +539,9 @@ function ContentGovernancePanel({ jwt }: { jwt: string; }) {
                 </Box>
                 <Button variant="text" onClick={() => openExam(e.id)}>Preview</Button>
                 <Button variant="outlined" startIcon={<FileDownloadIcon />} onClick={() => exportQTI(e.id)}>Export QTI</Button>
-                <Button variant="outlined" startIcon={<PolicyIcon />} onClick={() => approve(e.id)} disabled={e.status === 'approved'}>Approve</Button>
-                <Button color="warning" variant="outlined" startIcon={<FlagIcon />} onClick={() => archive(e.id)} disabled={e.status === 'archived'}>Archive</Button>
               </Stack>
             </Paper>
           ))}
-        </Stack>
-      </Paper>
-
-      {/* Policy templates (authoring governance) */}
-      <Paper elevation={1} sx={{ p: 2.5 }}>
-        <Typography variant="h6" fontWeight={600}>Policy Templates</Typography>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} alignItems={{ md: 'flex-start' }} sx={{ mt: 1.5 }}>
-          <TextField label="Template JSON" value={templateJson} onChange={(e) => setTemplateJson(e.target.value)} multiline minRows={6} fullWidth />
-          <Stack spacing={1.5}>
-            <Button variant="contained" disableElevation onClick={saveTemplate}>Save Template</Button>
-          </Stack>
         </Stack>
       </Paper>
 

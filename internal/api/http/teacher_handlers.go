@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 
@@ -64,12 +66,12 @@ func UploadExamHandler(store exam.Store, db *sql.DB, authSvc *authmw.AuthService
 			http.Error(w, "bad json", http.StatusBadRequest)
 			return
 		}
-		if e.ID == "" {
+		if strings.TrimSpace(e.ID) == "" {
 			http.Error(w, "id required", http.StatusBadRequest)
 			return
 		}
 
-		// If a profile/policy is provided, validate it before saving.
+		// Validate policy/profile if present (unchanged)
 		if e.Profile != "" && len(e.PolicyRaw) > 0 {
 			var pol formats.Policy
 			if err := json.Unmarshal(e.PolicyRaw, &pol); err != nil {
@@ -91,42 +93,121 @@ func UploadExamHandler(store exam.Store, db *sql.DB, authSvc *authmw.AuthService
 			}
 		}
 
-		// Derive total time from policy if not explicitly set.
+		// Derive total time from policy if not explicitly set (unchanged)
 		if e.TimeLimitSec == 0 && len(e.PolicyRaw) > 0 {
 			var pol formats.Policy
 			_ = json.Unmarshal(e.PolicyRaw, &pol)
-			if tl := totalTimeFromPolicy(pol); tl > 0 {
-				e.TimeLimitSec = tl
+			sum := 0
+			for _, s := range pol.Sections {
+				for _, m := range s.Modules {
+					if m.TimeLimitSec > 0 {
+						sum += m.TimeLimitSec
+					}
+				}
+			}
+			if sum > 0 {
+				e.TimeLimitSec = sum
 			}
 		}
 
-		// Save exam (upsert depending on store implementation)
+		sub, role := subjectAndRole(authSvc, r)
+		isAdmin := role == "admin"
+
+		// Does an exam with this ID already exist?
+		var exists bool
+		if err := db.QueryRowContext(r.Context(),
+			`SELECT EXISTS(SELECT 1 FROM exams WHERE id=$1)`, e.ID).Scan(&exists); err != nil {
+			http.Error(w, "lookup exam: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if !exists {
+			// Fresh create
+			if err := store.PutExam(e); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			_, _ = db.ExecContext(r.Context(),
+				`INSERT INTO exam_owners (exam_id, teacher_id) VALUES ($1,$2)
+				 ON CONFLICT (exam_id, teacher_id) DO NOTHING`,
+				e.ID, sub,
+			)
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"status": "created",
+				"id":     e.ID,
+			})
+			return
+		}
+
+		// Exists: determine if caller is an owner
+		var isOwner bool
+		_ = db.QueryRowContext(r.Context(),
+			`SELECT EXISTS(SELECT 1 FROM exam_owners WHERE exam_id=$1 AND teacher_id=$2)`,
+			e.ID, sub,
+		).Scan(&isOwner)
+
+		// Overwrite intent?
+		overwrite := r.URL.Query().Get("overwrite") == "1" ||
+			strings.EqualFold(strings.TrimSpace(r.Header.Get("X-Allow-Overwrite")), "1")
+
+		if overwrite {
+			// Only owner or admin may overwrite an existing exam id
+			if !(isOwner || isAdmin) {
+				http.Error(w, "conflict: exam exists and you are not an owner (use fork)", http.StatusConflict)
+				return
+			}
+			if err := store.PutExam(e); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			_, _ = db.ExecContext(r.Context(),
+				`INSERT INTO exam_owners (exam_id, teacher_id) VALUES ($1,$2)
+				 ON CONFLICT (exam_id, teacher_id) DO NOTHING`,
+				e.ID, sub,
+			)
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"status": "updated",
+				"id":     e.ID,
+			})
+			return
+		}
+
+		// Not overwriting: fork under a new ID to avoid clobbering
+		oldID := e.ID
+		e.ID = forkExamID(oldID, sub)
 		if err := store.PutExam(e); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		// Insert exam ownership for the uploading teacher/admin.
-		// JWT middleware is in place for this route, so we should have a subject.
-		if db != nil && authSvc != nil {
-			if sub, _ := subjectAndRole(authSvc, r); strings.TrimSpace(sub) != "" {
-				// Portable UPSERT for Postgres + modern SQLite:
-				if _, err := db.ExecContext(
-					r.Context(),
-					`INSERT INTO exam_owners (exam_id, teacher_id) VALUES ($1, $2)
-					 ON CONFLICT (exam_id, teacher_id) DO NOTHING`,
-					e.ID, sub,
-				); err != nil {
-					// If ownership write fails, surface it — permissions later depend on this row.
-					http.Error(w, "exam saved but owner insert failed: "+err.Error(), http.StatusInternalServerError)
-					return
-				}
-			}
-		}
+		_, _ = db.ExecContext(r.Context(),
+			`INSERT INTO exam_owners (exam_id, teacher_id) VALUES ($1,$2)
+			 ON CONFLICT (exam_id, teacher_id) DO NOTHING`,
+			e.ID, sub,
+		)
 
 		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok", "id": e.ID})
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"status":      "forked",
+			"id":          e.ID,
+			"forked_from": oldID,
+		})
 	}
+}
+
+// forkExamID generates a collision-resistant new exam id derived from a base.
+func forkExamID(base, owner string) string {
+	b := strings.TrimSpace(base)
+	if b == "" {
+		b = "exam"
+	}
+	// keep id readable but unique per uploader and second
+	ownershort := owner
+	if len(ownershort) > 8 {
+		ownershort = ownershort[:8]
+	}
+	return b + "-" + ownershort + "-" + strconv.FormatInt(time.Now().Unix(), 10)
 }
 
 func GetExamHandler(store exam.Store) http.HandlerFunc {

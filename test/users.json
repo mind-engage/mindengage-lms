@@ -4,5 +4,7 @@
     {"id":"admin","username":"admin","role":"admin","password":"admin"},
   
     {"id":"alice","username":"alice","role":"student","password":"alicepass"},
-    {"id":"bob","username":"bob","role":"student","password":"bobpass"}
+    {"id":"bob","username":"bob","role":"student","password":"bobpass"},
+
+    {"id":"charlie","username":"charlie","role":"teacher","password":"charliepass"}
   ]

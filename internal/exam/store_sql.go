@@ -124,13 +124,60 @@ func (s *SQLStore) ListExams(ctx context.Context, opts ListOpts) ([]ExamSummary,
 		opts.Offset = 0
 	}
 
-	rows, err := s.db.QueryContext(ctx, `
-		SELECT id, title, time_limit_sec, created_at, profile
-		FROM exams
-		WHERE ($1 = '' OR LOWER(title) LIKE LOWER('%' || $1 || '%'))
-		ORDER BY created_at DESC
-		LIMIT $2 OFFSET $3
-	`, strings.TrimSpace(opts.Q), opts.Limit, opts.Offset)
+	base := `
+SELECT e.id, e.title, e.time_limit_sec, e.created_at, e.profile
+FROM exams e
+`
+	where := []string{}
+	args := []any{}
+	i := 1
+
+	role := strings.ToLower(strings.TrimSpace(opts.ViewerRole))
+	uid := strings.TrimSpace(opts.ViewerID)
+
+	switch role {
+	case "teacher":
+		// Teacher: exams they own
+		base += ` JOIN exam_owners eo ON eo.exam_id = e.id `
+		where = append(where, fmt.Sprintf("eo.teacher_id = $%d", i))
+		args = append(args, uid)
+		i++
+	case "student":
+		// Student: exams offered in courses they are enrolled in (active)
+		where = append(where, fmt.Sprintf(`
+EXISTS (
+  SELECT 1
+    FROM exam_offerings ofr
+    JOIN course_students cs
+      ON cs.course_id = ofr.course_id
+   WHERE ofr.exam_id = e.id
+     AND cs.student_id = $%d
+     AND cs.status = 'active'
+)`, i))
+		args = append(args, uid)
+		i++
+	default:
+		// Admin or unknown: no extra predicate (admins see all)
+	}
+
+	// Optional title search
+	if q := strings.TrimSpace(opts.Q); q != "" {
+		where = append(where, fmt.Sprintf("LOWER(e.title) LIKE LOWER('%%' || $%d || '%%')", i))
+		args = append(args, q)
+		i++
+	}
+	if len(where) == 0 {
+		where = append(where, "1=1")
+	}
+
+	q := fmt.Sprintf(`
+%s
+WHERE %s
+ORDER BY e.created_at DESC
+LIMIT %d OFFSET %d
+`, base, strings.Join(where, " AND "), opts.Limit, opts.Offset)
+
+	rows, err := s.db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, err
 	}
