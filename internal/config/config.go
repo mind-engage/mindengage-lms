@@ -23,9 +23,11 @@ type Config struct {
 	BlobDriver   string // fs|minio|gcs
 	BlobBasePath string // for fs/minio
 
-	EnableLocalAuth bool
-	EnableLTI       bool
-	EnableJWKS      bool
+	EnableLocalAuth  bool
+	EnableGuestAuth  bool
+	EnableGoogleAuth bool
+	EnableLTI        bool
+	EnableJWKS       bool
 
 	AdminUser     string
 	AdminPassHash string // bcrypt
@@ -37,8 +39,6 @@ type Config struct {
 	LTIPlatformAuthURL string
 	LTIToolClientID    string
 	LTIToolRedirectURI string
-
-	EnableGoogleAuth bool
 
 	GoogleClientID     string
 	GoogleClientSecret string
@@ -80,7 +80,9 @@ func FromEnv() Config {
 		LTIToolClientID:    envOr("LTI_TOOL_CLIENT_ID", "TOOL_CLIENT_ID"),
 		LTIToolRedirectURI: envOr("LTI_TOOL_REDIRECT_URI", defRedirect),
 
-		EnableGoogleAuth:   envBool("ENABLE_GOOGLE_AUTH", false),
+		EnableGoogleAuth: envBool("ENABLE_GOOGLE_AUTH", false),
+		EnableGuestAuth:  envBool("ENABLE_GUEST_AUTH", false),
+
 		GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
 		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
 		GoogleRedirectURI:  envOr("GOOGLE_REDIRECT_URI", strings.TrimSuffix(pub, "/")+"/api/auth/google/callback"),

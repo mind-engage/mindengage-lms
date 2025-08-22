@@ -103,10 +103,12 @@ func main() {
 			type resp struct {
 				Mode             string `json:"mode"` // "online" | "offline"
 				EnableGoogleAuth bool   `json:"enable_google_auth"`
+				EnableGuestAuth  bool   `json:"enable_guest_auth"`
 			}
 			_ = json.NewEncoder(w).Encode(resp{
 				Mode:             string(cfg.Mode),
 				EnableGoogleAuth: cfg.EnableGoogleAuth && cfg.Mode == config.ModeOnline,
+				EnableGuestAuth:  cfg.EnableGuestAuth,
 			})
 		})
 		// --- JWKS ---
@@ -131,6 +133,10 @@ func main() {
 
 		if cfg.EnableLocalAuth {
 			apiR.Post("/auth/login", authmw.LoginHandler(authSvc, cfg, dbh))
+		}
+
+		if cfg.EnableGuestAuth {
+			apiR.Post("/auth/guest", auth.GuestLoginHandler(authSvc, dbh, cfg))
 		}
 
 		bs, err := storage.NewFSStore(cfg.BlobBasePath)
@@ -230,6 +236,8 @@ func main() {
 				cr.With(rbac.RequireAny("course:delete_any", "course:delete_own")).
 					Delete("/{courseID}", api.DeleteCourseHandler(dbh, authSvc))
 			})
+
+			pr.Get("/offerings/public", api.ListPublicOfferingsHandler(dbh))
 
 			apiR.Group(func(pr chi.Router) {
 				pr.Use(authmw.JWTMiddleware(authSvc))

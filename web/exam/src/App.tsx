@@ -94,7 +94,7 @@ type Offering = {
   visibility: "course" | "public" | "link";
 };
 
-type Features = { mode: "online"|"offline"; enable_google_auth: boolean };
+type Features = { mode: "online"|"offline"; enable_google_auth: boolean; enable_guest_auth: boolean };
 
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
@@ -357,11 +357,12 @@ function useSnack() {
 }
 
 /* -------------------- Screen 1: Login -------------------- */
-function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: string, p: string) => void; features?: { enable_google_auth: boolean } | null;}) {
-  const [username, setUsername] = useState("student");
-  const [password, setPassword] = useState("student");
+function LoginScreen({ busy, onLogin, onGuestLogin, features }: { busy: boolean; onLogin: (u: string, p: string) => void; onGuestLogin: () => void ;features?: { enable_google_auth: boolean, enable_guest_auth: boolean } | null;}) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const canGoogle = !!features?.enable_google_auth;
+  const canGuest  = !!features?.enable_guest_auth;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -391,16 +392,15 @@ function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: 
                 {canGoogle && (
                   <Button type="button" variant="outlined" size="large" onClick={loginWithGoogle} disabled={busy}>Sign in with Google</Button>
                 )}
+                {canGuest && (
                 <Divider>or</Divider>
-                  <Button
-                    type="button"
-                    variant="contained"
-                    size="large"
-                    onClick={() => onLogin("student", "student")}
-                    disabled={busy}
-                  >
+                )}
+                {canGuest && (
+ 
+                  <Button type="button" variant="contained" size="large" onClick={onGuestLogin} disabled={busy} >
                     Continue as guest
                   </Button>
+                )}
               </Stack>
             </Box>
           </Paper>
@@ -439,6 +439,15 @@ function SelectScreen({
   const [offerings, setOfferings] = useState<Offering[]>([]);
   const [busyCourses, setBusyCourses] = useState(false);
   const [busyOfferings, setBusyOfferings] = useState(false);
+
+  const [pubs, setPubs] = useState<Offering[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try { setPubs(await api<Offering[]>("/offerings/public", { headers: { Authorization: `Bearer ${jwt}` }})); }
+      catch (_) {}
+    })();
+  }, [jwt]);
 
   const loadCourses = useCallback(async () => {
     setBusyCourses(true); snack.setErr(null); snack.setMsg(null);
@@ -626,6 +635,28 @@ function SelectScreen({
                         </Typography>
                       </Box>
                       <Button variant="outlined" onClick={() => openByExamId(e.id)}>Open</Button>
+                    </Stack>
+                  </Paper>
+                ))}
+              </Stack>
+              <Typography variant="subtitle1" fontWeight={600}>Public offerings</Typography>
+              <Stack spacing={1.25} sx={{ mt: 1 }}>
+                {pubs.map(o => (
+                  <Paper key={o.id} variant="outlined" sx={{ p: 1.5 }}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography fontWeight={600}><code>{o.id}</code></Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Exam: <code>{o.exam_id}</code>
+                          {o.start_at && <> • Starts: {new Date(o.start_at).toLocaleString()}</>}
+                          {o.end_at && <> • Ends: {new Date(o.end_at).toLocaleString()}</>}
+                          {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0)/60)} min</>}
+                          <> • Attempts: {o.max_attempts}</>
+                        </Typography>
+                      </Box>
+                      <Button variant="contained" disableElevation onClick={() => onLoadExam(o.exam_id, o)}>
+                        Open
+                      </Button>
                     </Stack>
                   </Paper>
                 ))}
@@ -1251,7 +1282,7 @@ export default function StudentApp() {
         const f = await api<Features>("/features");
         setFeatures(f);
       } catch {
-        setFeatures({ mode: "offline", enable_google_auth: false }); // safe fallback
+        setFeatures({ mode: "offline", enable_google_auth: false, enable_guest_auth: false }); // safe fallback
       }
     })();
   }, []);
@@ -1271,6 +1302,16 @@ export default function StudentApp() {
       snack.setErr(err.message);
     } finally { setBusy(false); }
   }
+
+  async function guestLogin() {
+    const data = await api<{access_token:string, username:string}>("/auth/guest", {
+      method: "POST",
+      credentials: "include",     // <-- send/receive me_guest_id cookie
+    });
+    setJwt(data.access_token);
+    setScreen("select");
+  }
+  
 
   function signOut() {
     setJwt("");
@@ -1306,7 +1347,7 @@ export default function StudentApp() {
 
   return (
     <ThemeProvider theme={theme}>
-      {screen === "login" && <LoginScreen busy={busy} onLogin={login} features={features} />}
+      {screen === "login" && <LoginScreen busy={busy} onLogin={login} onGuestLogin={guestLogin} features={features} />}
       {screen === "select" && jwt && <SelectScreen jwt={jwt} onBack={signOut} onLoadExam={loadExamById} />}
       {screen === "exam" && jwt && loadedExam && (
         <ExamScreen jwt={jwt} exam={loadedExam} offering={loadedOffering} onExit={() => setScreen("select")} />

@@ -5,6 +5,9 @@ import (
 	"strings"
 )
 
+var ctxKeyRole = &struct{ _ string }{"role"}
+var ctxKeySub = &struct{ _ string }{"sub"}
+
 type Checker struct {
 	RolePermissions map[string][]string
 }
@@ -57,12 +60,6 @@ func matchPerm(pattern, perm string) bool {
 	return false
 }
 
-// ---- role in context ----
-
-type ctxKey struct{}
-
-var ctxKeyRole = ctxKey{}
-
 func WithRole(ctx context.Context, role string) context.Context {
 	return context.WithValue(ctx, ctxKeyRole, role)
 }
@@ -75,8 +72,6 @@ func RoleFromContext(ctx context.Context) string {
 	}
 	return ""
 }
-
-var ctxKeySub ctxKey = struct{}{}
 
 func WithSubject(ctx context.Context, sub string) context.Context {
 	return context.WithValue(ctx, ctxKeySub, sub)

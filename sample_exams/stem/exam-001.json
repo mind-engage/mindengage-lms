@@ -1,0 +1,46 @@
+{
+  "id": "exam-001",
+  "title": "Intro Physics Quiz",
+  "time_limit_sec": 900,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq_single",
+      "prompt_html": "Acceleration due to gravity near Earth is ~?",
+      "choices": [
+        {"id": "c1", "label_html": "7.8 m/s^2"},
+        {"id": "c2", "label_html": "9.8 m/s^2"},
+        {"id": "c3", "label_html": "10.8 m/s^2"}
+      ],
+      "answer_key": ["c2"],
+      "points": 2
+    },
+    {
+      "id": "q2",
+      "type": "true_false",
+      "prompt_html": "Momentum is conserved in isolated systems.",
+      "answer_key": ["true"],
+      "points": 2
+    },
+    {
+      "id": "q3",
+      "type": "short_word",
+      "prompt_html": "Symbol for velocity (lowercase)?",
+      "answer_key": ["v"],
+      "points": 1
+    },
+    {
+      "id": "q4",
+      "type": "numeric",
+      "prompt_html": "Pi to nearest integer?",
+      "answer_key": ["3"],
+      "points": 1
+    },
+    {
+      "id": "q5",
+      "type": "essay",
+      "prompt_html": "Explain Newton's second law with an example.",
+      "points": 4
+    }
+  ]
+}
