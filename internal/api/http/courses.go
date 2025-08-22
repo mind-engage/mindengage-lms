@@ -3,6 +3,7 @@ package http
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -49,37 +50,142 @@ func CreateCourseHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.Handl
 	}
 }
 
-func ListMyCoursesHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.HandlerFunc {
+func ListCoursesHandler(db *sql.DB, authSvc *authmw.AuthService) nethttp.HandlerFunc {
 	return func(w nethttp.ResponseWriter, r *nethttp.Request) {
 		sub, role := subjectFromBearer(authSvc, r)
 		if sub == "" {
 			nethttp.Error(w, "unauthorized", nethttp.StatusUnauthorized)
 			return
 		}
-		var rows *sql.Rows
-		var err error
-		switch role {
-		case "teacher", "admin":
-			rows, err = dbh.Query(`SELECT c.id, c.name FROM courses c
-                             JOIN course_teachers t ON t.course_id=c.id
-                             WHERE t.teacher_id=$1 ORDER BY c.created_at DESC`, sub)
-		default: // student
-			rows, err = dbh.Query(`SELECT c.id, c.name FROM courses c
-                             JOIN course_students s ON s.course_id=c.id
-                             WHERE s.student_id=$1 AND s.status='active' ORDER BY c.created_at DESC`, sub)
+
+		// Filters
+		q := strings.TrimSpace(r.URL.Query().Get("q"))
+		teacherID := strings.TrimSpace(r.URL.Query().Get("teacher_id"))
+		studentID := strings.TrimSpace(r.URL.Query().Get("student_id"))
+		all := r.URL.Query().Get("all") == "1"
+
+		limit := 50
+		offset := 0
+		if v, err := strconv.Atoi(r.URL.Query().Get("limit")); err == nil && v > 0 {
+			if v > 200 {
+				v = 200
+			}
+			limit = v
 		}
+		if v, err := strconv.Atoi(r.URL.Query().Get("offset")); err == nil && v >= 0 {
+			offset = v
+		}
+
+		var (
+			sqlStr string
+			args   []any
+		)
+
+		addNameFilter := func(base string, argStart int) (string, []any) {
+			// argStart = next placeholder index (1-based)
+			if q != "" {
+				base += fmt.Sprintf(" AND c.name ILIKE '%%' || $%d || '%%' ", argStart)
+				return base, []any{q}
+			}
+			return base, nil
+		}
+
+		switch role {
+		case "admin":
+			switch {
+			case all:
+				sqlStr = `
+					SELECT c.id, c.name
+					  FROM courses c
+					 WHERE 1=1`
+				var extra []any
+				sqlStr, extra = addNameFilter(sqlStr, 1)
+				args = append(args, extra...)
+				args = append(args, limit, offset)
+				sqlStr += ` ORDER BY c.created_at DESC LIMIT $` + strconv.Itoa(len(args)-1) + ` OFFSET $` + strconv.Itoa(len(args))
+
+			case teacherID != "":
+				sqlStr = `
+					SELECT c.id, c.name
+					  FROM courses c
+					  JOIN course_teachers t ON t.course_id=c.id
+					 WHERE t.teacher_id=$1`
+				var extra []any
+				sqlStr, extra = addNameFilter(sqlStr, 2)
+				args = append(args, teacherID)
+				args = append(args, extra...)
+				args = append(args, limit, offset)
+				sqlStr += ` ORDER BY c.created_at DESC LIMIT $` + strconv.Itoa(len(args)-1) + ` OFFSET $` + strconv.Itoa(len(args))
+
+			case studentID != "":
+				sqlStr = `
+					SELECT c.id, c.name
+					  FROM courses c
+					  JOIN course_students s ON s.course_id=c.id
+					 WHERE s.student_id=$1 AND s.status='active'`
+				var extra []any
+				sqlStr, extra = addNameFilter(sqlStr, 2)
+				args = append(args, studentID)
+				args = append(args, extra...)
+				args = append(args, limit, offset)
+				sqlStr += ` ORDER BY c.created_at DESC LIMIT $` + strconv.Itoa(len(args)-1) + ` OFFSET $` + strconv.Itoa(len(args))
+
+			default:
+				// "admin but no special filters" – either mimic teacher view or return all.
+				// To keep it least-surprising, return *all*:
+				sqlStr = `
+					SELECT c.id, c.name
+					  FROM courses c
+					 WHERE 1=1`
+				var extra []any
+				sqlStr, extra = addNameFilter(sqlStr, 1)
+				args = append(args, extra...)
+				args = append(args, limit, offset)
+				sqlStr += ` ORDER BY c.created_at DESC LIMIT $` + strconv.Itoa(len(args)-1) + ` OFFSET $` + strconv.Itoa(len(args))
+			}
+
+		case "teacher":
+			sqlStr = `
+				SELECT c.id, c.name
+				  FROM courses c
+				  JOIN course_teachers t ON t.course_id=c.id
+				 WHERE t.teacher_id=$1`
+			var extra []any
+			sqlStr, extra = addNameFilter(sqlStr, 2)
+			args = append(args, sub)
+			args = append(args, extra...)
+			args = append(args, limit, offset)
+			sqlStr += ` ORDER BY c.created_at DESC LIMIT $` + strconv.Itoa(len(args)-1) + ` OFFSET $` + strconv.Itoa(len(args))
+
+		default: // student
+			sqlStr = `
+				SELECT c.id, c.name
+				  FROM courses c
+				  JOIN course_students s ON s.course_id=c.id
+				 WHERE s.student_id=$1 AND s.status='active'`
+			var extra []any
+			sqlStr, extra = addNameFilter(sqlStr, 2)
+			args = append(args, sub)
+			args = append(args, extra...)
+			args = append(args, limit, offset)
+			sqlStr += ` ORDER BY c.created_at DESC LIMIT $` + strconv.Itoa(len(args)-1) + ` OFFSET $` + strconv.Itoa(len(args))
+		}
+
+		rows, err := db.QueryContext(r.Context(), sqlStr, args...)
 		if err != nil {
 			nethttp.Error(w, "db error", nethttp.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
-		//type row struct{ ID, Name string }
+
 		out := []Course{}
 		for rows.Next() {
-			var id, name string
-			_ = rows.Scan(&id, &name)
-			out = append(out, Course{ID: id, Name: name})
+			var c Course
+			if err := rows.Scan(&c.ID, &c.Name); err == nil {
+				out = append(out, c)
+			}
 		}
+		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(out)
 	}
 }

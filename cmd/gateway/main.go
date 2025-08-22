@@ -210,19 +210,19 @@ func main() {
 			// ===========================
 			pr.Route("/courses", func(cr chi.Router) {
 				// Create a course (teacher or admin)
-				cr.Post("/", api.CreateCourseHandler(dbh, authSvc))
+				cr.With(rbac.Require("course:create")).Post("/", api.CreateCourseHandler(dbh, authSvc))
 
 				// List my courses (teacher -> I teach; student -> I’m enrolled)
-				cr.Get("/", api.ListMyCoursesHandler(dbh, authSvc))
+				cr.Get("/", api.ListCoursesHandler(dbh, authSvc))
 
 				// Add co-teachers
-				cr.Post("/{courseID}/teachers", api.AddCoTeachersHandler(dbh, authSvc))
+				cr.With(rbac.Require("course:manage_teachers")).Post("/{courseID}/teachers", api.AddCoTeachersHandler(dbh, authSvc))
 
 				// Enroll students
-				cr.Post("/{courseID}/students", api.EnrollStudentsHandler(dbh, authSvc))
+				cr.With(rbac.Require("course:manage_students")).Post("/{courseID}/students", api.EnrollStudentsHandler(dbh, authSvc))
 
 				// Create an exam offering for a course
-				cr.Post("/{courseID}/offerings", api.CreateOfferingHandler(dbh, authSvc))
+				cr.With(rbac.Require("course:create_offering")).Post("/{courseID}/offerings", api.CreateOfferingHandler(dbh, authSvc))
 
 				// List offerings for a course
 				cr.Get("/{courseID}/offerings", api.ListOfferingsHandler(dbh, authSvc))

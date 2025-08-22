@@ -102,6 +102,8 @@ type Features = { mode: "online"|"offline"; enable_google_auth: boolean };
 /** NEW: Tenants & Flags */
 type Tenant = { id: string; name: string; domain?: string; flags?: Record<string, boolean> };
 
+export type Course = { id: string; name: string };
+
 /* -------------------- Helpers -------------------- */
 async function api<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, opts);
@@ -456,12 +458,25 @@ function IdentityRolesPanel({ jwt }: { jwt: string; }) {
 }
 
 /* -------------------- Content Governance -------------------- */
+/* -------------------- Content Governance -------------------- */
 function ContentGovernancePanel({ jwt }: { jwt: string; }) {
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string>("pending");
   const [list, setList] = useState<ExamSummary[]>([]);
   const [viewExam, setViewExam] = useState<Exam | null>(null);
+
+  // NEW: delete exam confirm + progress
+  const [confirmDelExam, setConfirmDelExam] = useState<{ id: string; title: string } | null>(null);
+  const [deletingExam, setDeletingExam] = useState(false);
+
+  // NEW: courses display + delete (admin view)
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
+  const [confirmDelCourse, setConfirmDelCourse] = useState(false);
+  const [deletingCourse, setDeletingCourse] = useState(false);
+  const [busyCourses, setBusyCourses] = useState(false);
+
   const snack = useSnack();
 
   const fetchExams = useCallback(async () => {
@@ -495,8 +510,67 @@ function ContentGovernancePanel({ jwt }: { jwt: string; }) {
     } catch (e: any) { snack.setErr(e.message); }
   }
 
+  // NEW: delete exam
+  async function doDeleteExam() {
+    if (!confirmDelExam) return;
+    setDeletingExam(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const res = await fetch(`${API_BASE}/exams/${encodeURIComponent(confirmDelExam.id)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      if (!res.ok && res.status !== 204) throw new Error(await res.text());
+      snack.setMsg(`Deleted exam "${confirmDelExam.title}".`);
+      setConfirmDelExam(null);
+      fetchExams();
+    } catch (e: any) {
+      // e.g. server may block if attempts exist
+      snack.setErr(e.message);
+    } finally {
+      setDeletingExam(false);
+    }
+  }
+
+  // NEW: load & delete courses
+  const loadCourses = useCallback(async () => {
+    setBusyCourses(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<Course[]>(`/courses`, { headers: { Authorization: `Bearer ${jwt}` } });
+      setCourses(data);
+      if (data.length > 0 && !selectedCourseId) setSelectedCourseId(data[0].id);
+    } catch (e: any) {
+      snack.setErr(e.message);
+    } finally {
+      setBusyCourses(false);
+    }
+  }, [jwt, selectedCourseId]);
+
+  useEffect(() => { loadCourses(); }, [loadCourses]);
+
+  async function deleteCourse() {
+    if (!selectedCourseId) return;
+    setDeletingCourse(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      if (!res.ok && res.status !== 204) throw new Error(await res.text());
+      snack.setMsg("Course deleted");
+      setConfirmDelCourse(false);
+      setSelectedCourseId("");
+      loadCourses();
+    } catch (e: any) {
+      // e.g., deletion blocked if offerings/attempts exist
+      snack.setErr(e.message);
+    } finally {
+      setDeletingCourse(false);
+    }
+  }
+
   return (
     <Stack spacing={3}>
+      {/* --- Exams: search & filter --- */}
       <Paper elevation={1} sx={{ p: 2.5 }}>
         <Grid container spacing={1.5} alignItems="flex-end">
           <Grid size={{ xs: 12, sm: 6, md: 'auto' }}>
@@ -521,6 +595,7 @@ function ContentGovernancePanel({ jwt }: { jwt: string; }) {
         </Grid>
       </Paper>
 
+      {/* --- Exams: list with Preview / Export / Delete --- */}
       <Paper elevation={1} sx={{ p: 2.5 }}>
         <Stack spacing={1.25} sx={{ maxHeight: 420, overflowY: 'auto' }}>
           {list.length === 0 && !busy && (<Typography variant="body2" color="text.secondary">No exams found.</Typography>)}
@@ -539,12 +614,73 @@ function ContentGovernancePanel({ jwt }: { jwt: string; }) {
                 </Box>
                 <Button variant="text" onClick={() => openExam(e.id)}>Preview</Button>
                 <Button variant="outlined" startIcon={<FileDownloadIcon />} onClick={() => exportQTI(e.id)}>Export QTI</Button>
+                {/* NEW: Delete exam */}
+                <Button variant="outlined" color="error" onClick={() => setConfirmDelExam({ id: e.id, title: e.title })}>Delete</Button>
               </Stack>
             </Paper>
           ))}
         </Stack>
       </Paper>
 
+      {/* --- Courses: display + delete (admin) --- */}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>Courses</Typography>
+        <Grid container spacing={1.5} alignItems="flex-end" sx={{ mt: 1 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth>
+              <InputLabel id="course-select-admin">Select course</InputLabel>
+              <Select
+                labelId="course-select-admin"
+                label="Select course"
+                value={selectedCourseId}
+                onChange={(e) => setSelectedCourseId(String(e.target.value))}
+              >
+                {courses.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{c.id}</Box>
+                      <Box component="span">• {c.name}</Box>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid>
+            <Button variant="outlined" onClick={loadCourses} disabled={busyCourses}>{busyCourses ? "…" : "Refresh"}</Button>
+          </Grid>
+          <Grid>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => setConfirmDelCourse(true)}
+              disabled={!selectedCourseId}
+            >
+              Delete Course
+            </Button>
+          </Grid>
+        </Grid>
+
+        {/* small table listing for visibility */}
+        <Table size="small" sx={{ mt: 2 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Course ID</TableCell>
+              <TableCell>Name</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {courses.map((c) => (
+              <TableRow key={c.id} hover selected={c.id === selectedCourseId} onClick={() => setSelectedCourseId(c.id)} sx={{ cursor: 'pointer' }}>
+                <TableCell sx={{ fontFamily: 'monospace' }}>{c.id}</TableCell>
+                <TableCell>{c.name}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
+
+      {/* Exam preview dialog */}
       <Dialog open={!!viewExam} onClose={() => setViewExam(null)} maxWidth="md" fullWidth>
         <DialogTitle>Preview: {viewExam?.title}</DialogTitle>
         <DialogContent dividers>
@@ -562,10 +698,47 @@ function ContentGovernancePanel({ jwt }: { jwt: string; }) {
         </DialogActions>
       </Dialog>
 
+      {/* NEW: Confirm delete exam */}
+      <Dialog open={!!confirmDelExam} onClose={() => !deletingExam && setConfirmDelExam(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Delete exam?</DialogTitle>
+        <DialogContent dividers>
+          <DialogContentText>
+            {`This will permanently remove exam "${confirmDelExam?.title}". `}
+            Deletion may be blocked if attempts exist—use Archive instead.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDelExam(null)} disabled={deletingExam}>Cancel</Button>
+          <Button variant="contained" color="error" disableElevation onClick={doDeleteExam} disabled={deletingExam}>
+            {deletingExam ? "Deleting…" : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* NEW: Confirm delete course */}
+      <Dialog open={confirmDelCourse} onClose={() => !deletingCourse && setConfirmDelCourse(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Delete course?</DialogTitle>
+        <DialogContent dividers>
+          <DialogContentText>
+            {selectedCourseId
+              ? <>You’re about to delete course <code>{selectedCourseId}</code>.</>
+              : "No course selected."}
+            {" "}This removes enrollments and offerings. If attempts exist, deletion will be blocked.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDelCourse(false)} disabled={deletingCourse}>Cancel</Button>
+          <Button variant="contained" color="error" disableElevation onClick={deleteCourse} disabled={deletingCourse || !selectedCourseId}>
+            {deletingCourse ? "Deleting…" : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {snack.node}
     </Stack>
   );
 }
+
 
 /* -------------------- Attempts Oversight -------------------- */
 function AttemptsOversightPanel({ jwt }: { jwt: string; }) {
