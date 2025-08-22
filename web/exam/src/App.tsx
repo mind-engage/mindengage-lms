@@ -391,6 +391,16 @@ function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: 
                 {canGoogle && (
                   <Button type="button" variant="outlined" size="large" onClick={loginWithGoogle} disabled={busy}>Sign in with Google</Button>
                 )}
+                <Divider>or</Divider>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    size="large"
+                    onClick={() => onLogin("student", "student")}
+                    disabled={busy}
+                  >
+                    Continue as guest
+                  </Button>
               </Stack>
             </Box>
           </Paper>
@@ -508,8 +518,8 @@ function SelectScreen({
                   {courses.map(c => (
                     <MenuItem key={c.id} value={c.id}>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{c.id}</Box>
                         <Box component="span">• {c.name}</Box>
+                        <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{c.id}</Box>
                       </Box>
                     </MenuItem>
                   ))}
@@ -533,15 +543,14 @@ function SelectScreen({
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }}>
                       <Box sx={{ flexGrow: 1 }}>
                         <Typography fontWeight={600}>
-                          <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.id}</Box>
+                          <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.exam_id}</Box>
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.exam_id}</Box>
+                          Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.id}</Box>
                           {o.start_at && <> • Starts: {new Date(o.start_at).toLocaleString()}</>}
                           {o.end_at && <> • Ends: {new Date(o.end_at).toLocaleString()}</>}
                           {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0) / 60)} min</>}
                           <> • Attempts: {o.max_attempts}</>
-                          <> • Visibility: {o.visibility}</>
                         </Typography>
                       </Box>
                       <Tooltip title={win.open ? "" : (win.reason || "Not available")}>

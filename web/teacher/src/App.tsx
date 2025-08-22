@@ -278,9 +278,9 @@ function Shell({ children, authed, onSignOut, title, right }: { children: React.
 /* -------------------- Login -------------------- */
 /** UPDATED: adds Google Sign-On button; keeps existing local login intact */
 function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: string, p: string, r: "teacher" | "admin") => void;  features?: { enable_google_auth: boolean } | null;}) {
-  const [username, setUsername] = useState("teacher");
-  const [password, setPassword] = useState("teacher");
-  const [role, setRole] = useState<"teacher" | "admin">("teacher");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const role = "teacher";
 
   const canGoogle = !!features?.enable_google_auth;
 
@@ -307,13 +307,7 @@ function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: 
               <Stack spacing={2}>
                 <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth />
                 <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth />
-                <FormControl fullWidth>
-                  <InputLabel id="role-lbl">Role</InputLabel>
-                  <Select labelId="role-lbl" label="Role" value={role} onChange={(e) => setRole(e.target.value as any)}>
-                    <MenuItem value="teacher">teacher</MenuItem>
-                    <MenuItem value="admin">admin</MenuItem>
-                  </Select>
-                </FormControl>
+
                 <Button type="submit" variant="contained" size="large" disableElevation disabled={busy}>{busy ? "…" : "Login"}</Button>
                 
                 {canGoogle && (

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	httpapi "github.com/mind-engage/mindengage-lms/internal/api/http"
 	authmw "github.com/mind-engage/mindengage-lms/internal/auth/middleware"
 	rbac "github.com/mind-engage/mindengage-lms/internal/rbac"
 )
@@ -32,7 +33,7 @@ func mountAdminRoutes(api chi.Router, dbh *sql.DB, authSvc *authmw.AuthService) 
 		r.With(rbac.Require("admin:apikeys")).Post("/api-keys", handleAdminCreateAPIKey)
 		r.With(rbac.Require("admin:apikeys")).Delete("/api-keys/{keyID}", handleAdminRevokeAPIKey)
 
-		r.With(rbac.Require("admin:identity")).Patch("/users/{userID}", handleAdminUpdateUserRole)
+		r.With(rbac.Require("admin:identity")).Patch("/users/{userID}", httpapi.AdminUpdateUserRoleHandler(dbh))
 
 		// ---- Content Governance ----
 		r.With(rbac.Require("admin:content")).Post("/exams/{examID}/approve", handleAdminApproveExam)
@@ -124,17 +125,6 @@ func handleAdminCreateAPIKey(w http.ResponseWriter, r *http.Request) {
 
 func handleAdminRevokeAPIKey(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusNoContent, nil)
-}
-
-func handleAdminUpdateUserRole(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		Role string `json:"role"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid JSON", http.StatusBadRequest)
-		return
-	}
-	respondJSON(w, http.StatusOK, map[string]any{"user_id": chi.URLParam(r, "userID"), "role": req.Role})
 }
 
 func handleAdminApproveExam(w http.ResponseWriter, r *http.Request) {
