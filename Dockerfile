@@ -25,6 +25,12 @@ RUN --mount=type=cache,target=/root/.npm cd web/admin && npm ci
 COPY web/admin web/admin
 RUN --mount=type=cache,target=/root/.npm sh -lc 'cd web/admin && PUBLIC_URL=/admin REACT_APP_API_BASE=/api npm run build'
 
+# quiz (served at /quiz)
+COPY web/quiz/package*.json web/quiz/
+RUN --mount=type=cache,target=/root/.npm cd web/quiz && npm ci
+COPY web/quiz web/quiz
+RUN --mount=type=cache,target=/root/.npm sh -lc 'cd web/quiz && PUBLIC_URL=/quiz REACT_APP_API_BASE=/api npm run build'
+
 # home (served at /)
 COPY web/home/package*.json web/home/
 RUN --mount=type=cache,target=/root/.npm cd web/home && npm ci
@@ -53,11 +59,13 @@ RUN rm -rf cmd/gateway/static && \
     mkdir -p cmd/gateway/static/exam && \
     mkdir -p cmd/gateway/static/teacher && \
     mkdir -p cmd/gateway/static/admin && \
+    mkdir -p cmd/gateway/static/quiz && \
     mkdir -p cmd/gateway/static/home
 
 COPY --from=ui /repo/web/exam/build/    cmd/gateway/static/exam/
 COPY --from=ui /repo/web/teacher/build/ cmd/gateway/static/teacher/
 COPY --from=ui /repo/web/admin/build/   cmd/gateway/static/admin/
+COPY --from=ui /repo/web/quiz/build/   cmd/gateway/static/quiz/
 COPY --from=ui /repo/web/home/build/    cmd/gateway/static/home/
 
 # Safety: ensure each dir has at least one file so //go:embed "static/**" never errors

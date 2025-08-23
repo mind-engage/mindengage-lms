@@ -923,6 +923,7 @@ function CoursesPanel({ jwt }: { jwt: string }) {
   const [accessToken, setAccessToken] = useState<string>("");
   const [confirmDelCourse, setConfirmDelCourse] = useState(false);
   const [deletingCourse, setDeletingCourse] = useState(false);
+  const [shareLinks, setShareLinks] = useState<Record<string, string>>({});
 
   function fmtRFC(s?: string | null) {
     if (!s) return "";
@@ -1084,6 +1085,23 @@ function CoursesPanel({ jwt }: { jwt: string }) {
       setDeletingCourse(false);
     }
   }
+
+  async function getShareLink(offID: string) {
+    try {
+      const res = await fetch(`${API_BASE}/courses/${encodeURIComponent(selectedCourseId)}/offerings/${encodeURIComponent(offID)}/share-link`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json() as { share_url: string };
+      setShareLinks(prev => ({ ...prev, [offID]: data.share_url }));
+      snack.setMsg("Link ready. Copied!");
+      try { await navigator.clipboard.writeText(data.share_url); } catch {}
+    } catch (e: any) {
+      snack.setErr(e.message || "Could not get link");
+    }
+  }
+
 
   function handleStartChange(v: string) {
     setStartAt(v);
@@ -1331,6 +1349,37 @@ function CoursesPanel({ jwt }: { jwt: string }) {
                         <> • Visibility: {o.visibility}</>
                       </Typography>
                     </Box>
+
+                    {o.visibility === "link" && (
+                      <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ width: { xs: "100%", sm: 520 } }}>
+                        <TextField
+                          size="small"
+                          fullWidth
+                          value={shareLinks[o.id] || ""}
+                          placeholder="Click Get Link"
+                          InputProps={{ readOnly: true }}
+                        />
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => {
+                            const url = shareLinks[o.id];
+                            if (url) { navigator.clipboard.writeText(url); snack.setMsg("Copied!"); }
+                          }}
+                          disabled={!shareLinks[o.id]}
+                        >
+                          Copy
+                        </Button>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          disableElevation
+                          onClick={() => getShareLink(o.id)}
+                        >
+                          Get Link
+                        </Button>
+                      </Stack>
+                    )}
                   </Stack>
                 </Paper>
               ))}

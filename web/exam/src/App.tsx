@@ -94,6 +94,8 @@ type Offering = {
   visibility: "course" | "public" | "link";
 };
 
+type PublicCourse = { id: string; name: string; open_public_count: number };
+
 type Features = { mode: "online"|"offline"; enable_google_auth: boolean; enable_guest_auth: boolean };
 
 /* -------------------- Helpers -------------------- */
@@ -440,14 +442,32 @@ function SelectScreen({
   const [busyCourses, setBusyCourses] = useState(false);
   const [busyOfferings, setBusyOfferings] = useState(false);
 
-  const [pubs, setPubs] = useState<Offering[]>([]);
+  const [pubCourses, setPubCourses] = useState<PublicCourse[]>([]);
+  const [selPubCourse, setSelPubCourse] = useState<string>("");
+  const [pubOfferings, setPubOfferings] = useState<Offering[]>([]);
+  const [busyPubCourses, setBusyPubCourses] = useState(false);
+  const [busyPubOfferings, setBusyPubOfferings] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try { setPubs(await api<Offering[]>("/offerings/public", { headers: { Authorization: `Bearer ${jwt}` }})); }
-      catch (_) {}
-    })();
-  }, [jwt]);
+  const loadPublicCourses = useCallback(async () => {
+    setBusyPubCourses(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<PublicCourse[]>("/public/courses");
+      setPubCourses(data);
+      if (data.length && !selPubCourse) setSelPubCourse(data[0].id);
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusyPubCourses(false); }
+  }, [selPubCourse]);
+
+  const loadPublicOfferings = useCallback(async (courseId: string) => {
+    if (!courseId) { setPubOfferings([]); return; }
+    setBusyPubOfferings(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const data = await api<Offering[]>(`/public/courses/${encodeURIComponent(courseId)}/offerings`);
+      setPubOfferings(data);
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusyPubOfferings(false); }
+  }, []);
+
+  useEffect(() => { loadPublicCourses(); }, [loadPublicCourses]);
+  useEffect(() => { if (selPubCourse) loadPublicOfferings(selPubCourse); }, [selPubCourse, loadPublicOfferings]);
 
   const loadCourses = useCallback(async () => {
     setBusyCourses(true); snack.setErr(null); snack.setMsg(null);
@@ -508,7 +528,7 @@ function SelectScreen({
       <Paper elevation={1} sx={{ p: 1, mb: 2 }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} textColor="primary" indicatorColor="primary">
           <Tab label="My Courses" />
-          <Tab label="Search All Exams" />
+          <Tab label="Public Courses" />
         </Tabs>
       </Paper>
 
@@ -552,10 +572,10 @@ function SelectScreen({
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }}>
                       <Box sx={{ flexGrow: 1 }}>
                         <Typography fontWeight={600}>
-                          <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.exam_id}</Box>
+                          <Box component="span" sx={{ fontFamily: "monospace", fontSize: 12 }}>{o.id}</Box>
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.id}</Box>
+                          Exam: <Box component="span" sx={{ fontFamily: "monospace" }}>{o.exam_id}</Box>
                           {o.start_at && <> • Starts: {new Date(o.start_at).toLocaleString()}</>}
                           {o.end_at && <> • Ends: {new Date(o.end_at).toLocaleString()}</>}
                           {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0) / 60)} min</>}
@@ -577,92 +597,66 @@ function SelectScreen({
           </Paper>
         </Stack>
       )}
-
+      {/* --- Tab 1: Public Catalog (NEW) --- */}
       {tab === 1 && (
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-          {/* Manual ID entry */}
-          <Box sx={{ width: { xs: '100%', md: `${(5 / 12) * 100}%` } }}>
-            <Paper elevation={1} sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight={600}>Enter Exam ID</Typography>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "flex-end" }} sx={{ mt: 2 }}>
-                <TextField label="Exam ID" value={examId} onChange={(e) => setExamId(e.target.value)} fullWidth />
-                <Button variant="contained" onClick={() => openByExamId(examId)} disableElevation disabled={!examId.trim()}>
-                  Load
-                </Button>
-              </Stack>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
-                Or pick one from the list →
-              </Typography>
-            </Paper>
-          </Box>
-
-          {/* Available exams */}
-          <Box sx={{ width: { xs: '100%', md: `${(7 / 12) * 100}%` } }}>
-            <Paper elevation={1} sx={{ p: 3 }}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }}>
-                <Box sx={{ flexGrow: 1 }}>
-                  <TextField
-                    label="Search exams"
-                    placeholder="title contains…"
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    fullWidth
-                  />
-                </Box>
-                <Button variant="outlined" onClick={() => fetchExams(q)} disabled={busySearch}>
-                  {busySearch ? "Searching…" : "Search"}
-                </Button>
-                <Button variant="text" onClick={() => { setQ(""); fetchExams(""); }} disabled={busySearch}>
-                  Reset
-                </Button>
-              </Stack>
-
-              <Stack spacing={1.25} sx={{ mt: 2, maxHeight: 420, overflowY: 'auto' }}>
-                {list.length === 0 && !busySearch && (
-                  <Typography variant="body2" color="text.secondary">No exams found.</Typography>
-                )}
-                {list.map((e) => (
-                  <Paper key={e.id} variant="outlined" sx={{ p: 1.5 }}>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
-                      <Box sx={{ flexGrow: 1 }}>
-                        <Typography fontWeight={600}>{e.title}</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          <Box component="span" sx={{ fontFamily: "monospace" }}>{e.id}</Box>
-                          {typeof e.time_limit_sec === "number" && (
-                            <> • ⏱ {Math.round((e.time_limit_sec || 0) / 60)} min</>
-                          )}
-                          {e.profile && <> • {e.profile}</>}
-                        </Typography>
+        <Stack spacing={3}>
+          <Paper elevation={1} sx={{ p: 3 }}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-end" }}>
+              <FormControl sx={{ minWidth: 280 }}>
+                <InputLabel id="pub-course-select">Public course</InputLabel>
+                <Select
+                  labelId="pub-course-select"
+                  label="Public course"
+                  value={selPubCourse}
+                  onChange={(e) => setSelPubCourse(String(e.target.value))}
+                >
+                  {pubCourses.map(c => (
+                    <MenuItem key={c.id} value={c.id}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box component="span">• {c.name}</Box>
+                        <Chip size="small" label={`${c.open_public_count} open`} />
                       </Box>
-                      <Button variant="outlined" onClick={() => openByExamId(e.id)}>Open</Button>
-                    </Stack>
-                  </Paper>
-                ))}
-              </Stack>
-              <Typography variant="subtitle1" fontWeight={600}>Public offerings</Typography>
-              <Stack spacing={1.25} sx={{ mt: 1 }}>
-                {pubs.map(o => (
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button variant="outlined" onClick={loadPublicCourses} disabled={busyPubCourses}>
+                {busyPubCourses ? "…" : "Refresh"}
+              </Button>
+            </Stack>
+          </Paper>
+
+          <Paper elevation={1} sx={{ p: 3 }}>
+            <Typography variant="subtitle1" fontWeight={600}>Offerings</Typography>
+            <Divider sx={{ my: 1 }} />
+            <Stack spacing={1.25} sx={{ maxHeight: 420, overflowY: "auto" }}>
+              {pubOfferings.length === 0 && !busyPubOfferings && (
+                <Typography variant="body2" color="text.secondary">No open public offerings.</Typography>
+              )}
+              {pubOfferings.map(o => {
+                const win = offeringWindowState(o);
+                return (
                   <Paper key={o.id} variant="outlined" sx={{ p: 1.5 }}>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }}>
                       <Box sx={{ flexGrow: 1 }}>
-                        <Typography fontWeight={600}><code>{o.id}</code></Typography>
+                        <Typography fontWeight={600}><code>Exam: {o.exam_id}</code></Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Exam: <code>{o.exam_id}</code>
+                          <code>{o.id}</code>
                           {o.start_at && <> • Starts: {new Date(o.start_at).toLocaleString()}</>}
                           {o.end_at && <> • Ends: {new Date(o.end_at).toLocaleString()}</>}
                           {typeof o.time_limit_sec === "number" && <> • ⏱ {Math.round((o.time_limit_sec || 0)/60)} min</>}
                           <> • Attempts: {o.max_attempts}</>
                         </Typography>
                       </Box>
-                      <Button variant="contained" disableElevation onClick={() => onLoadExam(o.exam_id, o)}>
-                        Open
-                      </Button>
+                      <Tooltip title={win.open ? "" : (win.reason || "Not available")}>
+                        <span><Button variant="contained" disableElevation onClick={() => openByOffering(o)} disabled={!win.open}>Open</Button></span>
+                      </Tooltip>
                     </Stack>
                   </Paper>
-                ))}
-              </Stack>
-            </Paper>
-          </Box>
+                );
+              })}
+            </Stack>
+          </Paper>
         </Stack>
       )}
       {snack.node}

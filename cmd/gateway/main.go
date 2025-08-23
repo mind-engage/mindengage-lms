@@ -41,6 +41,7 @@ import (
 //	cmd/gateway/static/exam
 //	cmd/gateway/static/teacher
 //	cmd/gateway/static/admin
+//	cmd/gateway/static/quiz
 //	cmd/gateway/static/home
 //
 //go:embed static/**
@@ -235,8 +236,14 @@ func main() {
 
 				cr.With(rbac.RequireAny("course:delete_any", "course:delete_own")).
 					Delete("/{courseID}", api.DeleteCourseHandler(dbh, authSvc))
-			})
 
+				cr.Post("/{courseID}/offerings/{offID}/share-link", api.ShareOfferingLinkHandler(dbh, authSvc))
+
+			})
+			apiR.Route("/public", func(pr chi.Router) {
+				pr.Get("/courses", api.ListPublicCoursesHandler(dbh))
+				pr.Get("/courses/{courseID}/offerings", api.ListCoursePublicOfferingsHandler(dbh))
+			})
 			pr.Get("/offerings/public", api.ListPublicOfferingsHandler(dbh))
 
 			apiR.Group(func(pr chi.Router) {
@@ -254,6 +261,7 @@ func main() {
 	mountSPA(r, "/exam/", "static/exam")
 	mountSPA(r, "/teacher/", "static/teacher")
 	mountSPA(r, "/admin/", "static/admin")
+	mountSPA(r, "/quiz/", "static/quiz")
 
 	log.Printf("listening on %s (mode=%s, db=%s)", cfg.HTTPAddr, cfg.Mode, cfg.DBDriver)
 	log.Fatal(http.ListenAndServe(cfg.HTTPAddr, r))

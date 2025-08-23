@@ -8,12 +8,18 @@ import (
 	"encoding/json"
 	"net/http"
 	nethttp "net/http"
+	"net/url"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"crypto/rand"
+	"encoding/hex"
+
 	"github.com/go-chi/chi/v5"
+	authmw "github.com/mind-engage/mindengage-lms/internal/auth/middleware"
 	ex "github.com/mind-engage/mindengage-lms/internal/exam"
 	"github.com/mind-engage/mindengage-lms/internal/grading"
 )
@@ -519,4 +525,99 @@ func bucketKeys(qType string, resp interface{}) []string {
 		// too free-form; only totals will be useful
 	}
 	return nil
+}
+
+func randomHex(n int) (string, error) {
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
+}
+
+func ShareOfferingLinkHandler(dbh *sql.DB, authSvc *authmw.AuthService) nethttp.HandlerFunc {
+	return func(w nethttp.ResponseWriter, r *nethttp.Request) {
+		courseID := chi.URLParam(r, "courseID")
+		offID := chi.URLParam(r, "offID")
+
+		sub, role := subjectFromBearer(authSvc, r)
+		if sub == "" {
+			nethttp.Error(w, "unauthorized", nethttp.StatusUnauthorized)
+			return
+		}
+		// teacher or admin on the course
+		if role != "admin" && !isCourseTeacher(dbh, sub, courseID) {
+			nethttp.Error(w, "forbidden", nethttp.StatusForbidden)
+			return
+		}
+
+		// Read current visibility and token
+		var visibility string
+		var token sql.NullString
+		err := dbh.QueryRow(`
+            SELECT visibility, access_token
+              FROM exam_offerings
+             WHERE id=$1 AND course_id=$2
+        `, offID, courseID).Scan(&visibility, &token)
+		if err == sql.ErrNoRows {
+			nethttp.Error(w, "not found", nethttp.StatusNotFound)
+			return
+		}
+		if err != nil {
+			nethttp.Error(w, "db error", nethttp.StatusInternalServerError)
+			return
+		}
+		if visibility != "link" {
+			nethttp.Error(w, "offering is not link-visible", nethttp.StatusBadRequest)
+			return
+		}
+
+		// Mint once if empty (idempotent)
+		if !token.Valid || strings.TrimSpace(token.String) == "" {
+			newTok, err := randomHex(32)
+			if err != nil {
+				nethttp.Error(w, "token gen error", nethttp.StatusInternalServerError)
+				return
+			}
+			// set token only if currently NULL or empty, tolerate races
+			_, _ = dbh.Exec(`
+                UPDATE exam_offerings
+                   SET access_token = COALESCE(NULLIF(access_token,''), $1)
+                 WHERE id=$2 AND course_id=$3
+            `, newTok, offID, courseID)
+			// read back the final token
+			_ = dbh.QueryRow(`SELECT access_token FROM exam_offerings WHERE id=$1`, offID).Scan(&token)
+			if !token.Valid || strings.TrimSpace(token.String) == "" {
+				token.Valid = true
+				token.String = newTok
+			}
+		}
+
+		// Build student-facing base URL
+		base := strings.TrimRight(os.Getenv("STUDENT_BASE"), "/")
+		if base == "" {
+			// derive from scheme+host, ignore path (works even if teacher is served at /teacher)
+			scheme := r.Header.Get("X-Forwarded-Proto")
+			if scheme == "" {
+				if r.TLS != nil {
+					scheme = "https"
+				} else {
+					scheme = "http"
+				}
+			}
+			base = scheme + "://" + r.Host
+		}
+
+		// Construct share URL (only returned as a whole, never the raw token field)
+		q := url.Values{}
+		q.Set("offering", offID)
+		q.Set("access_token", token.String)
+
+		shareURL := base + "/quiz/?" + q.Encode()
+
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"share_url": shareURL,
+		})
+	}
 }

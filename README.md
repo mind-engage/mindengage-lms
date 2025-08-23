@@ -106,6 +106,8 @@ Set env variables using either .env.lan(offline) or .env.online(online) template
 ```
 MODE=offline
 ADMIN_USER=admin
+
+# Hashed value of password "admin" using htpasswd. Generate your stronger password
 ADMIN_PASS_HASH='$2y$12$pyZAiWaTfVtM7UElIRStvOC3gNbnp70nmQU4eYopLGBfCJr1DOvji'
 
 HTTP_ADDR=0.0.0.0:8080

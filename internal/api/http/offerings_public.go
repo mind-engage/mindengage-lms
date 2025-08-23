@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func ListPublicOfferingsHandler(db *sql.DB) http.HandlerFunc {
@@ -55,6 +57,58 @@ func ListPublicOfferingsHandler(db *sql.DB) http.HandlerFunc {
 				o.TimeLimitSec = &v
 			}
 			out = append(out, o)
+		}
+		_ = json.NewEncoder(w).Encode(out)
+	}
+}
+
+func ListCoursePublicOfferingsHandler(db *sql.DB) http.HandlerFunc {
+	type off struct {
+		ID           string `json:"id"`
+		ExamID       string `json:"exam_id"`
+		TimeLimitSec *int   `json:"time_limit_sec,omitempty"`
+		MaxAttempts  int    `json:"max_attempts"`
+		Visibility   string `json:"visibility"`
+		StartAtUnix  *int64 `json:"start_at,omitempty"`
+		EndAtUnix    *int64 `json:"end_at,omitempty"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		cid := chi.URLParam(r, "courseID")
+		now := time.Now().Unix()
+		rows, err := db.Query(`
+			SELECT id, exam_id, start_at, end_at, time_limit_sec, max_attempts, visibility
+			  FROM exam_offerings
+			 WHERE course_id = $1
+			   AND visibility = 'public'
+			   AND (start_at IS NULL OR start_at <= $2)
+			   AND (end_at   IS NULL OR end_at   >= $2)
+			 ORDER BY start_at NULLS FIRST, id
+		`, cid, now)
+		if err != nil {
+			http.Error(w, "db error", 500)
+			return
+		}
+		defer rows.Close()
+
+		var out []off
+		for rows.Next() {
+			var o off
+			var start, end, tls sql.NullInt64
+			if err := rows.Scan(&o.ID, &o.ExamID, &start, &end, &tls, &o.MaxAttempts, &o.Visibility); err == nil {
+				if start.Valid {
+					v := start.Int64
+					o.StartAtUnix = &v
+				}
+				if end.Valid {
+					v := end.Int64
+					o.EndAtUnix = &v
+				}
+				if tls.Valid {
+					v := int(tls.Int64)
+					o.TimeLimitSec = &v
+				}
+				out = append(out, o)
+			}
 		}
 		_ = json.NewEncoder(w).Encode(out)
 	}
