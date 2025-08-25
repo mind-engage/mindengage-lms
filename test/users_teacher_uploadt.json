@@ -1,0 +1,4 @@
+[
+    {"id":"david","username":"david","role":"student","password":"davidpass"},
+    {"id":"eve","username":"eve","role":"student","password":"evepass"}
+  ]

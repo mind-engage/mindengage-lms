@@ -6,12 +6,14 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"strings"
 	"time"
 
+	authmw "github.com/mind-engage/mindengage-lms/internal/auth/middleware"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,8 +24,15 @@ type userRow struct {
 	Password string `json:"password,omitempty"` // plaintext optional (LAN-only)
 }
 
-func BulkUpsertUsersHandler(db *sql.DB) http.HandlerFunc {
+func BulkUpsertUsersHandler(db *sql.DB, authSvc *authmw.AuthService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Who is calling?
+		sub, actorRole := subjectFromBearer(authSvc, r)
+		if sub == "" {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		// Accept either multipart file= (CSV/JSON) OR raw JSON array in body
 		var rows []userRow
 		ct := r.Header.Get("Content-Type")
@@ -66,7 +75,8 @@ func BulkUpsertUsersHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		ins, upd, err := upsertUsers(r.Context(), db, rows)
+		// Enforce role rules inside the upsert transaction
+		ins, upd, err := upsertUsers(r.Context(), db, rows, actorRole)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -142,7 +152,7 @@ func parseCSV(r io.Reader) ([]userRow, error) {
 	return rows, nil
 }
 
-func upsertUsers(ctx context.Context, db *sql.DB, rows []userRow) (inserted, updated int, err error) {
+func upsertUsers(ctx context.Context, db *sql.DB, rows []userRow, actorRole string) (inserted, updated int, err error) {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return
@@ -160,9 +170,16 @@ func upsertUsers(ctx context.Context, db *sql.DB, rows []userRow) (inserted, upd
 		if r.Role == "" {
 			r.Role = "student"
 		}
+
+		// Teachers may only work with students.
+		if actorRole == "teacher" {
+			r.Role = "student" // force any incoming role to student
+		}
+
 		if r.Role != "student" && r.Role != "teacher" && r.Role != "admin" {
 			return inserted, updated, errors.New("invalid role: " + r.Role)
 		}
+
 		// Hash password if provided (LAN-only flow). If empty, keep existing hash or reject if new.
 		var phash string
 		if r.Password != "" {
@@ -173,20 +190,29 @@ func upsertUsers(ctx context.Context, db *sql.DB, rows []userRow) (inserted, upd
 			phash = string(b)
 		}
 
-		// Upsert: if exists update (optionally password), else insert (password required)
-		var exists bool
-		if err = tx.QueryRowContext(ctx, `SELECT 1 FROM users WHERE id=$1 OR username=$2`, r.ID, r.Username).Scan(new(int)); err == nil {
-			exists = true
-		} else if !errors.Is(err, sql.ErrNoRows) {
-			return inserted, updated, err
+		// Look up existing user to get canonical id + current role (needed for teacher policy)
+		var existingID, existingRole string
+		q := `SELECT id, role FROM users WHERE id=$1 OR username=$2`
+		scanErr := tx.QueryRowContext(ctx, q, r.ID, r.Username).Scan(&existingID, &existingRole)
+		exists := scanErr == nil
+		if scanErr != nil && !errors.Is(scanErr, sql.ErrNoRows) {
+			return inserted, updated, scanErr
 		}
+
+		// Teachers cannot modify any non-student accounts (protects teacher/admin).
+		if actorRole == "teacher" && exists && existingRole != "student" {
+			return inserted, updated, fmt.Errorf("forbidden: cannot modify non-student user %q", r.Username)
+		}
+
 		if exists {
 			if phash != "" {
-				_, err = tx.ExecContext(ctx, `UPDATE users SET username=$1, role=$2, password_hash=$3 WHERE id=$4`,
-					r.Username, r.Role, phash, r.ID)
+				_, err = tx.ExecContext(ctx,
+					`UPDATE users SET username=$1, role=$2, password_hash=$3 WHERE id=$4`,
+					r.Username, r.Role, phash, existingID)
 			} else {
-				_, err = tx.ExecContext(ctx, `UPDATE users SET username=$1, role=$2 WHERE id=$3`,
-					r.Username, r.Role, r.ID)
+				_, err = tx.ExecContext(ctx,
+					`UPDATE users SET username=$1, role=$2 WHERE id=$3`,
+					r.Username, r.Role, existingID)
 			}
 			if err != nil {
 				return inserted, updated, err

@@ -206,7 +206,7 @@ func main() {
 
 			// Users admin
 			pr.With(rbac.Require("users:bulk_upsert")).
-				Post("/users/bulk", api.BulkUpsertUsersHandler(dbh))
+				Post("/users/bulk", api.BulkUpsertUsersHandler(dbh, authSvc))
 			pr.With(rbac.Require("users:list")).
 				Get("/users", api.ListUsersHandler(dbh))
 			pr.With(rbac.Require("user:change_password")).
