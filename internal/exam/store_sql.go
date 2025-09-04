@@ -521,11 +521,13 @@ func (s *SQLStore) GetAttempt(id string) (Attempt, error) {
 func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	var a Attempt
 	var rjson string
-	var moduleIdx int
+	var moduleIdx, curIdx int
 	var curModID sql.NullString
 
-	row := s.db.QueryRow(`SELECT exam_id, responses_json, module_index, current_module_id FROM attempts WHERE id=$1`, attemptID)
-	if err := row.Scan(&a.ExamID, &rjson, &moduleIdx, &curModID); err != nil {
+	row := s.db.QueryRow(`
+		SELECT exam_id, responses_json, module_index, current_index, current_module_id
+		FROM attempts WHERE id=$1`, attemptID)
+	if err := row.Scan(&a.ExamID, &rjson, &moduleIdx, &curIdx, &curModID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Attempt{}, errors.New("attempt not found")
 		}
@@ -536,11 +538,15 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 		a.CurrentModuleID = curModID.String
 	}
 	a.ModuleIndex = moduleIdx
+	a.CurrentIndex = curIdx
 
 	ex, err := s.GetExamAdmin(context.Background(), a.ExamID)
 	if err != nil {
 		return Attempt{}, err
 	}
+
+	// Load navigation policy
+	nav := parseNavPolicy(ex.PolicyRaw)
 
 	// Placeholder-derived times and ids
 	modules := extractModuleTimes(ex.PolicyRaw)
@@ -551,6 +557,21 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	if len(modules) == 0 || len(modIDs) == 0 {
 		return Attempt{}, errors.New("no modules in policy")
 	}
+
+	// 🔹 If modules are unlocked, recompute current module based on current_index
+	if !nav.ModuleLocked && curIdx >= 0 && curIdx < len(ex.Questions) {
+		qid := ex.Questions[curIdx].ID
+		_, qidToMod, _ := buildIndexMaps(ex.Questions)
+		curMod := strings.TrimSpace(qidToMod[qid])
+		for i, mid := range modIDs {
+			if strings.TrimSpace(mid) == curMod {
+				moduleIdx = i
+				a.CurrentModuleID = mid
+				break
+			}
+		}
+	}
+
 	if moduleIdx+1 >= len(modules) {
 		return Attempt{}, errors.New("already at last module")
 	}
@@ -591,7 +612,7 @@ func (s *SQLStore) AdvanceModule(attemptID string) (Attempt, error) {
 	_, err = s.db.Exec(`
 	  UPDATE attempts
 	  SET module_index=$1, module_started_at=$2, module_deadline=$3,
-		  current_index=$4, max_reached_index=$4, current_module_id=$5
+	      current_index=$4, max_reached_index=$4, current_module_id=$5
 	  WHERE id=$6`,
 		nextIdx, now, nullableDeadline(now, nextDur),
 		cur, concreteNextID, attemptID,

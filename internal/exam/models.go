@@ -37,12 +37,12 @@ type Attempt struct {
 	OverallDeadline int64 `json:"overall_deadline,omitempty"`
 
 	// Timestamps (useful for teacher/admin list views)
-	StartedAt   int64 `json:"started_at,omitempty"`
+	StartedAt   int64 `json:"started_at"`
 	SubmittedAt int64 `json:"submitted_at,omitempty"`
 
-	RemainingSeconds int    `json:"remaining_seconds,omitempty"`
-	CurrentIndex     int    `json:"current_index,omitempty"`
-	MaxReachedIndex  int    `json:"max_reached_index,omitempty"`
+	RemainingSeconds int    `json:"remaining_seconds"`
+	CurrentIndex     int    `json:"current_index"`
+	MaxReachedIndex  int    `json:"max_reached_index"`
 	CurrentModuleID  string `json:"current_module_id,omitempty"`
 }
 

@@ -55,6 +55,10 @@ import GavelIcon from "@mui/icons-material/Gavel";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
 
+const ENABLE_SSO_PROVIDERS = false;
+const ENABLE_API_KEYS = false;
+
+
 /* -------------------- Types -------------------- */
 export type Exam = {
   id: string;
@@ -403,6 +407,7 @@ function IdentityRolesPanel({ jwt }: { jwt: string; }) {
       </Paper>
 
       {/* SSO Providers */}
+      {ENABLE_SSO_PROVIDERS && (
       <Paper elevation={1} sx={{ p: 2.5 }}>
         <Typography variant="h6" fontWeight={600}>SSO Providers</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }} sx={{ mt: 1.5 }}>
@@ -419,8 +424,9 @@ function IdentityRolesPanel({ jwt }: { jwt: string; }) {
           {providers.length === 0 && (<Typography variant="body2" color="text.secondary">No providers configured.</Typography>)}
         </Stack>
       </Paper>
-
+      )}
       {/* API Keys */}
+      { ENABLE_API_KEYS && (
       <Paper elevation={1} sx={{ p: 2.5 }}>
         <Typography variant="h6" fontWeight={600}>API Keys</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'flex-end' }} sx={{ mt: 1.5 }}>
@@ -451,7 +457,7 @@ function IdentityRolesPanel({ jwt }: { jwt: string; }) {
           </TableBody>
         </Table>
       </Paper>
-
+      )}
       {snack.node}
     </Stack>
   );
@@ -902,11 +908,34 @@ function ComplianceAuditPanel({ jwt }: { jwt: string; }) {
   async function piiAct(kind: 'export'|'delete') {
     if (!userId.trim()) { snack.setErr('User ID required'); return; }
     try {
-      const res = await fetch(`${API_BASE}/admin/pii/${kind}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }, body: JSON.stringify({ user_id: userId.trim() }) });
+      const res = await fetch(`${API_BASE}/admin/pii/${kind}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({ user_id: userId.trim() }),
+      });
       if (!res.ok) throw new Error(await res.text());
-      const data = await res.json();
-      snack.setMsg(`${kind} job submitted: ${data.job_id || '(see server)'}`);
-    } catch (e: any) { snack.setErr(e.message); }
+  
+      if (kind === 'export') {
+        const blob = await res.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `pii_${userId}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        snack.setMsg("PII export downloaded.");
+        return;
+      }
+  
+      if (kind === 'delete') {
+        const data = await res.json();
+        snack.setMsg(`Deleted user: ${data.status}`);
+      }
+    } catch (e: any) {
+      snack.setErr(e.message);
+    }
   }
 
   async function searchAudit() {
@@ -914,8 +943,11 @@ function ComplianceAuditPanel({ jwt }: { jwt: string; }) {
       const params = new URLSearchParams();
       if (auditQuery.trim()) params.set('q', auditQuery.trim());
       const rows = await api<any[]>(`/admin/audit?${params.toString()}`, { headers: { Authorization: `Bearer ${jwt}` } });
-      setAuditRows(rows);
-    } catch (e: any) { snack.setErr(e.message); }
+      setAuditRows(rows || []);   // <-- ensure array
+    } catch (e: any) {
+      snack.setErr(e.message);
+      setAuditRows([]);           // <-- keep safe state
+    }
   }
 
   return (
@@ -947,17 +979,27 @@ function ComplianceAuditPanel({ jwt }: { jwt: string; }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {auditRows.map((r, i) => (
-              <TableRow key={i}>
-                <TableCell>{r.at ? new Date(r.at).toLocaleString() : ''}</TableCell>
-                <TableCell>{r.actor}</TableCell>
-                <TableCell>{r.action}</TableCell>
-                <TableCell>{r.target}</TableCell>
-                <TableCell>{r.reason}</TableCell>
-                <TableCell>{r.ip}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          {(auditRows || []).length === 0 && (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <Typography variant="body2" color="text.secondary">
+                  No audit entries found for this query.
+                </Typography>
+              </TableCell>
+            </TableRow>
+          )}
+          {(auditRows || []).map((r, i) => (
+            <TableRow key={i}>
+              <TableCell>{r.at ? new Date(r.at).toLocaleString() : ''}</TableCell>
+              <TableCell>{r.actor}</TableCell>
+              <TableCell>{r.action}</TableCell>
+              <TableCell>{r.target}</TableCell>
+              <TableCell>{r.reason}</TableCell>
+              <TableCell>{r.ip}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+
         </Table>
       </Paper>
 
@@ -1083,12 +1125,33 @@ export default function AdminApp() {
   async function login(username: string, password: string) {
     setBusy(true); snack.setErr(null); snack.setMsg(null);
     try {
-      const data = await api<{ access_token: string }>("/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password, role: "admin" }) });
+      const data = await api<{ access_token: string }>("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, role: "admin" }),
+      });
       setJwt(data.access_token);
       try { localStorage.setItem("admin_jwt", data.access_token); } catch {}
       setScreen("home");
       snack.setMsg("Logged in.");
-    } catch (err: any) { snack.setErr(err.message); } finally { setBusy(false); }
+    } catch (err: any) {
+      snack.setErr(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function validateToken(token: string) {
+    try {
+      // Replace `/users/me` with `/me` if your backend uses that path
+      const res = await fetch(`${API_BASE}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("invalid");
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   useEffect(() => {
@@ -1102,56 +1165,113 @@ export default function AdminApp() {
     })();
   }, []);
 
+  // Restore token on mount + validate it
   useEffect(() => {
-    let token = "";
-    const url = new URL(window.location.href);
-    token = url.searchParams.get("access_token") || url.searchParams.get("jwt") || "";
-    if (!token && window.location.hash) {
-      const hashParams = new URLSearchParams(window.location.hash.slice(1));
-      token = hashParams.get("access_token") || hashParams.get("jwt") || "";
-    }
-    if (!token) { try { token = localStorage.getItem("admin_jwt") || ""; } catch {} }
-    if (token) {
-      setJwt(token);
-      try { localStorage.setItem("admin_jwt", token); } catch {}
-      setScreen("home");
-      url.searchParams.delete("access_token"); url.searchParams.delete("jwt");
-      window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""));
-      if (window.location.hash) { window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : "")); }
-    }
-  }, []);
+    (async () => {
+      let token = "";
+      const url = new URL(window.location.href);
 
-  function signOut() { 
-    setJwt(""); 
+      token =
+        url.searchParams.get("access_token") ||
+        url.searchParams.get("jwt") ||
+        "";
+
+      if (!token && window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.slice(1));
+        token = hashParams.get("access_token") || hashParams.get("jwt") || "";
+      }
+      if (!token) {
+        try {
+          token = localStorage.getItem("admin_jwt") || "";
+        } catch {}
+      }
+
+      if (token) {
+        const valid = await validateToken(token);
+        if (valid) {
+          setJwt(token);
+          try { localStorage.setItem("admin_jwt", token); } catch {}
+          setScreen("home");
+        } else {
+          // force logout if invalid
+          try { localStorage.removeItem("admin_jwt"); } catch {}
+          setJwt("");
+          setScreen("login");
+          snack.setErr("Session expired. Please log in again.");
+        }
+
+        // cleanup URL so token isn't exposed
+        url.searchParams.delete("access_token");
+        url.searchParams.delete("jwt");
+        window.history.replaceState(
+          {},
+          document.title,
+          url.pathname + (url.search ? `?${url.searchParams.toString()}` : "")
+        );
+        if (window.location.hash) {
+          window.history.replaceState(
+            {},
+            document.title,
+            url.pathname + (url.search ? `?${url.searchParams.toString()}` : "")
+          );
+        }
+      }
+    })();
+  }, []); // runs only once on mount
+
+  function signOut() {
+    setJwt("");
     try { localStorage.removeItem("admin_jwt"); } catch {}
-    setScreen("login"); 
-    snack.setMsg("Signed out."); 
+    setScreen("login");
+    snack.setMsg("Signed out.");
   }
 
-  const theme = useMemo(() => createTheme({
-    palette: { mode: "light", primary: { main: "#3f51b5" } },
-    shape: { borderRadius: 12 },
-    components: { MuiPaper: { styleOverrides: { root: { borderRadius: 16 } } }, MuiButton: { defaultProps: { disableRipple: true } } },
-  }), []);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: { mode: "light", primary: { main: "#3f51b5" } },
+        shape: { borderRadius: 12 },
+        components: {
+          MuiPaper: { styleOverrides: { root: { borderRadius: 16 } } },
+          MuiButton: { defaultProps: { disableRipple: true } },
+        },
+      }),
+    []
+  );
 
   if (screen === "login") {
-    return (<ThemeProvider theme={theme}><LoginScreen busy={busy} onLogin={login} features={features}/></ThemeProvider>);
+    return (
+      <ThemeProvider theme={theme}>
+        <LoginScreen busy={busy} onLogin={login} features={features} />
+      </ThemeProvider>
+    );
   }
 
   return (
     <ThemeProvider theme={theme}>
-      <Shell authed={true} onSignOut={signOut} title="Admin Console" right={
-        <Tabs value={tab} onChange={(_, v) => setTab(v)} textColor="primary" indicatorColor="primary" sx={{ mr: 1 }}>
-          <Tab icon={<SecurityIcon />} iconPosition="start" label="Overview" />
-          <Tab icon={<FlagIcon />} iconPosition="start" label="Tenants & Flags" />
-          <Tab icon={<VerifiedUserIcon />} iconPosition="start" label="Identity & Roles" />
-          <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Content" />
-          <Tab icon={<FactCheckIcon />} iconPosition="start" label="Attempts" />
-          <Tab icon={<GavelIcon />} iconPosition="start" label="Compliance" />
-          <Tab icon={<IntegrationInstructionsIcon />} iconPosition="start" label="Integrations" />
-          <Tab icon={<SettingsEthernetIcon />} iconPosition="start" label="Settings" />
-        </Tabs>
-      }>
+      <Shell
+        authed={true}
+        onSignOut={signOut}
+        title="Admin Console"
+        right={
+          <Tabs
+            value={tab}
+            onChange={(_, v) => setTab(v)}
+            textColor="primary"
+            indicatorColor="primary"
+            sx={{ mr: 1 }}
+          >
+            <Tab icon={<SecurityIcon />} iconPosition="start" label="Overview" />
+            <Tab disabled icon={<FlagIcon />} iconPosition="start" label="Tenants & Flags" />
+            <Tab icon={<VerifiedUserIcon />} iconPosition="start" label="Identity & Roles" />
+            <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Content" />
+            <Tab icon={<FactCheckIcon />} iconPosition="start" label="Attempts" />
+            <Tab icon={<GavelIcon />} iconPosition="start" label="Compliance" />
+            <Tab disabled icon={<IntegrationInstructionsIcon />} iconPosition="start" label="Integrations" />
+            <Tab disabled icon={<SettingsEthernetIcon />} iconPosition="start" label="Settings" />
+          </Tabs>
+        }
+      >
         {tab === 0 && <OverviewPanel jwt={jwt} />}
         {tab === 1 && <TenantsFlagsPanel jwt={jwt} />}
         {tab === 2 && <IdentityRolesPanel jwt={jwt} />}
@@ -1165,3 +1285,4 @@ export default function AdminApp() {
     </ThemeProvider>
   );
 }
+

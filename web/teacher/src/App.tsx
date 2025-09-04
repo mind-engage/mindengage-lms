@@ -301,7 +301,7 @@ function LoginScreen({ busy, onLogin, features }: { busy: boolean; onLogin: (u: 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 7, lg: 6}}>
           <Paper elevation={1} sx={{ p: 3 }}>
-            <Typography variant="h5" fontWeight={600}>Teacher/Admin Sign in</Typography>
+            <Typography variant="h5" fontWeight={600}>Teacher Sign in</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Use test creds (username=password). Choose your role.</Typography>
             <Box component="form" onSubmit={submit} sx={{ mt: 2 }}>
               <Stack spacing={2}>
@@ -1450,39 +1450,58 @@ export default function TeacherApp() {
   }, []);
 
   /** NEW: Accept JWT returned by Google callback via query or hash, and persist */
+  // Restore token on mount + validate it
   useEffect(() => {
-    // Try to read from URL (both query and hash) or from localStorage
-    let token = "";
-    const url = new URL(window.location.href);
+    (async () => {
+      if (jwt) return; // don’t clobber a fresh login
 
-    // query params
-    token = url.searchParams.get("access_token") || url.searchParams.get("jwt") || "";
+      let token = "";
+      const url = new URL(window.location.href);
 
-    // hash (#access_token=...)
-    if (!token && window.location.hash) {
-      const hashParams = new URLSearchParams(window.location.hash.slice(1));
-      token = hashParams.get("access_token") || hashParams.get("jwt") || "";
-    }
+      // query params
+      token = url.searchParams.get("access_token") || url.searchParams.get("jwt") || "";
 
-    // localStorage
-    if (!token) {
-      try { token = localStorage.getItem("teacher_jwt") || ""; } catch {}
-    }
-
-    if (token) {
-      setJwt(token);
-      try { localStorage.setItem("teacher_jwt", token); } catch {}
-      setScreen("home");
-
-      // clean URL (remove token-bearing params/hash)
-      url.searchParams.delete("access_token");
-      url.searchParams.delete("jwt");
-      window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""));
-      if (window.location.hash) {
-        window.history.replaceState({}, document.title, url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""));
+      // hash (#access_token=…)
+      if (!token && window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.slice(1));
+        token = hashParams.get("access_token") || hashParams.get("jwt") || "";
       }
-    }
-  }, []);
+
+      // localStorage
+      if (!token) {
+        try { token = localStorage.getItem("teacher_jwt") || ""; } catch {}
+      }
+
+      if (token) {
+        try {
+          // ✅ validate before trusting
+          const res = await fetch(`${API_BASE}/users/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("invalid");
+          setJwt(token);
+          try { localStorage.setItem("teacher_jwt", token); } catch {}
+          setScreen("home");
+        } catch {
+          // invalid → force logout
+          try { localStorage.removeItem("teacher_jwt"); } catch {}
+          setJwt("");
+          setScreen("login");
+          snack.setErr("Session expired. Please log in again.");
+        }
+
+        // clean URL
+        url.searchParams.delete("access_token");
+        url.searchParams.delete("jwt");
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+        if (window.location.hash) {
+          window.history.replaceState({}, document.title, url.pathname + url.search);
+        }
+      }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwt]);
+
 
   function signOut() {
     setJwt("");

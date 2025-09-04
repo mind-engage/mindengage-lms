@@ -1252,23 +1252,52 @@ export default function StudentApp() {
 
   // Capture JWT from URL (for Google callback redirects): ?access_token=... or #access_token=...
   useEffect(() => {
-    try {
+    (async () => {
+      if (jwt) return; // don’t clobber fresh login
+  
+      let token = "";
       const url = new URL(window.location.href);
-      let t = url.searchParams.get("access_token") || url.searchParams.get("t");
-      if (!t && url.hash && url.hash.startsWith("#")) {
+  
+      // query or hash
+      token = url.searchParams.get("access_token") || url.searchParams.get("t") || "";
+      if (!token && url.hash) {
         const h = new URLSearchParams(url.hash.slice(1));
-        t = h.get("access_token") || h.get("t");
+        token = h.get("access_token") || h.get("t") || "";
       }
-      if (t) {
-        setJwt(t);
-        setScreen("select");
+  
+      // localStorage fallback
+      if (!token) {
+        try { token = localStorage.getItem("student_jwt") || ""; } catch {}
+      }
+  
+      if (token) {
+        try {
+          // ✅ validate
+          const res = await fetch(`${API_BASE}/users/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("invalid");
+          setJwt(token);
+          try { localStorage.setItem("student_jwt", token); } catch {}
+          setScreen("select");
+        } catch {
+          try { localStorage.removeItem("student_jwt"); } catch {}
+          setJwt("");
+          setScreen("login");
+          snack.setErr("Session expired. Please log in again.");
+        }
+  
+        // Clean URL
         url.searchParams.delete("access_token");
         url.searchParams.delete("t");
-        const clean = url.origin + url.pathname + (url.search ? url.search : "");
-        window.history.replaceState({}, document.title, clean);
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+        if (window.location.hash) {
+          window.history.replaceState({}, document.title, url.pathname + url.search);
+        }
       }
-    } catch {}
-  }, []);
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwt]);
 
   useEffect(() => {
     (async () => {

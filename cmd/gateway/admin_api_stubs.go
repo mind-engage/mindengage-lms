@@ -44,9 +44,9 @@ func mountAdminRoutes(api chi.Router, dbh *sql.DB, authSvc *authmw.AuthService) 
 		r.With(rbac.Require("admin:attempts")).Post("/attempts/{attemptID}/{action}", handleAdminAttemptAction)
 
 		// ---- Compliance & Audit ----
-		r.With(rbac.Require("admin:compliance")).Post("/pii/export", handleAdminPIIExport)
-		r.With(rbac.Require("admin:compliance")).Post("/pii/delete", handleAdminPIIDelete)
-		r.With(rbac.Require("admin:compliance")).Get("/audit", handleAdminAuditSearch)
+		r.With(rbac.Require("admin:compliance")).Post("/pii/export", httpapi.HandleAdminPIIExport(dbh))
+		r.With(rbac.Require("admin:compliance")).Post("/pii/delete", httpapi.HandleAdminPIIDelete(dbh))
+		r.With(rbac.Require("admin:compliance")).Get("/audit", httpapi.HandleAdminAuditSearch(dbh))
 
 		// ---- Settings (CORS, IP allowlist, Branding) ----
 		r.With(rbac.Require("admin:settings")).Get("/cors", handleAdminGetCORS)
@@ -168,36 +168,6 @@ func handleAdminAttemptAction(w http.ResponseWriter, r *http.Request) {
 		"action":     action,
 		"status":     "queued",
 	})
-}
-
-func handleAdminPIIExport(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		UserID string `json:"user_id"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.UserID == "" {
-		http.Error(w, "user_id required", http.StatusBadRequest)
-		return
-	}
-	respondJSON(w, http.StatusAccepted, map[string]any{"job_id": fmt.Sprintf("job_%d", time.Now().UnixNano())})
-}
-
-func handleAdminPIIDelete(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		UserID string `json:"user_id"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.UserID == "" {
-		http.Error(w, "user_id required", http.StatusBadRequest)
-		return
-	}
-	respondJSON(w, http.StatusAccepted, map[string]any{"job_id": fmt.Sprintf("job_%d", time.Now().UnixNano())})
-}
-
-func handleAdminAuditSearch(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query().Get("q")
-	rows := []map[string]any{
-		{"at": time.Now().Add(-2 * time.Hour), "actor": "admin:stub", "action": "search", "target": "audit", "reason": q, "ip": "0.0.0.0"},
-	}
-	respondJSON(w, http.StatusOK, rows)
 }
 
 func handleAdminGetCORS(w http.ResponseWriter, r *http.Request) {
