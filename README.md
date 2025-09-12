@@ -133,16 +133,9 @@ docker build -t mindengage-lms .
 ```
 docker run -it --network host  --env-file .env -v $PWD/data:/app/data:rw   -p 8080:8080  mindengage-lms
 
-docker run --restart unless-stopped -d  --network host --env-file .env  -p 8080:8080  mindengage-lms
-docker run -it --network host --env-file .env  -p 8080:8080  mindengage-lms
-
 ```
 
-```
-docker run -it --network host -v $PWD/data:/app/data:rw  -e DB_DSN='file:/app/db/mindengage.db' -v $PWD/db:/app/db:rw -p 8080:8080  mindengage-lms
-
-```
-
+## Local debugging
 ```bash
 
 go run ./cmd/gateway
