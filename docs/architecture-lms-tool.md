@@ -382,3 +382,59 @@ graph TB
   U --> W[Enforcement only chosen variant allowed]
 
 ```
+
+
+## Database
+```mermaid
+flowchart LR
+  %% Layout
+  %% LR = left->right; switch to TB if you prefer top->bottom
+  %% Styling to match your dark brand vibes
+  classDef table fill:#101726,stroke:#FF7A18,stroke-width:1px,color:#E5E7EB,font-size:12px;
+  classDef linktext color:#9CA3AF,font-size:11px;
+
+  %% ===========================
+  %% Tables as nodes (attributes via <br/>)
+  %% ===========================
+
+  USERS["USERS<br/>id<br/>username<br/>password_hash<br/>role<br/>created_at"]
+  EXAMS["EXAMS<br/>id<br/>title<br/>time_limit_sec<br/>questions_json<br/>created_at<br/>profile<br/>policy_json"]
+  COURSES["COURSES<br/>id<br/>name<br/>created_by<br/>created_at"]
+  COURSE_TEACHERS["COURSE_TEACHERS<br/>course_id<br/>teacher_id<br/>role"]
+  COURSE_STUDENTS["COURSE_STUDENTS<br/>course_id<br/>student_id<br/>status"]
+  EXAM_OFFERINGS["EXAM_OFFERINGS<br/>id<br/>exam_id<br/>course_id<br/>assigned_by<br/>start_at<br/>end_at<br/>time_limit_sec<br/>max_attempts<br/>visibility<br/>access_token"]
+  EXAM_OWNERS["EXAM_OWNERS<br/>exam_id<br/>teacher_id"]
+  TEACHER_INVITES["TEACHER_INVITES<br/>email<br/>created_at<br/>expires_at"]
+  ATTEMPTS["ATTEMPTS<br/>id<br/>exam_id<br/>user_id<br/>status<br/>score<br/>responses_json<br/>started_at<br/>submitted_at<br/>module_index<br/>module_started_at<br/>module_deadline<br/>overall_deadline<br/>current_index<br/>max_reached_index<br/>current_module_id<br/>offering_id<br/>graded_at<br/>auto_score<br/>manual_score"]
+  ATTEMPT_ITEMS["ATTEMPT_ITEMS<br/>attempt_id<br/>question_id<br/>q_type<br/>points_max<br/>auto_points<br/>manual_points<br/>needs_manual<br/>comment<br/>response_json<br/>graded_by<br/>graded_at"]
+  EVENT_LOG["EVENT_LOG<br/>event_offset<br/>site_id<br/>typ<br/>key<br/>data<br/>created_at"]
+  EPHEMERAL_STATS["EPHEMERAL_STATS<br/>offering_id<br/>question_id<br/>bucket<br/>count<br/>correct<br/>sum_points<br/>max_points<br/>updated_at"]
+
+  class USERS,EXAMS,COURSES,COURSE_TEACHERS,COURSE_STUDENTS,EXAM_OFFERINGS,EXAM_OWNERS,TEACHER_INVITES,ATTEMPTS,ATTEMPT_ITEMS,EVENT_LOG,EPHEMERAL_STATS table;
+
+  %% ===========================
+  %% Relationships (labels = semantics)
+  %% ===========================
+
+  USERS -->|creates| COURSES
+  USERS -->|teaches| COURSE_TEACHERS
+  COURSES -->|has teachers| COURSE_TEACHERS
+
+  USERS -->|enrolled| COURSE_STUDENTS
+  COURSES -->|has students| COURSE_STUDENTS
+
+  EXAMS -->|offered_in| EXAM_OFFERINGS
+  COURSES -->|includes| EXAM_OFFERINGS
+  USERS -->|assigned_by| EXAM_OFFERINGS
+
+  EXAMS -->|owned_by| EXAM_OWNERS
+  USERS -->|owns| EXAM_OWNERS
+
+  EXAMS -->|has attempts| ATTEMPTS
+  USERS -->|takes| ATTEMPTS
+  EXAM_OFFERINGS -->|via offering| ATTEMPTS
+
+  ATTEMPTS -->|has items| ATTEMPT_ITEMS
+
+  EXAM_OFFERINGS -->|aggregates| EPHEMERAL_STATS
+```
