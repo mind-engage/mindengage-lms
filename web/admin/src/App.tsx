@@ -268,6 +268,273 @@ function StatusCard({ label, value, icon }: { label: string; value: string; icon
   );
 }
 
+function UsersPanel({ jwt }: { jwt: string }) {
+  type Row = { id: string; username: string; role: string };
+
+  const snack = useSnack();
+  const [roleFilter, setRoleFilter] = useState<string>("");
+  const [q, setQ] = useState<string>("");
+  const [busy, setBusy] = useState(false);
+  const [users, setUsers] = useState<Row[]>([]);
+  const [edits, setEdits] = useState<Record<string, Partial<Row> & { password?: string }>>({});
+  const [pwdUser, setPwdUser] = useState<Row | null>(null);
+  const [pwd, setPwd] = useState("");
+
+  function genId() {
+    // simple random id (client-side). You can replace server-side if preferred.
+    const rnd = crypto?.getRandomValues?.(new Uint8Array(8)) ?? new Uint8Array(8);
+    return Array.from(rnd).map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  // New user form
+  const [newId, setNewId] = useState<string>(genId());
+  const [newUsername, setNewUsername] = useState<string>("");
+  const [newRole, setNewRole] = useState<string>("student");
+  const [newPassword, setNewPassword] = useState<string>("");
+
+  async function load() {
+    setBusy(true); snack.setErr(null); snack.setMsg(null);
+    try {
+      const qs = roleFilter ? `?${new URLSearchParams({ role: roleFilter }).toString()}` : "";
+      const data = await api<Row[]>(`/users${qs}`, { headers: { Authorization: `Bearer ${jwt}` } });
+      setUsers(data);
+      setEdits({});
+    } catch (e: any) { snack.setErr(e.message); } finally { setBusy(false); }
+  }
+  useEffect(() => { load(); /* eslint-disable react-hooks/exhaustive-deps */ }, [roleFilter]);
+
+  function filtered(u: Row[]) {
+    const term = q.trim().toLowerCase();
+    if (!term) return u;
+    return u.filter(x =>
+      x.username.toLowerCase().includes(term) ||
+      x.id.toLowerCase().includes(term) ||
+      x.role.toLowerCase().includes(term)
+    );
+  }
+
+  function setEdit(id: string, patch: Partial<Row> & { password?: string }) {
+    setEdits(prev => ({ ...prev, [id]: { ...prev[id], ...patch } }));
+  }
+
+  function getEffective(u: Row): Row & { password?: string } {
+    return { ...u, ...(edits[u.id] || {}) };
+  }
+
+  async function createUser() {
+    if (!newId.trim() || !newUsername.trim() || !newPassword.trim()) {
+      snack.setErr("ID, username and password are required");
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/users/bulk`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify([{ id: newId.trim(), username: newUsername.trim(), role: newRole, password: newPassword }]),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg("User created");
+      setNewId(genId());
+      setNewUsername("");
+      setNewPassword("");
+      setNewRole("student");
+      load();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  async function saveRow(u: Row) {
+    const original = u;
+    const eff = getEffective(u);
+
+    try {
+      // 1) If username or password changed — upsert via bulk (keeps current role)
+      const changedName = eff.username.trim() !== original.username;
+      const changedPwd = !!(edits[u.id]?.password && edits[u.id]?.password?.length);
+      if (changedName || changedPwd) {
+        const payload: any = [{ id: original.id, username: eff.username.trim(), role: original.role }];
+        if (changedPwd) payload[0].password = edits[u.id]?.password;
+        const res = await fetch(`${API_BASE}/users/bulk`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(await res.text());
+      }
+
+      // 2) If role changed — PATCH (enforces "last admin" guard server-side)
+      const changedRole = eff.role !== original.role;
+      if (changedRole) {
+        const res = await fetch(`${API_BASE}/admin/users/${encodeURIComponent(original.id)}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+          body: JSON.stringify({ role: eff.role }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+      }
+
+      snack.setMsg("Saved");
+      setEdits(prev => ({ ...prev, [u.id]: {} }));
+      load();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  async function deleteRow(u: Row) {
+    if (!window.confirm(`Delete user "${u.username}"?\nThis is irreversible.`)) return;
+    try {
+      const res = await fetch(`${API_BASE}/admin/pii/delete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify({ user_id: u.id }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg("User deleted");
+      load();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  function openPwd(u: Row) { setPwdUser(u); setPwd(""); }
+  async function applyPwd() {
+    if (!pwdUser) return;
+    if (!pwd.trim()) { snack.setErr("Password required"); return; }
+    try {
+      const res = await fetch(`${API_BASE}/users/bulk`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify([{ id: pwdUser.id, username: pwdUser.username, role: pwdUser.role, password: pwd }]),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      snack.setMsg("Password reset");
+      setPwdUser(null); setPwd("");
+      load();
+    } catch (e: any) { snack.setErr(e.message); }
+  }
+
+  return (
+    <Stack spacing={3}>
+      {/* Create new user */}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Typography variant="h6" fontWeight={600}>Create User</Typography>
+        <Grid container spacing={1.5} alignItems="flex-end" sx={{ mt: 1 }}>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <TextField label="User ID" value={newId} onChange={(e) => setNewId(e.target.value)} fullWidth />
+          </Grid>
+          <Grid><Button variant="text" onClick={() => setNewId(genId())}>Generate</Button></Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <TextField label="Username" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} fullWidth />
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel id="new-role">Role</InputLabel>
+              <Select labelId="new-role" label="Role" value={newRole} onChange={(e) => setNewRole(String(e.target.value))}>
+                <MenuItem value="student">student</MenuItem>
+                <MenuItem value="teacher">teacher</MenuItem>
+                <MenuItem value="admin">admin</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <TextField label="Password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} fullWidth />
+          </Grid>
+          <Grid><Button variant="contained" disableElevation onClick={createUser} disabled={busy}>Create</Button></Grid>
+        </Grid>
+      </Paper>
+
+      {/* Filters */}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Grid container spacing={1.5} alignItems="flex-end">
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <TextField label="Search (username / id / role)" value={q} onChange={(e) => setQ(e.target.value)} fullWidth />
+          </Grid>
+          <Grid size={{ xs: 12, sm: "auto" }}>
+            <FormControl sx={{ minWidth: 180 }}>
+              <InputLabel id="user-role-filter">Filter by role</InputLabel>
+              <Select labelId="user-role-filter" label="Filter by role" value={roleFilter} onChange={(e) => setRoleFilter(String(e.target.value))}>
+                <MenuItem value="">(all)</MenuItem>
+                <MenuItem value="student">student</MenuItem>
+                <MenuItem value="teacher">teacher</MenuItem>
+                <MenuItem value="admin">admin</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid><Button variant="outlined" onClick={load} disabled={busy}>{busy ? "…" : "Refresh"}</Button></Grid>
+        </Grid>
+      </Paper>
+
+      {/* Users table */}
+      <Paper elevation={1} sx={{ p: 2.5 }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Username</TableCell>
+              <TableCell sx={{ minWidth: 240 }}>ID</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filtered(users).map((u) => {
+              const e = edits[u.id] || {};
+              return (
+                <TableRow key={u.id} hover>
+                  <TableCell>
+                    <TextField
+                      variant="standard"
+                      value={e.username ?? u.username}
+                      onChange={(ev) => setEdit(u.id, { username: ev.target.value })}
+                      fullWidth
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontFamily: "monospace" }}>{u.id}</TableCell>
+                  <TableCell>
+                    <FormControl sx={{ minWidth: 140 }}>
+                      <Select
+                        size="small"
+                        value={e.role ?? u.role}
+                        onChange={(ev) => setEdit(u.id, { role: String(ev.target.value) })}
+                      >
+                        <MenuItem value="student">student</MenuItem>
+                        <MenuItem value="teacher">teacher</MenuItem>
+                        <MenuItem value="admin">admin</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <Button size="small" onClick={() => openPwd(u)}>Reset Password</Button>
+                      <Button size="small" variant="outlined" onClick={() => saveRow(u)}>Save</Button>
+                      <Button size="small" color="error" onClick={() => deleteRow(u)}>Delete</Button>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+            {filtered(users).length === 0 && !busy && (
+              <TableRow><TableCell colSpan={4}><Typography variant="body2" color="text.secondary">No users found.</Typography></TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
+
+      {/* Reset password dialog */}
+      <Dialog open={!!pwdUser} onClose={() => setPwdUser(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Reset password</DialogTitle>
+        <DialogContent dividers>
+          <DialogContentText>
+            Set a new password for <strong>{pwdUser?.username}</strong>.
+          </DialogContentText>
+          <TextField label="New password" type="password" value={pwd} onChange={(e) => setPwd(e.target.value)} fullWidth sx={{ mt: 2 }} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPwdUser(null)}>Cancel</Button>
+          <Button variant="contained" disableElevation onClick={applyPwd} disabled={!pwd.trim()}>Apply</Button>
+        </DialogActions>
+      </Dialog>
+
+      {snack.node}
+    </Stack>
+  );
+}
+
 /* -------------------- Identity & Roles -------------------- */
 function IdentityRolesPanel({ jwt }: { jwt: string; }) {
   const [role, setRole] = useState<string>("");
@@ -1264,9 +1531,10 @@ export default function AdminApp() {
             <Tab icon={<SecurityIcon />} iconPosition="start" label="Overview" />
             <Tab disabled icon={<FlagIcon />} iconPosition="start" label="Tenants & Flags" />
             <Tab icon={<VerifiedUserIcon />} iconPosition="start" label="Identity & Roles" />
+            <Tab icon={<ManageAccountsIcon />} iconPosition="start" label="Users" />
             <Tab icon={<LibraryBooksIcon />} iconPosition="start" label="Content" />
             <Tab icon={<FactCheckIcon />} iconPosition="start" label="Attempts" />
-            <Tab icon={<GavelIcon />} iconPosition="start" label="Compliance" />
+            <Tab disabled icon={<GavelIcon />} iconPosition="start" label="Compliance" />
             <Tab disabled icon={<IntegrationInstructionsIcon />} iconPosition="start" label="Integrations" />
             <Tab disabled icon={<SettingsEthernetIcon />} iconPosition="start" label="Settings" />
           </Tabs>
@@ -1275,11 +1543,12 @@ export default function AdminApp() {
         {tab === 0 && <OverviewPanel jwt={jwt} />}
         {tab === 1 && <TenantsFlagsPanel jwt={jwt} />}
         {tab === 2 && <IdentityRolesPanel jwt={jwt} />}
-        {tab === 3 && <ContentGovernancePanel jwt={jwt} />}
-        {tab === 4 && <AttemptsOversightPanel jwt={jwt} />}
-        {tab === 5 && <ComplianceAuditPanel jwt={jwt} />}
-        {tab === 6 && <IntegrationsPanel jwt={jwt} />}
-        {tab === 7 && <SettingsPanel jwt={jwt} />}
+        {tab === 3 && <UsersPanel jwt={jwt} />}{/* NEW */}
+        {tab === 4 && <ContentGovernancePanel jwt={jwt} />}
+        {tab === 5 && <AttemptsOversightPanel jwt={jwt} />}
+        {tab === 6 && <ComplianceAuditPanel jwt={jwt} />}
+        {tab === 7 && <IntegrationsPanel jwt={jwt} />}
+        {tab === 8 && <SettingsPanel jwt={jwt} />}
         {snack.node}
       </Shell>
     </ThemeProvider>
