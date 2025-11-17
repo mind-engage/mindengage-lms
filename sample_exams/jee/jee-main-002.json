@@ -1,5 +1,5 @@
 {
-    "id": "jee-main-p1-001",
+    "id": "jee-main-p1-002",
     "title": "JEE (Main) Paper 1 – Full Length",
     "profile": "jee.v1",
     "policy": {
@@ -2568,7 +2568,7 @@
             "module_id": "math-m1",
             "part": "B",
             "type": "numeric",
-            "prompt_html": "<p>Let A = \[\[1, 2], [3, 4]\]. Compute det(A).</p>",
+            "prompt_html": "<p>Let A = [[1, 2], [3, 4]]. Compute det(A).</p>",
             "answer_key": [
                 "-2"
             ],

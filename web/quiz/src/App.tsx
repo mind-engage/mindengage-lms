@@ -9,7 +9,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 /* ---------------- URL params ---------------- */
 const url = new URL(window.location.href);
-const API_BASE = (url.searchParams.get("api") || "http://localhost:8080/api").replace(/\/$/, "");
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080/api";
 const OFFERING_ID = url.searchParams.get("offering") || url.searchParams.get("o") || "";
 const LINK_TOKEN  = url.searchParams.get("access_token") || url.searchParams.get("t") || "";
 const SHOW_ANS_DEFAULT = url.searchParams.get("show_answers") === "1";

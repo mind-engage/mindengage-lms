@@ -1,4 +1,5 @@
 .env
+test_users.json
 flatten.sh
 flatten.txt
 scaffold_mindengage.sh
